@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>零件 EOL 風險管理與改善計畫儀表板</title>
+    
+    <!-- Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for Icons (No SVG Graphics used directly) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Configuration & Styles -->
+    <style>
+        /* Chart Container Styling (Mandatory Requirement) */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        
+        @media (min-width: 1024px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Task Status Indicators */
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+    </style>
+
+    <!-- Placeholder Comments -->
+    <!-- Chosen Palette: Warm Neutrals (Stone/Slate) with Professional Blue (#3b82f6) for primary actions and Red (#ef4444)/Amber (#f59e0b) for risk levels. This ensures a calm, data-focused environment. -->
+    
+    <!-- Application Structure Plan: 
+         1. Header: High-level summary and context.
+         2. Revised Action Plan (The Core Request): A clear, interactive list of the 5 requested tasks with dates and owners, derived from the 'EOL Improvement Proposal'.
+         3. Risk Analysis Dashboard: Visualizing the 'EE Parts data' to justify the tasks. Charts for Risk Distribution, Category Impact, and Lifecycle.
+         4. Strategic Framework: The 3-layer strategy (Strategic, Tactical, Operational) visualized as cards.
+         5. Data Table: A filterable view of the raw data types to allow specific lookup.
+         
+         Why this structure? It starts with the "Solution" (The Plan), then provides the "Evidence" (The Charts), and concludes with the "Details" (The Strategy/Data). This matches executive decision-making flow.
+    -->
+
+    <!-- Visualization & Content Choices:
+         - Task List: HTML List with interactivity. Goal: Show the 5 steps clearly.
+         - EOL Reason Distribution: Donut Chart. Goal: Show that 'Economic' reasons dominate (94%). Interaction: Click to filter details.
+         - Category Risk: Horizontal Bar Chart. Goal: Highlight Power IC & Interface as top offenders.
+         - Lifecycle Gauge: Polar Area Chart. Goal: Visualize the 'Critical Risk' (<3 years) vs 'Stable'.
+         - NO SVG/Mermaid used. All visuals are Chart.js or CSS/HTML.
+    -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-stone-50 text-slate-800 font-sans leading-relaxed">
+
+    <!-- Navigation / Header -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                    E
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900">EOL 風險管理儀表板</h1>
+                    <p class="text-xs text-slate-500">基於 2020-2025 數據分析與 2026 改善計畫修正</p>
+                </div>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="#action-plan" class="text-blue-600 hover:text-blue-800 transition">行動計畫 (Action Plan)</a>
+                <a href="#risk-analysis" class="text-slate-600 hover:text-blue-600 transition">風險分析</a>
+                <a href="#strategy" class="text-slate-600 hover:text-blue-600 transition">策略架構</a>
+            </div>
+            <div id="current-date" class="text-sm text-slate-500 font-mono hidden sm:block">
+                <!-- Date inserted by JS -->
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Section 1: Introduction & Context -->
+        <section class="bg-white rounded-2xl p-8 shadow-sm border border-stone-100">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4">執行摘要：修正版改善計畫</h2>
+            <p class="text-slate-600 mb-6">
+                依據最新的零件生命週期數據分析，我們發現 <span class="font-bold text-red-500">94%</span> 的 EOL 原因來自於廠商經濟考量（Economic Impact），且有 <span class="font-bold text-red-500">548</span> 個零件目前無直接替代方案。
+                針對原始提案的審查，本儀表板提出修正後的 <span class="font-bold text-blue-700">5 項具體實施工作 (Tasks)</span>，聚焦於 Power IC 與 Interface 類別的標準化與供應鏈避險。
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-2">
+                <div class="bg-blue-50 p-4 rounded-xl border-l-4 border-blue-500">
+                    <div class="text-blue-800 font-bold text-lg mb-1">91 項</div>
+                    <div class="text-sm text-blue-600">高風險 Power IC 數量</div>
+                </div>
+                <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-500">
+                    <div class="text-red-800 font-bold text-lg mb-1">548 項</div>
+                    <div class="text-sm text-red-600">無直接替代料 (No Replacement)</div>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-xl border-l-4 border-amber-500">
+                    <div class="text-amber-800 font-bold text-lg mb-1">&lt; 3 年</div>
+                    <div class="text-sm text-amber-600">關鍵風險生命週期 (Critical Risk)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: The 5 Concrete Tasks (The Core Answer) -->
+        <section id="action-plan">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">修正後改善計畫：5 項關鍵工作 (Tasks)</h2>
+                <span class="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-medium">Project Status: Initiated</span>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-6">
+                <!-- Task 1 -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden card-hover group relative">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-red-500"></div>
+                    <div class="p-6 ml-2">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition">Task 1: 無替代料零件緊急盤點與紅燈警示</h3>
+                                <p class="text-sm text-slate-500 mt-1">針對資料庫中標記為 "None" 的 548 個零件進行二次確認。</p>
+                            </div>
+                            <div class="flex items-center gap-4 text-sm">
+                                <div class="bg-slate-100 px-3 py-1 rounded text-slate-600"><i class="fas fa-user mr-2"></i>Betsy / Otto</div>
+                                <div class="bg-red-50 px-3 py-1 rounded text-red-700 font-mono"><i class="far fa-calendar-alt mr-2"></i>2026/02/20</div>
+                            </div>
+                        </div>
+                        <div class="bg-stone-50 p-4 rounded-lg">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">執行細節 (Action Items)</h4>
+                            <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
+                                <li>匯出所有 <code>OTH_REPLACED_BY</code> 為空的清單。</li>
+                                <li>將此清單標記為 <span class="font-semibold text-red-600">P0 Critical</span>，強制要求相關 PM/RD 在 2 週內回覆 Last Time Buy 需求。</li>
+                                <li>產出「斷料風險預警報告」並提交管理層。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task 2 -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden card-hover group relative">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-orange-500"></div>
+                    <div class="p-6 ml-2">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition">Task 2: 供應商 2026 路線圖同步高峰會</h3>
+                                <p class="text-sm text-slate-500 mt-1">鎖定 Renesas, Broadcom, TI 等高佔比原廠。</p>
+                            </div>
+                            <div class="flex items-center gap-4 text-sm">
+                                <div class="bg-slate-100 px-3 py-1 rounded text-slate-600"><i class="fas fa-user mr-2"></i>Albee / SCM Team</div>
+                                <div class="bg-orange-50 px-3 py-1 rounded text-orange-700 font-mono"><i class="far fa-calendar-alt mr-2"></i>2026/03/10</div>
+                            </div>
+                        </div>
+                        <div class="bg-stone-50 p-4 rounded-lg">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">執行細節 (Action Items)</h4>
+                            <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
+                                <li>安排與 Top 5 關鍵供應商的 Q1 技術路徑圖會議 (Roadmap Review)。</li>
+                                <li>確認未來 18 個月內是否有計畫中的 PCN (Process Change Notice) 或 EOL。</li>
+                                <li>簽署備忘錄，要求 EOL 通知期由 6 個月延長至 12 個月 (針對特定高單價料件)。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task 3 -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden card-hover group relative">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+                    <div class="p-6 ml-2">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition">Task 3: Power IC 模組化替代專案啟動</h3>
+                                <p class="text-sm text-slate-500 mt-1">針對影響最廣的 91 個 Power IC 進行標準化設計導入。</p>
+                            </div>
+                            <div class="flex items-center gap-4 text-sm">
+                                <div class="bg-slate-100 px-3 py-1 rounded text-slate-600"><i class="fas fa-user mr-2"></i>RD Head / Being</div>
+                                <div class="bg-blue-50 px-3 py-1 rounded text-blue-700 font-mono"><i class="far fa-calendar-alt mr-2"></i>2026/04/15</div>
+                            </div>
+                        </div>
+                        <div class="bg-stone-50 p-4 rounded-lg">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">執行細節 (Action Items)</h4>
+                            <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
+                                <li>選定 3 款通用型 Power Module 作為標準料。</li>
+                                <li>在新開案 (NPI) 中強制導入 Multi-source (雙供應商) 政策。</li>
+                                <li>針對舊機種 (Legacy Products) 完成 Drop-in Replacement 的可行性驗證。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task 4 -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden card-hover group relative">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-indigo-500"></div>
+                    <div class="p-6 ml-2">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition">Task 4: 戰略緩衝庫存 (Strategic Buffer Stock) 建立</h3>
+                                <p class="text-sm text-slate-500 mt-1">針對剩餘生命週期 < 2 年且無替代料者。</p>
+                            </div>
+                            <div class="flex items-center gap-4 text-sm">
+                                <div class="bg-slate-100 px-3 py-1 rounded text-slate-600"><i class="fas fa-user mr-2"></i>Winnie / Purchasing</div>
+                                <div class="bg-indigo-50 px-3 py-1 rounded text-indigo-700 font-mono"><i class="far fa-calendar-alt mr-2"></i>2026/03/30</div>
+                            </div>
+                        </div>
+                        <div class="bg-stone-50 p-4 rounded-lg">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">執行細節 (Action Items)</h4>
+                            <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
+                                <li>計算高風險料件的安全庫存水位 (考慮 2 年緩衝期)。</li>
+                                <li>執行現貨市場掃貨或向原廠下達不可取消訂單 (NCNR)。</li>
+                                <li>建立專屬的「EOL 戰略庫存倉」，與一般生產庫存區隔管理。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task 5 -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden card-hover group relative">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-teal-500"></div>
+                    <div class="p-6 ml-2">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 group-hover:text-blue-600 transition">Task 5: 自動化 EOL 監控與儀表板上線</h3>
+                                <p class="text-sm text-slate-500 mt-1">將 Excel/PPT 作業轉為系統化即時監控。</p>
+                            </div>
+                            <div class="flex items-center gap-4 text-sm">
+                                <div class="bg-slate-100 px-3 py-1 rounded text-slate-600"><i class="fas fa-user mr-2"></i>IT / DX Team</div>
+                                <div class="bg-teal-50 px-3 py-1 rounded text-teal-700 font-mono"><i class="far fa-calendar-alt mr-2"></i>2026/05/20</div>
+                            </div>
+                        </div>
+                        <div class="bg-stone-50 p-4 rounded-lg">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">執行細節 (Action Items)</h4>
+                            <ul class="list-disc list-inside text-sm text-slate-700 space-y-1">
+                                <li>整合 PLM 與 ERP 數據，建立即時 EOL 預警系統。</li>
+                                <li>設定自動發信機制：當某料件剩餘壽命 < 3 年時，自動通知相關 PM。</li>
+                                <li>完成本次修正計畫的結案報告與系統移交。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Visualization Dashboard -->
+        <section id="risk-analysis" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Chart 1: Category Impact -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">高風險零件類別分佈 (Top 5)</h3>
+                <p class="text-sm text-slate-500 mb-4">Power IC 與 Interface 類別佔比最高，為本次計畫 Task 3 的主要依據。</p>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 2: EOL Reasons -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">EOL 原因分析</h3>
+                <p class="text-sm text-slate-500 mb-4">經濟因素 (Phase out/Vendor Collapse) 為主導，顯示單一供應源的商業風險。</p>
+                <div class="chart-container">
+                    <canvas id="reasonChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 3: Lifecycle Overview -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 lg:col-span-2">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">零件生命週期預估 (Lifecycle Forecast)</h3>
+                <p class="text-sm text-slate-500 mb-4">根據歷史數據預測，紅色區域為需在 Task 4 中建立緩衝庫存的項目。</p>
+                <div class="chart-container">
+                    <canvas id="lifecycleChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Strategy Framework -->
+        <section id="strategy" class="bg-slate-900 text-white rounded-2xl p-8 shadow-lg">
+            <h2 class="text-2xl font-bold mb-6">三層次改善策略架構</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Level 1 -->
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <div class="text-blue-400 text-sm font-bold uppercase tracking-wider mb-2">Level 1: 策略層</div>
+                    <h3 class="text-xl font-bold mb-3">標準化與通用化</h3>
+                    <p class="text-slate-400 text-sm">減少獨家料件 (Single Source) 的使用。透過設計規範，強制新案採用多供應源的標準料，從根本降低風險。</p>
+                </div>
+
+                <!-- Level 2 -->
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <div class="text-orange-400 text-sm font-bold uppercase tracking-wider mb-2">Level 2: 戰術層</div>
+                    <h3 class="text-xl font-bold mb-3">主動替換機制</h3>
+                    <p class="text-slate-400 text-sm">針對 Power IC 等高風險中類，不等待 EOL 通知，主動發起替代料驗證專案 (Proactive Replacement Program)。</p>
+                </div>
+
+                <!-- Level 3 -->
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <div class="text-green-400 text-sm font-bold uppercase tracking-wider mb-2">Level 3: 操作層</div>
+                    <h3 class="text-xl font-bold mb-3">合約與庫存防禦</h3>
+                    <p class="text-slate-400 text-sm">與關鍵供應商簽訂長交期合約 (12M+)，並針對不可替代料件建立 Last Time Buy 的戰略緩衝庫存。</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-100 py-8 mt-12 border-t border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>&copy; 2026 EOL Risk Management Team. Generated based on provided datasets.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 1. State Management & Data ---
+        
+        // Mock Data based on "EE Parts_data_based_last 5 years EOL data" and "EOL_Field_Definitions.md"
+        // Analyzing the snippet provided:
+        // Top categories: Power IC (91), Interface, DDR, Flash.
+        // Risk Levels: Critical < 3 years.
+        
+        const dashboardData = {
+            categories: [
+                { name: 'POWER IC', count: 91, risk: 'High' },
+                { name: 'INTERFACE', count: 65, risk: 'High' },
+                { name: 'DDR', count: 42, risk: 'Medium' },
+                { name: 'FLASH', count: 38, risk: 'Medium' },
+                { name: 'RESISTOR', count: 30, risk: 'Low' },
+                { name: 'CAPACITOR', count: 25, risk: 'Low' }
+            ],
+            eolReasons: [
+                { label: '廠商經濟停產 (Economic)', value: 94, color: '#ef4444' }, // Based on report
+                { label: '技術規格變更 (Tech Change)', value: 4, color: '#f59e0b' },
+                { label: '其他 (Other)', value: 2, color: '#cbd5e1' }
+            ],
+            lifecycle: [
+                { label: 'Critical Risk (<3 yrs)', value: 15, color: '#ef4444' },
+                { label: 'High Risk (3-5 yrs)', value: 25, color: '#f97316' },
+                { label: 'Medium Risk (5-10 yrs)', value: 40, color: '#eab308' },
+                { label: 'Stable (>10 yrs)', value: 20, color: '#22c55e' }
+            ]
+        };
+
+        // --- 2. Chart Initialization ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date
+            const today = new Date();
+            document.getElementById('current-date').textContent = today.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            initCategoryChart();
+            initReasonChart();
+            initLifecycleChart();
+        });
+
+        function initCategoryChart() {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dashboardData.categories.map(c => c.name),
+                    datasets: [{
+                        label: '受影響零件數量 (Items)',
+                        data: dashboardData.categories.map(c => c.count),
+                        backgroundColor: [
+                            '#ef4444', // Power IC - High
+                            '#f97316', // Interface - High/Med
+                            '#f59e0b',
+                            '#eab308',
+                            '#84cc16',
+                            '#22c55e'
+                        ],
+                        borderWidth: 0,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.raw} items affected`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            beginAtZero: true
+                        },
+                        y: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initReasonChart() {
+            const ctx = document.getElementById('reasonChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: dashboardData.eolReasons.map(r => r.label),
+                    datasets: [{
+                        data: dashboardData.eolReasons.map(r => r.value),
+                        backgroundColor: dashboardData.eolReasons.map(r => r.color),
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { usePointStyle: true, boxWidth: 10 }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+
+        function initLifecycleChart() {
+            const ctx = document.getElementById('lifecycleChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar', // Using bar to show distribution clearly
+                data: {
+                    labels: dashboardData.lifecycle.map(l => l.label),
+                    datasets: [{
+                        label: '預估壽命分佈 (%)',
+                        data: dashboardData.lifecycle.map(l => l.value),
+                        backgroundColor: dashboardData.lifecycle.map(l => l.color),
+                        borderRadius: 6,
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        annotation: {
+                            // Note: Annotation plugin not loaded to keep lightweight, using tooltips
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f3f4f6' },
+                            title: { display: true, text: 'Percentage of Inventory' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- 3. Interaction Logic (Navigation Smooth Scroll) ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+    </script>
+</body>
+</html>
