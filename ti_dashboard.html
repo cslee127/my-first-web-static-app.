@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>TI × Advantech Dashboard Prototype (v2)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" rel="stylesheet">
+  <style>
+    body { background:#f7f7fb; }
+    .card-kpi { border:0; box-shadow:0 6px 18px rgba(0,0,0,.06); border-radius:16px; }
+    .section-title { font-weight:700; }
+    .muted { color:#6c757d; }
+    .badge-soft { background:#eef2ff; color:#374151; border-radius:999px; padding:.35rem .6rem; }
+    .container { max-width: 1200px; }
+    .plot-card { border:0; box-shadow:0 6px 18px rgba(0,0,0,.06); border-radius:16px; }
+    table.dataTable tbody td { vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+      <div>
+        <h3 class="mb-1">TI × Advantech 互動式 Dashboard（Prototype v2）</h3>
+        <div class="muted">資料來源：TI KCC list_300mm migration PCN survey_1212.xlsx（Sheet：TI list_20251211Main）</div>
+      </div>
+      <div class="text-end">
+        <span class="badge-soft">修正：CAC 與 CANDIDACY 分開計算</span>
+      </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="row g-3 mb-3">
+      <div class="col-12 col-md-3">
+        <div class="card card-kpi p-3">
+          <div class="muted">Total Advantech Component（TI 製造）</div>
+          <div class="display-6" id="kpiTotalItem">-</div>
+          <div class="muted">Unique Item_Number</div>
+        </div>
+      </div>
+      <div class="col-12 col-md-3">
+        <div class="card card-kpi p-3">
+          <div class="muted">Total TI MPN</div>
+          <div class="display-6" id="kpiTotalMPN">-</div>
+          <div class="muted">Unique MFR_PART_NUMBER</div>
+        </div>
+      </div>
+      <div class="col-12 col-md-2">
+        <div class="card card-kpi p-3">
+          <div class="muted">KCC（Item）</div>
+          <div class="display-6" id="kpiKCC">-</div>
+          <div class="muted">Unique Item_Number</div>
+        </div>
+      </div>
+      <div class="col-12 col-md-2">
+        <div class="card card-kpi p-3">
+          <div class="muted">CAC（Item）</div>
+          <div class="display-6" id="kpiCAC">-</div>
+          <div class="muted">Unique Item_Number</div>
+        </div>
+      </div>
+      <div class="col-12 col-md-2">
+        <div class="card card-kpi p-3">
+          <div class="muted">CANDIDACY（Item）</div>
+          <div class="display-6" id="kpiCAND">-</div>
+          <div class="muted">Unique Item_Number</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-3 mb-3">
+      <div class="col-12 col-lg-6">
+        <div class="card plot-card p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="section-title">MAINSTREAM 分布</div>
+              <div class="muted">以 Unique Item_Number 計（CAC 與 CANDIDACY 分開）</div>
+            </div>
+          </div>
+          <div id="chartMainstream" style="height:380px;"></div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="card plot-card p-3">
+          <div class="section-title">Wafer Size 分布</div>
+          <div class="muted">以 Unique MFR_PART_NUMBER 計（150/200/300/Unknown/Other）</div>
+          <div id="chartWafer" style="height:380px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TopN controls -->
+    <div class="card plot-card p-3 mb-3">
+      <div class="d-flex flex-wrap gap-2 justify-content-between align-items-end">
+        <div>
+          <div class="section-title">Top 出貨量（2025 Qty）</div>
+          <div class="muted">以 MFR_PART_NUMBER 彙總 sum(2025 Qty)，並標記 KCC / CAC / CANDIDACY</div>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <label class="muted">Top N</label>
+          <select id="topN" class="form-select form-select-sm" style="width:120px;">
+            <option value="10">Top 10</option>
+            <option value="20">Top 20</option>
+            <option value="30">Top 30</option>
+            <option value="40">Top 40</option>
+            <option value="50" selected>Top 50</option>
+          </select>
+          <div class="form-check ms-1">
+            <input class="form-check-input" type="checkbox" id="onlyKCC">
+            <label class="form-check-label" for="onlyKCC">只看 KCC 關聯</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <table id="topTable" class="display" style="width:100%">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>MFR_PART_NUMBER</th>
+              <th>2025 Qty (sum)</th>
+              <th>Item Count</th>
+              <th>KCC</th>
+              <th>CAC</th>
+              <th>CANDIDACY</th>
+              <th>Wafer</th>
+              <th>Revoke</th>
+              <th>Retired</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="muted small">
+      註：此 Prototype 先以主表（TI list_20251211Main）示範；若你希望「每個 Sheet 切換」或「跨 Sheet 合併」我也可以直接幫你升級成 Tabs/下拉選單版本。
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+  <script>
+    const KPI = {"total_item": 4293, "total_mpn": 5456, "kcc_item": 329, "cac_item": 0, "candidacy_item": 155, "revoke_item": 879, "retired_item": 12, "blank_item": 2918};
+    const MAINSTREAM_COUNTS = [{"MAINSTREAM": "KCC", "ItemCount": 329}, {"MAINSTREAM": "CAC", "ItemCount": 0}, {"MAINSTREAM": "Candidacy", "ItemCount": 155}, {"MAINSTREAM": "Revoke", "ItemCount": 879}, {"MAINSTREAM": "Retired", "ItemCount": 12}, {"MAINSTREAM": "(Blank)", "ItemCount": 2918}];
+    const WAFER_COUNTS = [{"WaferCat": "150mm", "MPNCount": 44}, {"WaferCat": "200mm", "MPNCount": 306}, {"WaferCat": "300mm", "MPNCount": 250}, {"WaferCat": "Unknown", "MPNCount": 4849}, {"WaferCat": "Other", "MPNCount": 7}];
+    const TOP_DATA = [{"MFR_PART_NUMBER": "SN74LVC1G08DCKR", "Qty2025": 6843000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC1G125DCKR", "Qty2025": 4611000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS22990DMLR", "Qty2025": 3744000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC2G14DCKR", "Qty2025": 3393000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74AHC1G08DBVR", "Qty2025": 2649000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC1G17DCKR", "Qty2025": 2184020, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74AHCT1G125DBVR", "Qty2025": 2160000, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "Yes", "WaferCat": "Unknown", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "GD75232PWR", "Qty2025": 1972000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC14APWR", "Qty2025": 1730000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS2001DDBVR", "Qty2025": 1602000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC1G07DCKR", "Qty2025": 1560000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TXB0104RUTR", "Qty2025": 1443000, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "Yes", "WaferCat": "Unknown", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC1G32DBVR", "Qty2025": 1413000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPD4E05U06DQAR", "Qty2025": 1221000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "CSD95496QVM", "Qty2025": 1198143, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "No", "WaferCat": "Unknown", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPD4E02B04DQAR", "Qty2025": 1116000, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "No", "WaferCat": "Unknown", "Revoke": "Yes", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74AUP1G07DCKR", "Qty2025": 1113000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "MAX3243EIRHBR", "Qty2025": 1014000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC1G14DCKR", "Qty2025": 1005000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC2G125DCUR", "Qty2025": 924000, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "No", "WaferCat": "Unknown", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74AHC1G125DBVR", "Qty2025": 915000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74AHCT1G125DCKR", "Qty2025": 906000, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "Yes", "WaferCat": "Unknown", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "THVD1550DR", "Qty2025": 865000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN75185DBR", "Qty2025": 738000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS51216RUKR", "Qty2025": 714200, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS7A9201DSKR", "Qty2025": 714000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS51200DRCR", "Qty2025": 708000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TCA9406DCUR", "Qty2025": 660000, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "No", "WaferCat": "Unknown", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS2065CDBVR", "Qty2025": 594000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC2G07DCKR", "Qty2025": 594000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS82130SILR", "Qty2025": 583683, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74AHC1G86DBVR", "Qty2025": 549000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "LM2904DGKR", "Qty2025": 522500, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS56C215RNNR", "Qty2025": 513000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TRS3243EIPWR", "Qty2025": 512000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "CSD87350Q5D", "Qty2025": 507500, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS2493PWR", "Qty2025": 506000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS82085SILR", "Qty2025": 503924, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS3808G01DBVR", "Qty2025": 495000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC1G08DBVR", "Qty2025": 474020, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS568215RNNR", "Qty2025": 456000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN75DP139RGZR", "Qty2025": 445000, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "No", "WaferCat": "Unknown", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC244APWR", "Qty2025": 426000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TRS213EIDBR", "Qty2025": 424000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "LM358DR", "Qty2025": 407500, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "300mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS3809K33DBVR", "Qty2025": 384000, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "No", "WaferCat": "Unknown", "Revoke": "Yes", "Retired": "No"}, {"MFR_PART_NUMBER": "TPS548A20RVER", "Qty2025": 372500, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "No", "WaferCat": "Unknown", "Revoke": "Yes", "Retired": "No"}, {"MFR_PART_NUMBER": "CSD97395Q4M", "Qty2025": 367500, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "No", "WaferCat": "Unknown", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "SN74LVC1G04DBVR", "Qty2025": 333000, "ItemCount": 1, "KCC": "Yes", "CAC": "No", "CANDIDACY": "No", "WaferCat": "200mm", "Revoke": "No", "Retired": "No"}, {"MFR_PART_NUMBER": "OPA336NA/3K", "Qty2025": 324000, "ItemCount": 1, "KCC": "No", "CAC": "No", "CANDIDACY": "No", "WaferCat": "Unknown", "Revoke": "Yes", "Retired": "No"}];
+
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function renderKPI() {
+      document.getElementById("kpiTotalItem").innerText = numberWithCommas(KPI.total_item);
+      document.getElementById("kpiTotalMPN").innerText = numberWithCommas(KPI.total_mpn);
+      document.getElementById("kpiKCC").innerText = numberWithCommas(KPI.kcc_item);
+      document.getElementById("kpiCAC").innerText = numberWithCommas(KPI.cac_item);
+      document.getElementById("kpiCAND").innerText = numberWithCommas(KPI.candidacy_item);
+    }
+
+    function renderCharts() {
+      // MAINSTREAM donut
+      const msLabels = MAINSTREAM_COUNTS.map(d => d.MAINSTREAM);
+      const msValues = MAINSTREAM_COUNTS.map(d => d.ItemCount);
+      Plotly.newPlot('chartMainstream', [{
+        type: 'pie',
+        labels: msLabels,
+        values: msValues,
+        hole: 0.55,
+        textinfo: 'label+value',
+        hovertemplate: '%{label}<br>Item: %{value}<extra></extra>'
+      }], {
+        margin: {t: 10, l: 10, r: 10, b: 10},
+        showlegend: true
+      }, {displayModeBar:false});
+
+      // Wafer bar
+      const wLabels = WAFER_COUNTS.map(d => d.WaferCat);
+      const wValues = WAFER_COUNTS.map(d => d.MPNCount);
+      Plotly.newPlot('chartWafer', [{
+        type: 'bar',
+        x: wLabels,
+        y: wValues,
+        hovertemplate: '%{x}<br>MPN: %{y}<extra></extra>'
+      }], {
+        margin: {t: 10, l: 50, r: 10, b: 50},
+        yaxis: {title:'Unique MPN'},
+        xaxis: {title:'Wafer Category'}
+      }, {displayModeBar:false});
+    }
+
+    let topTable = null;
+
+    function getFilteredTopData() {
+      const n = parseInt(document.getElementById('topN').value, 10);
+      const onlyKCC = document.getElementById('onlyKCC').checked;
+      let rows = TOP_DATA.slice(0, 50); // embedded top 50
+      if (onlyKCC) {
+        rows = rows.filter(r => r.KCC === 'Yes');
+      }
+      rows = rows.slice(0, n);
+      return rows.map((r, idx) => ([
+        idx + 1,
+        r.MFR_PART_NUMBER,
+        numberWithCommas(r.Qty2025),
+        r.ItemCount,
+        r.KCC,
+        r.CAC,
+        r.CANDIDACY,
+        r.WaferCat,
+        r.Revoke,
+        r.Retired
+      ]));
+    }
+
+    function renderTopTable() {
+      const data = getFilteredTopData();
+      if (topTable) {
+        topTable.clear();
+        topTable.rows.add(data);
+        topTable.draw();
+        return;
+      }
+      topTable = $('#topTable').DataTable({
+        data: data,
+        pageLength: 10,
+        lengthMenu: [10, 20, 50],
+        order: [[0, 'asc']]
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderKPI();
+      renderCharts();
+      renderTopTable();
+
+      document.getElementById('topN').addEventListener('change', renderTopTable);
+      document.getElementById('onlyKCC').addEventListener('change', renderTopTable);
+    });
+  </script>
+</body>
+</html>
