@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>VDA 5050 3D 互動教學</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; }
+        #ui-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; }
+        
+        /* 左側：主控端操作 */
+        #master-panel {
+            width: 300px; background: rgba(0, 60, 100, 0.8); padding: 20px; pointer-events: auto;
+            border-right: 1px solid #00aaff; display: flex; flex-direction: column; gap: 10px;
+        }
+        h2 { margin: 0 0 10px 0; font-size: 18px; color: #00aaff; border-bottom: 1px solid #00aaff; padding-bottom: 5px;}
+        h3 { margin: 0; font-size: 16px; color: #00ff88; }
+        
+        button {
+            background: #00aaff; border: none; color: white; padding: 10px; cursor: pointer; font-weight: bold; transition: 0.2s;
+        }
+        button:hover { background: #0088cc; }
+        button:disabled { background: #555; cursor: not-allowed; }
+
+        /* 右側：資料流與 AGV 狀態 */
+        #data-panel {
+            position: absolute; right: 0; top: 0; width: 350px; height: 100%; 
+            background: rgba(0, 0, 0, 0.85); padding: 20px; pointer-events: auto;
+            overflow-y: auto; font-family: 'Consolas', monospace; font-size: 12px;
+            border-left: 1px solid #444;
+        }
+
+        .json-block { background: #222; padding: 10px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #444; }
+        .key { color: #9cdcfe; }
+        .string { color: #ce9178; }
+        .number { color: #b5cea8; }
+        
+        /* 中間提示 */
+        #tooltip {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 20px;
+            font-size: 14px; color: #aaa;
+        }
+
+        /* 標籤 */
+        .label {
+            position: absolute; background: rgba(0,0,0,0.7); padding: 2px 5px; border-radius: 3px; 
+            font-size: 10px; pointer-events: none;
+        }
+    </style>
+    <!-- 引入 Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- 引入 Tween.js 用於動畫 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+</head>
+<body>
+
+    <div id="ui-container">
+        <div id="master-panel">
+            <h2>Master Control (主控端)</h2>
+            <p style="font-size:12px; color:#ccc;">模擬發送 VDA 5050 "Order" topic</p>
+            
+            <button id="btn-order-1" onclick="sendOrder('path1')">📦 任務 A：前往倉庫取貨</button>
+            <button id="btn-order-2" onclick="sendOrder('path2')">🏭 任務 B：運送至產線</button>
+            <button id="btn-pause" onclick="togglePause()" style="background:#ffaa00;">II 暫停/恢復 (Instant Action)</button>
+            
+            <div style="margin-top: auto;">
+                <h3>模擬說明：</h3>
+                <p style="font-size:12px; color:#ccc;">
+                    1. 點擊按鈕發送 Order JSON。<br>
+                    2. 綠色方塊 (AGV) 解析 Nodes/Edges。<br>
+                    3. AGV 移動並持續回報 State JSON。<br>
+                    4. 觀察右側面板的數據變化。
+                </p>
+            </div>
+        </div>
+
+        <div id="data-panel">
+            <h2>Topic Monitor (通訊監控)</h2>
+            
+            <h3>⬇️ Received Order (Topic: order)</h3>
+            <div id="json-order" class="json-block">等待指令...</div>
+
+            <h3>⬆️ AGV State (Topic: state)</h3>
+            <div id="json-state" class="json-block">初始化中...</div>
+        </div>
+    </div>
+
+    <div id="tooltip">按住滑鼠左鍵旋轉視角 • 滾輪縮放</div>
+
+    <script>
+        // --- 1. 3D 場景設定 (Three.js) ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x222222);
+        
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 15, 15);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 燈光
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(5, 10, 5);
+        scene.add(dirLight);
+
+        // 地板網格
+        const gridHelper = new THREE.GridHelper(20, 20, 0x444444, 0x333333);
+        scene.add(gridHelper);
+
+        // --- 2. 物件建立 ---
+        
+        // AGV (綠色方塊)
+        const agvGeometry = new THREE.BoxGeometry(0.8, 0.5, 1.2);
+        const agvMaterial = new THREE.MeshLambertMaterial({ color: 0x00ff88 });
+        const agv = new THREE.Mesh(agvGeometry, agvMaterial);
+        agv.position.set(0, 0.25, 0);
+        scene.add(agv);
+
+        // 節點 (Nodes) 視覺化
+        const nodes = {
+            "start": { x: 0, z: 0 },
+            "n1": { x: 0, z: -5 },
+            "n2": { x: 5, z: -5 },
+            "n3": { x: 5, z: 5 },
+            "n4": { x: -5, z: 5 },
+            "n5": { x: -5, z: 0 }
+        };
+
+        // 繪製節點與標籤
+        Object.keys(nodes).forEach(key => {
+            const node = nodes[key];
+            const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshBasicMaterial({ color: 0x00aaff }));
+            sphere.position.set(node.x, 0, node.z);
+            scene.add(sphere);
+            
+            // 簡單的地面文字 (用 Canvas 貼圖)
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 128; canvas.height = 64;
+            ctx.fillStyle = 'white';
+            ctx.font = '40px Arial';
+            ctx.fillText(key, 10, 50);
+            const tex = new THREE.CanvasTexture(canvas);
+            const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex }));
+            sprite.position.set(node.x, 1, node.z);
+            sprite.scale.set(2, 1, 1);
+            scene.add(sprite);
+        });
+
+        // --- 3. VDA 5050 邏輯模擬 ---
+
+        // 模擬資料結構
+        let agvState = {
+            headerId: 0,
+            timestamp: new Date().toISOString(),
+            version: "2.0.0",
+            manufacturer: "SimBot",
+            serialNumber: "AGV-001",
+            orderId: "",
+            orderUpdateId: 0,
+            lastNodeId: "start",
+            lastNodeSequenceId: 0,
+            driving: false,
+            batteryState: { batteryCharge: 80.5, charging: false },
+            errors: []
+        };
+
+        let currentTween = null;
+        let isPaused = false;
+
+        // 定義路徑 (VDA 5050 Order 結構簡化版)
+        const paths = {
+            "path1": {
+                orderId: "ORD-2023-001",
+                nodes: [
+                    { nodeId: "start", sequenceId: 0, released: true },
+                    { nodeId: "n1", sequenceId: 1, released: true },
+                    { nodeId: "n2", sequenceId: 2, released: true }
+                ],
+                edges: [
+                    { edgeId: "e1", sequenceId: 1, startNodeId: "start", endNodeId: "n1", maxSpeed: 1.0 },
+                    { edgeId: "e2", sequenceId: 2, startNodeId: "n1", endNodeId: "n2", maxSpeed: 1.0 }
+                ]
+            },
+            "path2": {
+                orderId: "ORD-2023-002",
+                nodes: [
+                    { nodeId: "n2", sequenceId: 2, released: true },
+                    { nodeId: "n3", sequenceId: 3, released: true },
+                    { nodeId: "n4", sequenceId: 4, released: true },
+                    { nodeId: "start", sequenceId: 5, released: true }
+                ],
+                edges: [
+                    { edgeId: "e3", sequenceId: 3, startNodeId: "n2", endNodeId: "n3", maxSpeed: 1.5 },
+                    { edgeId: "e4", sequenceId: 4, startNodeId: "n3", endNodeId: "n4", maxSpeed: 1.5 },
+                    { edgeId: "e5", sequenceId: 5, startNodeId: "n4", endNodeId: "start", maxSpeed: 0.8 }
+                ]
+            }
+        };
+
+        // 更新 UI 顯示 JSON
+        function updateUI() {
+            const stateEl = document.getElementById('json-state');
+            agvState.timestamp = new Date().toISOString();
+            agvState.headerId++;
+            
+            // 格式化 JSON 顯示 (簡易語法高亮)
+            const jsonStr = JSON.stringify(agvState, null, 2);
+            stateEl.innerHTML = syntaxHighlight(jsonStr);
+        }
+
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'string'; // bool as string color for simplicity
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        // 發送訂單
+        function sendOrder(pathKey) {
+            if (agvState.driving) {
+                alert("AGV 忙碌中，請稍後（VDA 5050 支援 Order Update，但此 Demo 僅示範單一任務）。");
+                return;
+            }
+
+            const order = paths[pathKey];
+            
+            // 檢查起始點是否匹配
+            if (order.nodes[0].nodeId !== agvState.lastNodeId) {
+                alert(`路徑不匹配！ AGV 目前在 ${agvState.lastNodeId}，但訂單從 ${order.nodes[0].nodeId} 開始。請先執行其他任務回到正確位置。`);
+                return;
+            }
+
+            // 顯示 Order JSON
+            document.getElementById('json-order').innerHTML = syntaxHighlight(JSON.stringify(order, null, 2));
+            
+            // 更新 AGV 狀態
+            agvState.orderId = order.orderId;
+            agvState.driving = true;
+            
+            executePath(order, 0);
+        }
+
+        // 遞迴執行路徑移動
+        function executePath(order, stepIndex) {
+            if (stepIndex >= order.edges.length) {
+                agvState.driving = false;
+                updateUI();
+                return;
+            }
+
+            const edge = order.edges[stepIndex];
+            const targetNodeId = edge.endNodeId;
+            const targetPos = nodes[targetNodeId];
+            const startPos = nodes[edge.startNodeId];
+
+            // 計算距離與時間 (模擬速度)
+            const dist = Math.sqrt(Math.pow(targetPos.x - startPos.x, 2) + Math.pow(targetPos.z - startPos.z, 2));
+            const duration = (dist / edge.maxSpeed) * 1000;
+
+            // 轉向
+            agv.lookAt(targetPos.x, 0.25, targetPos.z);
+
+            // 移動動畫
+            currentTween = new TWEEN.Tween(agv.position)
+                .to({ x: targetPos.x, z: targetPos.z }, duration)
+                .easing(TWEEN.Easing.Linear.None)
+                .onUpdate(() => {
+                    // 即時更新 State 位置 (模擬)
+                    // 實際 VDA 5050 會有 x, y, theta
+                    updateUI();
+                })
+                .onComplete(() => {
+                    agvState.lastNodeId = targetNodeId;
+                    agvState.lastNodeSequenceId = order.nodes[stepIndex + 1].sequenceId;
+                    updateUI();
+                    executePath(order, stepIndex + 1);
+                })
+                .start();
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            if (isPaused) {
+                if(currentTween) currentTween.pause();
+                agvState.errors = [{ errorType: "pause", errorDescription: "User paused by Instant Action" }];
+            } else {
+                if(currentTween) currentTween.resume();
+                agvState.errors = [];
+            }
+            updateUI();
+        }
+
+        // --- 4. 渲染迴圈 ---
+        function animate(time) {
+            requestAnimationFrame(animate);
+            TWEEN.update(time);
+            renderer.render(scene, camera);
+        }
+        
+        // 初始更新
+        updateUI();
+        animate();
+
+        // 視窗調整
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html>
