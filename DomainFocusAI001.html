@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain AI Use Case 互動導覽</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
+        .step-card { transition: all 0.3s ease; cursor: pointer; }
+        .step-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .step-active { border-color: #3b82f6; background-color: #eff6ff; }
+        .case-content { display: none; }
+        .case-content.active { display: block; animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-slate-900 to-blue-900 text-white py-12 px-6 shadow-lg">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-4xl font-bold mb-4">Domain AI Use Case 產業分析報告</h1>
+            <p class="text-blue-100 text-lg opacity-90">聚焦 2024-2025 研發與產品部門之重大 AI 落地實踐</p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-10">
+        
+        <!-- Section 1: Methodology -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-8 flex items-center">
+                <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">1</span>
+                Use Case 轉換 6 步流程 (Methodology)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <!-- Step 1 -->
+                <div class="step-card bg-white border-2 border-slate-100 rounded-xl p-4 text-center" onclick="showStep(1)">
+                    <div class="text-blue-600 mb-2"><i class="fas fa-search text-2xl"></i></div>
+                    <div class="font-bold text-sm">1. 收集痛點</div>
+                </div>
+                <!-- Step 2 -->
+                <div class="step-card bg-white border-2 border-slate-100 rounded-xl p-4 text-center" onclick="showStep(2)">
+                    <div class="text-blue-600 mb-2"><i class="fas fa-brain text-2xl"></i></div>
+                    <div class="font-bold text-sm">2. 知識萃取</div>
+                </div>
+                <!-- Step 3 -->
+                <div class="step-card bg-white border-2 border-slate-100 rounded-xl p-4 text-center" onclick="showStep(3)">
+                    <div class="text-blue-600 mb-2"><i class="fas fa-map text-2xl"></i></div>
+                    <div class="font-bold text-sm">3. Canvas 定型</div>
+                </div>
+                <!-- Step 4 -->
+                <div class="step-card bg-white border-2 border-slate-100 rounded-xl p-4 text-center" onclick="showStep(4)">
+                    <div class="text-blue-600 mb-2"><i class="fas fa-database text-2xl"></i></div>
+                    <div class="font-bold text-sm">4. 資料就緒</div>
+                </div>
+                <!-- Step 5 -->
+                <div class="step-card bg-white border-2 border-slate-100 rounded-xl p-4 text-center" onclick="showStep(5)">
+                    <div class="text-blue-600 mb-2"><i class="fas fa-rocket text-2xl"></i></div>
+                    <div class="font-bold text-sm">5. MVP 驗證</div>
+                </div>
+                <!-- Step 6 -->
+                <div class="step-card bg-white border-2 border-slate-100 rounded-xl p-4 text-center" onclick="showStep(6)">
+                    <div class="text-blue-600 mb-2"><i class="fas fa-copy text-2xl"></i></div>
+                    <div class="font-bold text-sm">6. 擴散複製</div>
+                </div>
+            </div>
+
+            <!-- Step Detail Display -->
+            <div id="step-detail" class="mt-6 bg-blue-50 border border-blue-100 rounded-xl p-6 min-h-[100px] flex items-center justify-center text-slate-600">
+                點擊上方圖示查看各步驟具體做法...
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Cases -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-8 flex items-center">
+                <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">2</span>
+                重大案例分析 (Case Studies)
+            </h2>
+            
+            <div class="flex flex-wrap gap-2 mb-8">
+                <button onclick="showCase('boeing')" class="case-tab px-6 py-2 rounded-full bg-slate-200 hover:bg-slate-300 font-medium active-tab" data-case="boeing">Boeing 航太製造</button>
+                <button onclick="showCase('ge')" class="case-tab px-6 py-2 rounded-full bg-slate-200 hover:bg-slate-300 font-medium" data-case="ge">GE Aerospace 航太</button>
+                <button onclick="showCase('toyota')" class="case-tab px-6 py-2 rounded-full bg-slate-200 hover:bg-slate-300 font-medium" data-case="toyota">Toyota 車用研發</button>
+                <button onclick="showCase('siemens')" class="case-tab px-6 py-2 rounded-full bg-slate-200 hover:bg-slate-300 font-medium" data-case="siemens">Siemens 工業自動化</button>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <!-- Boeing -->
+                <div id="case-boeing" class="case-content active p-8">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/3">
+                            <div class="bg-blue-600 text-white p-6 rounded-xl">
+                                <h3 class="text-xl font-bold mb-2">Boeing CV/OCR</h3>
+                                <p class="text-blue-100 text-sm mb-4">品質工程 / 生產驗證</p>
+                                <div class="text-3xl font-bold mb-1">>17 小時</div>
+                                <p class="text-xs uppercase tracking-wider">每架飛機檢驗節省工時</p>
+                            </div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <h4 class="font-bold text-blue-600 mb-2 uppercase text-xs">關鍵做法</h4>
+                            <p class="mb-4">開發視覺 AI 辨識零件序號，支援 1,400+ 零件。利用 2,250 張真實影像標註強化模型，解決人工核對易出錯的問題。</p>
+                            <ul class="space-y-2">
+                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> 2024/1 已在產線正式部署</li>
+                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> 核心知識：零件特徵字典與序號邏輯</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GE -->
+                <div id="case-ge" class="case-content p-8">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/3">
+                            <div class="bg-slate-800 text-white p-6 rounded-xl">
+                                <h3 class="text-xl font-bold mb-2">GE Wingmate</h3>
+                                <p class="text-slate-400 text-sm mb-4">工程檢索助理 (RAG)</p>
+                                <div class="text-3xl font-bold mb-1">20 萬頁</div>
+                                <p class="text-xs uppercase tracking-wider">處理技術文件總量</p>
+                            </div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <h4 class="font-bold text-blue-600 mb-2 uppercase text-xs">關鍵做法</h4>
+                            <p class="mb-4">建立工程知識 RAG 系統，讓 52,000 名員工能用對話方式查詢複雜的技術手冊與維修規範，顯著加速資訊查找。</p>
+                            <ul class="space-y-2">
+                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> 3 個月內達成 50 萬次查詢量</li>
+                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> 資料治理：確保「帶引用來源」的正確性</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toyota -->
+                <div id="case-toyota" class="case-content p-8">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/3">
+                            <div class="bg-red-600 text-white p-6 rounded-xl">
+                                <h3 class="text-xl font-bold mb-2">Toyota O-Beya</h3>
+                                <p class="text-red-100 text-sm mb-4">多代理研發協作 (Agentic)</p>
+                                <div class="text-3xl font-bold mb-1">9 個 Agents</div>
+                                <p class="text-xs uppercase tracking-wider">整合不同 Domain 專家代理</p>
+                            </div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <h4 class="font-bold text-blue-600 mb-2 uppercase text-xs">關鍵做法</h4>
+                            <p class="mb-4">利用 Agentic Workflow 保留工程師集體智慧。各代理（震動、法規、油耗等）能同時分析設計權衡，並提出多維度的決策建議。</p>
+                            <ul class="space-y-2">
+                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> 查找時間從「數天」降至「數分鐘」</li>
+                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> 適用場景：動力系統研發與設計權衡</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Siemens -->
+                <div id="case-siemens" class="case-content p-8">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="md:w-1/3">
+                            <div class="bg-emerald-600 text-white p-6 rounded-xl">
+                                <h3 class="text-xl font-bold mb-2">Siemens Copilot</h3>
+                                <p class="text-emerald-100 text-sm mb-4">自動化工程 (PLC/TIA)</p>
+                                <div class="text-3xl font-bold mb-1">50% ↑</div>
+                                <p class="text-xs uppercase tracking-wider">系統更新與改版效率提升</p>
+                            </div>
+                        </div>
+                        <div class="md:w-2/3">
+                            <h4 class="font-bold text-blue-600 mb-2 uppercase text-xs">關鍵做法</h4>
+                            <p class="mb-4">將 GenAI 嵌進 TIA Portal 工具鏈。自動生成 SCL 代碼、HMI 視覺化，並進行錯誤檢查，讓自動化工程進入「對話式生成」時代。</p>
+                            <ul class="space-y-2">
+                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> 2024/7 TIA Essential 正式上架</li>
+                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> 核心價值：程式碼規範與模組庫的自動套用</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Strategy 2026 -->
+        <section class="mb-16 bg-blue-900 text-white rounded-2xl p-8 shadow-inner">
+            <h2 class="text-2xl font-bold mb-6">2026 研發部門戰略佈局</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-blue-300">關鍵策略</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-blue-800 p-2 rounded mr-4"><i class="fas fa-filter"></i></div>
+                            <div>
+                                <p class="font-bold">15/80 規則 (J&J 啟發)</p>
+                                <p class="text-blue-100 text-sm">從 900 個用例中篩選出前 15% 核心價值專案，集中 80% 資源攻關。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-blue-800 p-2 rounded mr-4"><i class="fas fa-link"></i></div>
+                            <div>
+                                <p class="font-bold">工程知識「活化」</p>
+                                <p class="text-blue-100 text-sm">將過去 10 年結案報告轉為 RAG 系統，打破資深工程師知識孤島。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-800 bg-opacity-50 p-6 rounded-xl border border-blue-700">
+                    <h3 class="text-lg font-bold mb-4">建議 KPI 指標</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex justify-between border-b border-blue-700 pb-2">
+                            <span>問題查找/定位時間</span>
+                            <span class="text-blue-300">-70%</span>
+                        </li>
+                        <li class="flex justify-between border-b border-blue-700 pb-2">
+                            <span>PLC/核心代碼生成率</span>
+                            <span class="text-blue-300">50% ↑</span>
+                        </li>
+                        <li class="flex justify-between border-b border-blue-700 pb-2">
+                            <span>品質檢驗人工工時</span>
+                            <span class="text-blue-300">>15 hrs/架</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>知識復用貢獻度 (A+ 獎勵)</span>
+                            <span class="text-blue-300">權重提升</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-100 border-t border-slate-200 py-10 px-6 text-center text-slate-500 text-sm">
+        <p>© 2026 Domain AI Use Case Analysis. 數據來源基於 2024-2025 全球企業公開報告。</p>
+    </footer>
+
+    <script>
+        const stepData = {
+            1: "<strong>收集痛點</strong>：每月收 10 個高頻、耗時、易錯任務（如手動錄入、歷史查找）。",
+            2: "<strong>知識萃取</strong>：將 Domain Know-how 變成「零件字典」、「規範切片」或「Agent 專家邊界」。",
+            3: "<strong>Canvas 定型</strong>：定義明確的輸入 (Data)、輸出 (Format) 與目標指標 (KPI)。",
+            4: "<strong>資料就緒</strong>：打通 PLM/MES 權限，進行 RAG 索引或模型微調數據集 (如 Boeing 的 3.8 萬標註)。",
+            5: "<strong>MVP 驗證</strong>：鎖定 1 個場景 + 1 個角色 + 1 個關鍵指標進行 4-8 週衝刺。",
+            6: "<strong>擴散複製</strong>：將成功模式擴展至不同廠區或相關任務，結合 A+ 獎勵制度激勵參與。"
+        };
+
+        function showStep(id) {
+            const detailDiv = document.getElementById('step-detail');
+            detailDiv.innerHTML = stepData[id];
+            
+            // Highlight selected card
+            document.querySelectorAll('.step-card').forEach((card, index) => {
+                if (index === id - 1) {
+                    card.classList.add('step-active');
+                } else {
+                    card.classList.remove('step-active');
+                }
+            });
+        }
+
+        function showCase(caseId) {
+            // Hide all contents
+            document.querySelectorAll('.case-content').forEach(c => c.classList.remove('active'));
+            // Show selected
+            document.getElementById('case-' + caseId).classList.add('active');
+            
+            // Update tabs
+            document.querySelectorAll('.case-tab').forEach(tab => {
+                if (tab.getAttribute('data-case') === caseId) {
+                    tab.classList.remove('bg-slate-200');
+                    tab.classList.add('bg-blue-600', 'text-white');
+                } else {
+                    tab.classList.add('bg-slate-200');
+                    tab.classList.remove('bg-blue-600', 'text-white');
+                }
+            });
+        }
+
+        // Initialize
+        window.onload = () => {
+            showStep(1);
+            showCase('boeing');
+        };
+    </script>
+</body>
+</html>
