@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC系統風扇生命週期與供應鏈分析報告</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Google Fonts (Noto Sans Traditional Chinese) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Chosen Palette: Warm Professional -->
+    <!-- Colors: 
+         Background: #F5F5F4 (Warm Stone/Light Grey)
+         Surface: #FFFFFF (White)
+         Primary Text: #1C1917 (Dark Warm Grey)
+         Secondary Text: #57534E (Medium Warm Grey)
+         Accent: #0F766E (Teal/Deep Green - representing efficiency/hardware)
+         Highlight: #D97706 (Amber - representing warnings/lifecycle end)
+    -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#F5F5F4',
+                        surface: '#FFFFFF',
+                        primary: '#0F766E', // Teal 700
+                        primaryLight: '#14B8A6', // Teal 500
+                        accent: '#D97706', // Amber 600
+                        textMain: '#1C1917',
+                        textSec: '#57534E',
+                        border: '#E7E5E4'
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F5F5F4;
+            color: #1C1917;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Max width constraint */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            border-bottom: 3px solid #0F766E;
+            color: #0F766E;
+            font-weight: 700;
+        }
+
+        /* Custom Scrollbar for internal overflow */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #ccc; 
+            border-radius: 3px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #0F766E; 
+        }
+        
+        .timeline-node {
+            transition: all 0.3s ease;
+        }
+        .timeline-node:hover {
+            transform: scale(1.1);
+        }
+    </style>
+
+    <!-- Application Structure Plan:
+         The app is designed as an "Executive Intelligence Dashboard" for supply chain or PM professionals.
+         1. Hero Section: Sets the context of the expert analysis.
+         2. Navigation: Functional tabs to switch between logical domains (Overview, Lifecycle Standards, PWM IC Deep Dive, Strategy).
+         3. Dashboard Views:
+            - Overview: Market landscape (Delta vs Sunon) and key definitions.
+            - JEDEC vs Reality: Addresses the user's specific question about standards. Uses comparative layout.
+            - PWM IC Roadmap: Addresses the IC lifecycle question. Uses a Gantt-style chart.
+            - Lifecycle Simulator: Interactive tool to visualize "Phase Out" triggers.
+         Why this structure? The user asked complex technical questions. Grouping them into specific "knowledge modules" prevents information overload and allows for focused deep dives.
+    -->
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header / Hero -->
+    <header class="bg-surface border-b border-border sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="bg-primary text-white p-2 rounded-lg">
+                        <!-- Icon using Unicode -->
+                        <span class="text-xl">❖</span>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-primary tracking-tight">System Fan Intelligence</h1>
+                        <p class="text-xs text-textSec">PC 系統風扇供應鏈與技術生命週期分析報告</p>
+                    </div>
+                </div>
+                <!-- Mobile Menu Button (Simplified for this SPA context) -->
+                <button id="mobile-menu-btn" class="md:hidden text-textSec hover:text-primary">
+                    <span class="text-2xl">☰</span>
+                </button>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="hidden md:flex space-x-8 mt-2 overflow-x-auto pb-1" id="main-nav">
+                <button onclick="switchTab('overview')" class="nav-item active py-3 px-1 text-sm font-medium text-textSec hover:text-primary whitespace-nowrap transition-colors">產業概況與供應商</button>
+                <button onclick="switchTab('lifecycle')" class="nav-item py-3 px-1 text-sm font-medium text-textSec hover:text-primary whitespace-nowrap transition-colors">JEDEC 與產品週期</button>
+                <button onclick="switchTab('ic-tech')" class="nav-item py-3 px-1 text-sm font-medium text-textSec hover:text-primary whitespace-nowrap transition-colors">PWM IC 控制晶片</button>
+                <button onclick="switchTab('strategy')" class="nav-item py-3 px-1 text-sm font-medium text-textSec hover:text-primary whitespace-nowrap transition-colors">Phase Out 策略模擬</button>
+            </nav>
+        </div>
+        <!-- Mobile Nav Panel (Hidden by default) -->
+        <div id="mobile-nav" class="hidden md:hidden bg-bg border-t border-border px-4 py-2 shadow-inner">
+             <div class="flex flex-col space-y-2">
+                <button onclick="switchTab('overview')" class="text-left py-2 text-sm font-medium text-textSec">產業概況</button>
+                <button onclick="switchTab('lifecycle')" class="text-left py-2 text-sm font-medium text-textSec">JEDEC 與週期</button>
+                <button onclick="switchTab('ic-tech')" class="text-left py-2 text-sm font-medium text-textSec">PWM IC 技術</button>
+                <button onclick="switchTab('strategy')" class="text-left py-2 text-sm font-medium text-textSec">Phase Out 模擬</button>
+             </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- View: Overview -->
+        <section id="view-overview" class="space-y-8 animate-fade-in">
+            <div class="max-w-3xl">
+                <h2 class="text-2xl font-bold text-textMain mb-3">專家觀點：PC 系統風扇供應鏈概論</h2>
+                <p class="text-textSec leading-relaxed">
+                    本區塊旨在建立基礎認知。身為風扇領域專家，我們首先分析主要供應商 Delta（台達電）與 Sunon（建準）的市場定位，並釐清系統風扇與一般消費性電子的不同。這些組件雖小，卻是 PC 系統散熱與穩定性的核心，其生命週期深受平台架構（如 Intel/AMD 世代更替）影響。
+                </p>
+            </div>
+
+            <!-- Key Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card p-6 border-l-4 border-primary">
+                    <h3 class="text-sm font-semibold text-textSec uppercase tracking-wider">主要供應商</h3>
+                    <p class="mt-2 text-3xl font-bold text-textMain">Delta & Sunon</p>
+                    <p class="mt-1 text-sm text-primary">市場領導者 (Tier 1)</p>
+                    <div class="mt-4 text-xs text-textSec">
+                        <p>• Delta: 高階伺服器、工業控制強勢</p>
+                        <p>• Sunon: 專利磁浮技術、筆電薄型化強勢</p>
+                    </div>
+                </div>
+                <div class="card p-6 border-l-4 border-accent">
+                    <h3 class="text-sm font-semibold text-textSec uppercase tracking-wider">標準產品週期</h3>
+                    <p class="mt-2 text-3xl font-bold text-textMain">3 - 5 年</p>
+                    <p class="mt-1 text-sm text-accent">一般 PC/NB 應用</p>
+                    <div class="mt-4 text-xs text-textSec">
+                        <p>• 隨 CPU 平台 (Intel Tick-Tock) 更新</p>
+                        <p>• 伺服器應用可長達 5-7 年</p>
+                    </div>
+                </div>
+                <div class="card p-6 border-l-4 border-gray-500">
+                    <h3 class="text-sm font-semibold text-textSec uppercase tracking-wider">關鍵組件</h3>
+                    <p class="mt-2 text-3xl font-bold text-textMain">PWM IC</p>
+                    <p class="mt-1 text-sm text-gray-500">馬達控制核心</p>
+                    <div class="mt-4 text-xs text-textSec">
+                        <p>• 決定能效、噪音與轉速控制</p>
+                        <p>• 生命週期通常長於風扇本體</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Section: Market & Application -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-lg font-bold text-textMain mb-2">應用領域生命週期分佈</h3>
+                    <p class="text-sm text-textSec mb-4">不同應用場景決定了風扇的改版頻率。消費性電子更新最快，而工業/伺服器追求極致穩定。</p>
+                    <div class="chart-container flex-grow">
+                        <canvas id="lifecycleDistChart"></canvas>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-lg font-bold text-textMain mb-4">供應商技術優勢對比</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold text-primary">Delta (台達電)</span>
+                                <span class="text-xs bg-primary text-white px-2 py-1 rounded">產能與自動化</span>
+                            </div>
+                            <p class="text-sm text-textSec">以強大的電源管理整合能力著稱。在伺服器風扇領域，往往結合其電源供應器 (PSU) 進行系統級散熱優化。其 PWM 控制邏輯常針對高壓 (48V) 與高背壓環境設計。</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold text-accent">Sunon (建準電機)</span>
+                                <span class="text-xs bg-accent text-white px-2 py-1 rounded">磁浮與微型化</span>
+                            </div>
+                            <p class="text-sm text-textSec">以 MagLev (磁浮) 專利聞名，解決了傳統軸承噪音與壽命問題。在超薄筆電 (NB) 與微型散熱方案中具有極高的市佔率與技術壁壘。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: Lifecycle Standards -->
+        <section id="view-lifecycle" class="hidden space-y-8 animate-fade-in">
+            <div class="max-w-4xl">
+                <h2 class="text-2xl font-bold text-textMain mb-3">深入解析：JEDEC 標準與產品生命週期</h2>
+                <p class="text-textSec leading-relaxed">
+                    這是業內常有的誤解。JEDEC (固態技術協會) 主要規範半導體元件（如 DRAM, Flash）。<strong class="text-primary">系統風扇本身作為機電組件 (Electro-mechanical assembly)，並不直接遵循 JEDEC 生命週期規範。</strong> 然而，風扇內部的 "控制 IC" 與 "MOSFET" 必須符合 JEDEC 標準。風扇成品的生命週期更多是遵循各大廠 (Dell, HP, Apple) 的規範與 IPC 標準。
+                </p>
+            </div>
+
+            <!-- Visualization: The Layered Lifecycle Model -->
+            <div class="card p-8">
+                <h3 class="text-lg font-bold text-textMain mb-6 text-center">風扇產品的「洋蔥式」生命週期架構</h3>
+                <div class="relative">
+                    <!-- Layer 1: Component -->
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 mb-4 hover:border-primary transition-colors cursor-pointer" onclick="highlightLayer('comp')">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-primary">核心層：電子元件 (IC, MOSFET)</h4>
+                                <p class="text-sm text-textSec">遵循標準：<span class="font-mono bg-gray-200 px-1 rounded">JEDEC (JESD47/22)</span></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-textSec">週期長度</p>
+                                <p class="font-bold text-xl">7-10+ 年</p>
+                            </div>
+                        </div>
+                        <div id="desc-comp" class="hidden mt-3 text-sm text-gray-600 bg-gray-50 p-3 rounded">
+                            風扇內部的 PWM 控制 IC 或霍爾感應器 (Hall Sensor) 是標準半導體，必須符合 JEDEC 的可靠度測試。一旦這些 IC 停產 (EOL)，風扇就必須改版。
+                        </div>
+                    </div>
+
+                    <!-- Layer 2: Fan Assembly -->
+                    <div class="border-2 border-gray-300 rounded-xl p-6 mb-4 hover:border-accent transition-colors cursor-pointer bg-white shadow-sm" onclick="highlightLayer('fan')">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-accent">產品層：風扇單體 (Fan Unit)</h4>
+                                <p class="text-sm text-textSec">遵循標準：<span class="font-mono bg-gray-200 px-1 rounded">IPC, Manufacturer Spec, UL/TUV</span></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-textSec">週期長度</p>
+                                <p class="font-bold text-xl">3-5 年</p>
+                            </div>
+                        </div>
+                        <div id="desc-fan" class="hidden mt-3 text-sm text-gray-600 bg-gray-50 p-3 rounded">
+                            這是 Delta/Sunon 出貨的料號。其壽命取決於軸承物理磨損 (L10 Life) 與模具壽命。通常一個模具世代會延續 3-5 年，直到下一代空氣動力學設計出現。
+                        </div>
+                    </div>
+
+                    <!-- Layer 3: System Platform -->
+                    <div class="border-2 border-gray-800 rounded-xl p-6 hover:border-gray-900 transition-colors cursor-pointer bg-gray-50" onclick="highlightLayer('platform')">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-textMain">應用層：終端平台 (PC/Server Model)</h4>
+                                <p class="text-sm text-textSec">驅動因素：<span class="font-mono bg-gray-200 px-1 rounded">Intel/AMD CPU Generations</span></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-textSec">週期長度</p>
+                                <p class="font-bold text-xl">1-2 年</p>
+                            </div>
+                        </div>
+                        <div id="desc-platform" class="hidden mt-3 text-sm text-gray-600 bg-gray-200 p-3 rounded">
+                            這是使用者買到的電腦。雖然電腦每年改款，但通常會沿用上一代的風扇料號 (Carry-over)，直到散熱需求 (TDP) 大幅改變。
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-xs text-textSec mt-4">點擊區塊查看詳細關聯邏輯</p>
+            </div>
+
+            <!-- EOL Flow Diagram (CSS based) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card p-6">
+                    <h3 class="text-lg font-bold text-textMain mb-4">Phase Out (停產) 流程解析</h3>
+                    <ul class="space-y-4 relative border-l-2 border-gray-200 ml-3 pl-6">
+                        <li class="relative">
+                            <span class="absolute -left-[31px] bg-white border-2 border-primary w-4 h-4 rounded-full"></span>
+                            <h4 class="font-bold text-sm">觸發點 (Trigger)</h4>
+                            <p class="text-xs text-textSec">關鍵 IC 停產 (EOL Notification) 或模具老化損壞。</p>
+                        </li>
+                        <li class="relative">
+                            <span class="absolute -left-[31px] bg-white border-2 border-gray-300 w-4 h-4 rounded-full"></span>
+                            <h4 class="font-bold text-sm">最後下單通知 (LTB - Last Time Buy)</h4>
+                            <p class="text-xs text-textSec">通常在停產前 6 個月發出。客戶需預估未來維修備料量。</p>
+                        </li>
+                        <li class="relative">
+                            <span class="absolute -left-[31px] bg-white border-2 border-gray-300 w-4 h-4 rounded-full"></span>
+                            <h4 class="font-bold text-sm">最後出貨日 (LTS - Last Time Ship)</h4>
+                            <p class="text-xs text-textSec">LTB 後 3-6 個月。此後生產線關閉。</p>
+                        </li>
+                        <li class="relative">
+                            <span class="absolute -left-[31px] bg-white border-2 border-accent w-4 h-4 rounded-full"></span>
+                            <h4 class="font-bold text-sm">替代料導入 (Qualify New Fan)</h4>
+                            <p class="text-xs text-textSec">若系統仍需生產，需驗證使用新 IC/軸承的新風扇料號。</p>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card p-6 flex flex-col justify-center bg-primary text-white">
+                    <h3 class="text-xl font-bold mb-4">專家小結</h3>
+                    <p class="text-sm opacity-90 mb-4">
+                        "不要去跟風扇廠要 JEDEC 報告，除非是針對上面的 IC。你要關注的是 <span class="font-bold text-accent">MTBF (平均故障間隔)</span> 與 <span class="font-bold text-accent">L10 壽命測試報告</span>。"
+                    </p>
+                    <div class="bg-white/10 p-4 rounded-lg">
+                        <p class="text-xs font-mono">L10 Life Definition:</p>
+                        <p class="text-xs italic">The time at which 10% of a sample group of fans are expected to fail.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: PWM IC Technology -->
+        <section id="view-ic-tech" class="hidden space-y-8 animate-fade-in">
+            <div class="max-w-3xl">
+                <h2 class="text-2xl font-bold text-textMain mb-3">PWM 控制 IC：世代交替與更新頻率</h2>
+                <p class="text-textSec leading-relaxed">
+                    控制 IC 是風扇的大腦。一般風扇設計使用的 PWM IC，其生命週期目標極長，通常為 **5 到 10 年**。這與消費性電子 IC (如手機晶片 1-2 年) 截然不同。為什麼？因為驅動馬達的物理原理 (Maxwell's equations) 不變。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Chart: IC vs Fan Generations -->
+                <div class="card p-6 lg:col-span-2">
+                    <div class="flex justify-between items-end mb-4">
+                        <h3 class="text-lg font-bold text-textMain">IC 世代 vs. 風扇世代 時間軸</h3>
+                        <div class="text-xs text-textSec">顯示單一 IC 如何跨越數代風扇產品</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="icGenerationChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Info Panel: Why Update? -->
+                <div class="card p-6 flex flex-col gap-4">
+                    <h3 class="text-lg font-bold text-textMain">何時會有下一個世代 IC？</h3>
+                    <p class="text-sm text-textSec">IC 廠 (如 Global Mixed-mode, Rohm, Allegro) 不會無故改版。主要驅動力如下：</p>
+                    
+                    <div class="space-y-3">
+                        <button class="w-full text-left p-3 rounded border hover:bg-gray-50 transition-colors focus:ring-2 focus:ring-primary" onclick="showIcDetail('silence')">
+                            <span class="font-bold text-primary block">1. 靜音演算法需求</span>
+                            <span class="text-xs text-textSec">從方波驅動轉向正弦波 (Sine Wave) 驅動。</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded border hover:bg-gray-50 transition-colors focus:ring-2 focus:ring-primary" onclick="showIcDetail('voltage')">
+                            <span class="font-bold text-primary block">2. 電壓架構改變</span>
+                            <span class="text-xs text-textSec">伺服器從 12V 轉向 48V 供電，需耐高壓 IC。</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded border hover:bg-gray-50 transition-colors focus:ring-2 focus:ring-primary" onclick="showIcDetail('supply')">
+                            <span class="font-bold text-primary block">3. 晶圓製程 EOL</span>
+                            <span class="text-xs text-textSec">8吋晶圓產能緊縮，迫使 IC 設計轉向新製程。</span>
+                        </button>
+                    </div>
+                    
+                    <div id="ic-detail-box" class="mt-auto bg-gray-100 p-3 rounded text-sm text-gray-700 h-24 overflow-y-auto">
+                        點擊上方項目查看詳細技術說明。
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table: IC Design Timeline -->
+            <div class="card overflow-hidden">
+                <div class="px-6 py-4 border-b border-border">
+                    <h3 class="text-lg font-bold text-textMain">新世代 IC 導入時程表 (Design-in Timeline)</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-textSec font-medium">
+                            <tr>
+                                <th class="px-6 py-3">階段</th>
+                                <th class="px-6 py-3">耗時</th>
+                                <th class="px-6 py-3">關鍵活動</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 font-bold text-primary">IC 研發 (IC Design)</td>
+                                <td class="px-6 py-4">12 - 18 個月</td>
+                                <td class="px-6 py-4">IC 廠商開發新架構 (如 FOC 控制)，通過 JEDEC 驗證。</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-bold text-accent">風扇廠導入 (Design In)</td>
+                                <td class="px-6 py-4">6 - 9 個月</td>
+                                <td class="px-6 py-4">Delta/Sunon 工程師設計 PCB，調教韌體參數 (P-Q Curve)。</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-bold text-textMain">系統驗證 (System Qual)</td>
+                                <td class="px-6 py-4">3 - 6 個月</td>
+                                <td class="px-6 py-4">PC 系統廠 (OEM) 進行整機散熱與 EMI 測試。</td>
+                            </tr>
+                            <tr class="bg-primary/5">
+                                <td class="px-6 py-4 font-bold text-textMain">量產 (Mass Production)</td>
+                                <td class="px-6 py-4">5 - 10 年</td>
+                                <td class="px-6 py-4">成為主要用料 (Main Source)。直到下一波技術革命。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: Strategy Simulator -->
+        <section id="view-strategy" class="hidden space-y-8 animate-fade-in">
+            <div class="max-w-3xl">
+                <h2 class="text-2xl font-bold text-textMain mb-3">策略工具：改版與 Phase Out 評估</h2>
+                <p class="text-textSec leading-relaxed">
+                    本區塊提供互動式情境模擬。身為採購或 PM，您需要評估何時引入新風扇或備料。輸入假設條件，系統將根據專家經驗給出建議。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Input Panel -->
+                <div class="card p-6 space-y-6">
+                    <h3 class="text-lg font-bold text-textMain border-b pb-2">情境參數設定</h3>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-textSec mb-2">當前 IC 已量產年限</label>
+                        <input type="range" id="icAge" min="0" max="12" value="4" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary">
+                        <div class="flex justify-between text-xs text-textSec mt-1">
+                            <span>0年 (全新)</span>
+                            <span id="icAgeDisplay" class="font-bold text-primary">4 年</span>
+                            <span>12年 (瀕臨淘汰)</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-textSec mb-2">主要應用平台</label>
+                        <select id="platformType" class="w-full p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary">
+                            <option value="consumer">消費型 PC (Consumer)</option>
+                            <option value="server">伺服器/工業 (Server/Industrial)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-textSec mb-2">供應商通知狀態</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="eolStatus" value="none" checked class="text-primary focus:ring-primary">
+                                <span class="ml-2 text-sm">無通知</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="eolStatus" value="pcn" class="text-primary focus:ring-primary">
+                                <span class="ml-2 text-sm">收到 PCN (變更通知)</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="eolStatus" value="eol" class="text-accent focus:ring-accent">
+                                <span class="ml-2 text-sm">收到 EOL (停產)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button onclick="calculateRisk()" class="w-full bg-primary hover:bg-primaryLight text-white font-bold py-3 px-4 rounded transition-colors shadow-md">
+                        分析風險與建議
+                    </button>
+                </div>
+
+                <!-- Output Panel -->
+                <div class="card p-6 bg-gray-50 border-2 border-transparent transition-colors" id="resultCard">
+                    <h3 class="text-lg font-bold text-textMain mb-4">分析結果建議</h3>
+                    
+                    <div id="resultContent" class="space-y-4">
+                        <div class="flex items-center justify-center h-40 text-textSec italic">
+                            請設定左側參數並點擊分析按鈕...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-border mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm text-textSec">System Fan Expert Intelligence Dashboard</p>
+            <p class="text-xs text-gray-400 mt-2">Visualization powered by Chart.js. No SVG or external images used.</p>
+        </div>
+    </footer>
+
+    <!-- Visualization & Content Choices:
+         1. Lifecycle Distribution (Donut): Shows the breakdown of product lifespan by category (Consumer vs Server). Goal: Inform.
+         2. IC Generation (Gantt/Bar): Shows that one IC generation spans multiple Fan generations. Goal: Change/Time.
+         3. Layered Interactive Model (DOM): Explains the "Onion" structure of components without complex diagrams. Goal: Organize.
+         4. Risk Calculator (JS Logic): Interactive synthesis of the expert rules. Goal: Engagement/Synthesis.
+         
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+
+    <script>
+        // --- State Management ---
+        const state = {
+            currentTab: 'overview',
+            charts: {},
+            data: {
+                icAge: 4,
+                platform: 'consumer',
+                eolStatus: 'none'
+            }
+        };
+
+        // --- Navigation Logic ---
+        function switchTab(tabId) {
+            // Update UI State
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            // Try to find the button that called this, or find by index if called programmatically
+            const btns = document.querySelectorAll(`button[onclick="switchTab('${tabId}')"]`);
+            if(btns.length > 0) btns.forEach(b => b.classList.add('active'));
+
+            // Hide all sections
+            ['view-overview', 'view-lifecycle', 'view-ic-tech', 'view-strategy'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+
+            // Show selected section
+            const targetSection = document.getElementById(`view-${tabId}`);
+            targetSection.classList.remove('hidden');
+            
+            // Trigger animation
+            targetSection.classList.remove('animate-fade-in');
+            void targetSection.offsetWidth; // trigger reflow
+            targetSection.classList.add('animate-fade-in');
+
+            state.currentTab = tabId;
+
+            // Resize charts if necessary when becoming visible
+            if (tabId === 'overview' && state.charts.lifecycleDist) state.charts.lifecycleDist.resize();
+            if (tabId === 'ic-tech' && state.charts.icGen) state.charts.icGen.resize();
+        }
+
+        // --- Chart Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initOverviewChart();
+            initIcChart();
+            
+            // Input Listener for Range
+            document.getElementById('icAge').addEventListener('input', (e) => {
+                document.getElementById('icAgeDisplay').innerText = `${e.target.value} 年`;
+                state.data.icAge = parseInt(e.target.value);
+            });
+        });
+
+        function initOverviewChart() {
+            const ctx = document.getElementById('lifecycleDistChart').getContext('2d');
+            state.charts.lifecycleDist = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['消費性電子 (PC/NB)', '伺服器 (Server)', '工業應用 (Industry)'],
+                    datasets: [{
+                        data: [50, 30, 20], // Rough market share/volume split
+                        backgroundColor: ['#14B8A6', '#0F766E', '#1C1917'], // Teal 500, Teal 700, Dark
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const labels = [
+                                        '週期短 (1-3年), 成本導向', 
+                                        '週期長 (3-5年), 效能導向', 
+                                        '週期極長 (5-7+年), 穩定導向'
+                                    ];
+                                    return labels[context.dataIndex];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initIcChart() {
+            const ctx = document.getElementById('icGenerationChart').getContext('2d');
+            
+            // Data representing timelines (years)
+            // IC Generation 1 lasts year 0-6
+            // Fan Gen A uses IC Gen 1 (Year 1-3)
+            // Fan Gen B uses IC Gen 1 (Year 3-6)
+            // IC Generation 2 intro year 5...
+            
+            state.charts.icGen = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029'],
+                    datasets: [
+                        {
+                            label: 'PWM IC (第N代)',
+                            data: [1, 1, 1, 1, 1, 1, 1, 0.2, 0, 0], // Active full life then phase out
+                            backgroundColor: '#0F766E',
+                            barPercentage: 1.0,
+                            categoryPercentage: 1.0,
+                            type: 'line',
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '風扇型號 A (舊款)',
+                            data: [0, 0.8, 0.8, 0.2, 0, 0, 0, 0, 0, 0],
+                            backgroundColor: '#D97706',
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '風扇型號 B (改版)',
+                            data: [0, 0, 0, 0.5, 0.9, 0.9, 0.4, 0, 0, 0],
+                            backgroundColor: '#F59E0B',
+                            yAxisID: 'y'
+                        },
+                         {
+                            label: 'PWM IC (第N+1代)',
+                            data: [0, 0, 0, 0, 0, 0.1, 0.5, 1, 1, 1],
+                            backgroundColor: '#1C1917',
+                            type: 'line',
+                            borderDash: [5, 5],
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1.2,
+                            ticks: { display: false }, // Hide numbers, conceptual chart
+                            title: { display: true, text: '市場滲透率 / 採用狀態' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ' : ' + (context.raw > 0 ? 'Active' : 'Inactive');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Interactive Logic ---
+        
+        function highlightLayer(layerId) {
+            // Hide all descriptions
+            ['desc-comp', 'desc-fan', 'desc-platform'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            // Show selected
+            const el = document.getElementById(`desc-${layerId}`);
+            if(el) {
+                el.classList.remove('hidden');
+                el.classList.add('animate-fade-in');
+            }
+        }
+
+        function showIcDetail(type) {
+            const box = document.getElementById('ic-detail-box');
+            let content = "";
+            switch(type) {
+                case 'silence':
+                    content = "<strong>靜音演算法需求：</strong><br>傳統方波 (Square Wave) 驅動在換相時會產生電磁噪音。新世代 IC 採用正弦波 (Sine Wave) 或 FOC (磁場導向控制)，雖然成本較高，但能大幅降低風扇運轉時的「答答」聲，是目前高階 PC 的主流更新動力。";
+                    break;
+                case 'voltage':
+                    content = "<strong>電壓架構改變：</strong><br>隨著 AI 伺服器運算力提升，電流過大導致熱損耗。資料中心正規劃從 12V 供電轉向 48V。這迫使風扇內的馬達驅動 IC 必須能承受 60V+ 的突波，導致舊款低壓製程 IC 必須全面改版。";
+                    break;
+                case 'supply':
+                    content = "<strong>晶圓製程 EOL：</strong><br>許多舊款 PWM IC 使用 0.35um 或 0.5um 舊製程。當晶圓廠 (TSMC/UMC) 關閉這些舊產線以挪作他用時，IC 設計公司就被迫重新設計 (Redesign) 並遷移到新製程 (如 0.18um BCD)，這會導致舊料號強制 EOL。";
+                    break;
+            }
+            box.innerHTML = content;
+        }
+
+        function calculateRisk() {
+            const age = state.data.icAge;
+            const platform = document.getElementById('platformType').value;
+            const status = document.querySelector('input[name="eolStatus"]:checked').value;
+            
+            let riskLevel = "Low";
+            let colorClass = "text-green-600";
+            let suggestion = "";
+            let borderColor = "border-green-500";
+
+            // Logic Tree
+            if (status === 'eol') {
+                riskLevel = "CRITICAL (極高風險)";
+                colorClass = "text-red-600";
+                borderColor = "border-red-600";
+                suggestion = "供應商已發出停產通知。請立即進行 LTB (最後備料)，數量需覆蓋至新產品驗證完成 (約 9-12 個月)。同時啟動 Second Source 驗證。";
+            } else if (status === 'pcn') {
+                riskLevel = "High (高風險)";
+                colorClass = "text-orange-600";
+                borderColor = "border-orange-500";
+                suggestion = "收到變更通知 (PCN)。請確認變更內容是否影響安規 (Safety) 或 EMI。若是更換 IC 版本，通常需要重新跑小量試產 (Pilot Run)。";
+            } else {
+                // No official notice, base on Age logic
+                if (age > 8) {
+                    riskLevel = "High (潛在淘汰風險)";
+                    colorClass = "text-orange-600";
+                    borderColor = "border-orange-500";
+                    suggestion = `IC 已量產 ${age} 年，接近 10 年大限。雖然未收通知，但建議新開案避免選用此舊料 (Not Recommend for New Design)，以免量產中途遇到缺貨。`;
+                } else if (age > 5 && platform === 'consumer') {
+                    riskLevel = "Medium (中期)";
+                    colorClass = "text-yellow-600";
+                    borderColor = "border-yellow-500";
+                    suggestion = "對於消費性電子，5年已是成熟期。請關注供應商是否有推廣更有價格競爭力的新 IC (Cost Down version)。";
+                } else {
+                    riskLevel = "Low (安全)";
+                    suggestion = "IC 處於穩定量產黃金期。可放心使用，並爭取長單價格優惠。";
+                }
+            }
+
+            const resultHTML = `
+                <div class="mb-4">
+                    <p class="text-sm text-textSec">風險等級</p>
+                    <p class="text-2xl font-bold ${colorClass}">${riskLevel}</p>
+                </div>
+                <div class="bg-white p-4 rounded border border-gray-200">
+                    <p class="font-bold text-textMain mb-2">專家建議：</p>
+                    <p class="text-sm text-textSec leading-relaxed">${suggestion}</p>
+                </div>
+                <div class="mt-4 text-xs text-gray-400">
+                    *基於 Delta/Sunon 一般供應鏈慣例運算
+                </div>
+            `;
+
+            const card = document.getElementById('resultCard');
+            card.className = `card p-6 bg-gray-50 border-2 transition-colors ${borderColor}`;
+            document.getElementById('resultContent').innerHTML = resultHTML;
+        }
+
+    </script>
+</body>
+</html>
