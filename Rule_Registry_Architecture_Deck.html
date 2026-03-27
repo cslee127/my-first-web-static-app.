@@ -29,10 +29,10 @@ body{
 }
 .slide.active{opacity:1;transform:translateX(0);pointer-events:all}
 .slide.exit{opacity:0;transform:translateX(-50px)}
-
+ 
 /* ── Progress bar ─────────────────────────────────────────── */
 .prog{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#3b82f6,#06b6d4);transition:width .5s ease;z-index:200}
-
+ 
 /* ── Nav ─────────────────────────────────────────────────── */
 .nav{
   position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
@@ -51,49 +51,49 @@ body{
 }
 .nbtn:hover{border-color:#3b82f6;color:#3b82f6}
 .nbtn.on{border-color:#3b82f6;color:#3b82f6}
-
+ 
 /* ── Corner labels ─────────────────────────────────────────── */
 .ver{position:fixed;top:16px;left:40px;font-size:11px;color:rgba(255,255,255,.22);z-index:100}
 .ctr{position:fixed;top:16px;right:40px;font-size:11px;color:rgba(255,255,255,.22);z-index:100}
-
+ 
 /* ── Typography ──────────────────────────────────────────── */
 .tag{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#3b82f6;margin-bottom:6px}
 .h1{font-size:26px;font-weight:700;color:#f1f5f9;margin-bottom:5px;letter-spacing:-.5px}
 .sub{font-size:13px;color:#4b5e79;margin-bottom:28px;letter-spacing:.3px}
-
+ 
 /* ── Cards ───────────────────────────────────────────────── */
 .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px}
 .card-b{background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.2);border-radius:10px;padding:16px}
-
+ 
 /* ── Grade badges ─────────────────────────────────────────── */
 .g{display:inline-flex;align-items:center;justify-content:center;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.4px}
 .gR{background:rgba(239,68,68,.18);color:#f87171;border:1px solid rgba(239,68,68,.28)}
 .gY{background:rgba(245,158,11,.18);color:#fbbf24;border:1px solid rgba(245,158,11,.28)}
 .gG{background:rgba(16,185,129,.18);color:#34d399;border:1px solid rgba(16,185,129,.28)}
 .gN{background:rgba(148,163,184,.12);color:#94a3b8;border:1px solid rgba(148,163,184,.2)}
-
+ 
 /* ── Status dot ──────────────────────────────────────────── */
 .sdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;flex-shrink:0}
 .sA{background:#10b981;box-shadow:0 0 8px rgba(16,185,129,.5);animation:pulse 2s infinite}
 .sP{background:#f59e0b}
 .sF{background:#475569}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}50%{box-shadow:0 0 0 5px rgba(16,185,129,0)}}
-
+ 
 /* ── Flow nodes ──────────────────────────────────────────── */
 .fn{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.22);border-radius:9px;padding:10px 16px;font-size:12px;font-weight:600;color:#93c5fd}
 .fn-d{background:rgba(6,182,212,.1);border-color:rgba(6,182,212,.22);color:#67e8f9}
 .fn-o{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.22);color:#6ee7b7}
-
+ 
 /* ── Pill tags ───────────────────────────────────────────── */
 .pill{display:inline-block;padding:2px 9px;border-radius:10px;font-size:10px;font-weight:600;background:rgba(59,130,246,.14);color:#93c5fd;border:1px solid rgba(59,130,246,.22)}
 .pillA{background:rgba(245,158,11,.14);color:#fbbf24;border-color:rgba(245,158,11,.22)}
 .pillG{background:rgba(16,185,129,.14);color:#34d399;border-color:rgba(16,185,129,.22)}
 .pillN{background:rgba(71,85,105,.18);color:#64748b;border-color:rgba(71,85,105,.25)}
-
+ 
 /* ── Step box ────────────────────────────────────────────── */
 .sbox{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px 12px;position:relative;text-align:center}
 .snum{position:absolute;top:-10px;left:12px;background:#3b82f6;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
-
+ 
 /* ── Misc ────────────────────────────────────────────────── */
 .hl{background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;border-radius:0 8px 8px 0;padding:11px 15px;font-size:12px;color:#93c5fd;line-height:1.65}
 .mono{font-family:'Cascadia Code',Consolas,monospace}
@@ -113,20 +113,18 @@ tr:hover td{background:rgba(255,255,255,.025)}
 <body>
 <div class="bg"></div>
 <div class="prog" id="prog"></div>
-<div class="ver">Rule Registry Architecture · v3.0 · 2026-02-26</div>
-<div class="ctr" id="ctr">1 / 7</div>
-
+<div class="ver">Rule Registry Architecture · v4.3 · 2026-03-26</div>
+<div class="ctr" id="ctr">1 / 9</div>
+ 
 <div class="slides" id="slides">
-
-<!-- ═══════════ SLIDE 1 · Overview ═══════════ -->
+ 
+<!-- ═══════════ SLIDE 1 · Architecture Overview v4.3 ═══════════ -->
 <div class="slide active" id="s1">
-  <div class="tag">Architecture Overview</div>
+  <div class="tag">Architecture Overview · v4.3</div>
   <div class="h1">Rule Registry Architecture</div>
-  <div class="sub">96階 BOM 零件風險評估規則架構 · 設計精神 · 規則清單 · 案例說明</div>
-
-  <!-- flow -->
-  <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:18px">
-
+  <div class="sub">96階 BOM 零件風險評估規則架構 · v4.3 · 設計精神 · 13+1 規則 · Cascade 組合推估</div>
+ 
+  <div style="display:flex;align-items:flex-start;justify-content:center;gap:0;margin-bottom:16px;font-size:12px">
     <!-- Data Sources -->
     <div style="display:flex;flex-direction:column;gap:8px;min-width:185px">
       <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#06b6d4;margin-bottom:2px">資料來源</div>
@@ -134,771 +132,706 @@ tr:hover td{background:rgba(255,255,255,.025)}
         <div>iv_allparts_info_for_ce</div>
         <div style="font-size:10px;color:#94a3b8;font-weight:400;margin-top:2px">PLM / BOM 主數據</div>
       </div>
-      <div class="fn-d" style="padding:9px 12px;font-size:11px;opacity:.6;border-style:dashed">
-        <div>mv_ce_supplier_lifecycle</div>
-        <div style="font-size:10px;color:#94a3b8;font-weight:400;margin-top:2px">廠商回覆 (Phase II)</div>
+      <div class="fn-d" style="padding:9px 12px;font-size:11px;opacity:.65;border-style:dashed">
+        <div>iv_zparts_b2b_p2p</div>
+        <div style="font-size:10px;color:#94a3b8;font-weight:400;margin-top:2px">B2B/P2P 替代料 (ODBC)</div>
+      </div>
+      <div class="fn-d" style="padding:9px 12px;font-size:11px;opacity:.55;border-style:dashed">
+        <div>mv_ce_supplier_lifecycle_feedback</div>
+        <div style="font-size:10px;color:#94a3b8;font-weight:400;margin-top:2px">廠商回覆 Phase II</div>
       </div>
       <div class="fn-d" style="padding:9px 12px;font-size:11px;opacity:.35;border-style:dashed">
+        <div>mv_ce_silicon_expert_lifecycle</div>
+        <div style="font-size:10px;color:#94a3b8;font-weight:400;margin-top:2px">SiliconExpert API Phase II</div>
+      </div>
+      <div class="fn-d" style="padding:9px 12px;font-size:11px;opacity:.25;border-style:dashed">
         <div>SAP 年用量</div>
-        <div style="font-size:10px;color:#94a3b8;font-weight:400;margin-top:2px">待接入 (Phase II)</div>
+        <div style="font-size:10px;color:#94a3b8;font-weight:400;margin-top:2px">待接入</div>
       </div>
     </div>
-
+ 
     <!-- arrow -->
-    <div style="padding:0 14px">
-      <svg width="52" height="100" viewBox="0 0 52 100">
+    <div style="padding:0 12px;flex-shrink:0">
+      <svg width="44" height="145" viewBox="0 0 44 145">
         <defs><marker id="a1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L7,3z" fill="#3b82f6" opacity=".7"/></marker></defs>
-        <line x1="2" y1="22" x2="45" y2="44" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#a1)" opacity=".8" stroke-dasharray="4,3"/>
-        <line x1="2" y1="50" x2="45" y2="50" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#a1)" opacity=".5" stroke-dasharray="4,3"/>
-        <line x1="2" y1="78" x2="45" y2="56" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#a1)" opacity=".28" stroke-dasharray="4,3"/>
+        <line x1="2" y1="10" x2="35" y2="30" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#a1)" opacity=".8" stroke-dasharray="4,3"/>
+        <line x1="2" y1="50" x2="35" y2="50" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#a1)" opacity=".6" stroke-dasharray="4,3"/>
+        <line x1="2" y1="90" x2="35" y2="70" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#a1)" opacity=".5" stroke-dasharray="4,3"/>
+        <line x1="2" y1="130" x2="35" y2="110" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#a1)" opacity=".2" stroke-dasharray="4,3"/>
       </svg>
     </div>
-
+ 
     <!-- Rule Engine -->
-    <div style="display:flex;flex-direction:column;gap:7px;min-width:210px">
+    <div style="display:flex;flex-direction:column;gap:6px;min-width:220px">
       <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#3b82f6;margin-bottom:2px">Rule Engine</div>
-      <div style="display:flex;gap:7px">
-        <div class="fn" style="flex:1;font-size:11px;padding:9px 8px"><div>Rule-001</div><div style="font-size:9px;color:#94a3b8;font-weight:400">EOL 日期完整性</div></div>
-        <div class="fn" style="flex:1;font-size:11px;padding:9px 8px"><div>Rule-002</div><div style="font-size:9px;color:#94a3b8;font-weight:400">生命週期狀態</div></div>
+      <div style="display:flex;gap:6px">
+        <div class="fn" style="flex:1;font-size:10px;padding:8px 7px"><div style="font-weight:700">Rule-001</div><div style="font-size:9px;color:#94a3b8;font-weight:400">停產可信度</div></div>
+        <div class="fn" style="flex:1;font-size:10px;padding:8px 7px"><div style="font-weight:700">Rule-002</div><div style="font-size:9px;color:#94a3b8;font-weight:400">生命週期</div></div>
       </div>
-      <div style="display:flex;gap:7px">
-        <div class="fn" style="flex:1;font-size:11px;padding:9px 8px"><div>Rule-004</div><div style="font-size:9px;color:#94a3b8;font-weight:400">替代料可用性</div></div>
-        <div class="fn" style="flex:1;font-size:11px;padding:9px 8px;opacity:.5;border-style:dashed"><div>R003~007</div><div style="font-size:9px;color:#94a3b8;font-weight:400">Phase II ···</div></div>
+      <div style="display:flex;gap:6px">
+        <div class="fn" style="flex:1;font-size:10px;padding:8px 7px"><div style="font-weight:700">Rule-004</div><div style="font-size:9px;color:#94a3b8;font-weight:400">替代料B2B/P2P</div></div>
+        <div class="fn-o" style="flex:1;font-size:10px;padding:8px 7px"><div style="font-weight:700">Rule-C001★</div><div style="font-size:9px;color:#94a3b8;font-weight:400">最佳EOL組合</div></div>
       </div>
-      <div class="fn" style="font-size:10px;padding:7px;opacity:.28;border-style:dashed;text-align:center;color:#64748b">Rule-008~011 (Phase III)</div>
+      <div style="display:flex;gap:6px;opacity:.55">
+        <div class="fn" style="flex:1;font-size:10px;padding:8px 7px;border-style:dashed"><div style="font-weight:700">Rule-003~009</div><div style="font-size:9px;color:#94a3b8;font-weight:400">Phase II</div></div>
+      </div>
+      <div class="fn" style="font-size:9px;padding:6px;opacity:.28;border-style:dashed;text-align:center;color:#64748b">Rule-010~013 (Phase III)</div>
     </div>
-
+ 
     <!-- arrow -->
-    <div style="padding:0 14px">
-      <svg width="46" height="26" viewBox="0 0 46 26">
+    <div style="padding:0 12px;flex-shrink:0">
+      <svg width="40" height="26" viewBox="0 0 40 26">
         <defs><marker id="a2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L7,3z" fill="#10b981" opacity=".9"/></marker></defs>
-        <line x1="2" y1="13" x2="38" y2="13" stroke="#10b981" stroke-width="2" marker-end="url(#a2)"/>
+        <line x1="2" y1="13" x2="32" y2="13" stroke="#10b981" stroke-width="2" marker-end="url(#a2)"/>
       </svg>
     </div>
-
+ 
     <!-- Standard Output -->
-    <div style="min-width:170px">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#10b981;margin-bottom:6px">標準輸出（每條 Rule 統一）</div>
-      <div class="fn-o" style="font-size:11px;padding:13px 14px;text-align:left;line-height:1.9">
-        <div>RULE_ID · PART_NUMBER</div>
-        <div>RULE_STATUS &nbsp;<span style="color:#94a3b8;font-size:10px">(PASS / WARN / FAIL)</span></div>
-        <div style="font-weight:800">RISK_GRADE &nbsp;🔴🟡🟢</div>
-        <div>RULE_REASON &nbsp;<span style="color:#94a3b8;font-size:10px">(原因碼)</span></div>
+    <div style="min-width:165px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#10b981;margin-bottom:6px">標準輸出</div>
+      <div class="fn-o" style="font-size:11px;padding:12px 12px;text-align:left;line-height:1.85">
+        <div style="font-weight:700">RULE_ID · PART_NUMBER</div>
+        <div style="font-size:10px;color:#94a3b8">RULE_STATUS (PASS/WARN/FAIL)</div>
+        <div style="font-weight:700">RISK_GRADE 🔴🟡🟢</div>
+        <div style="font-size:10px;color:#94a3b8">RULE_REASON</div>
+        <div style="font-size:10px;color:#94a3b8">CONFIDENCE_LEVEL ← NEW</div>
       </div>
     </div>
-
+ 
     <!-- arrow -->
-    <div style="padding:0 14px">
-      <svg width="46" height="26" viewBox="0 0 46 26">
+    <div style="padding:0 12px;flex-shrink:0">
+      <svg width="40" height="26" viewBox="0 0 40 26">
         <defs><marker id="a3" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L7,3z" fill="#3b82f6" opacity=".9"/></marker></defs>
-        <line x1="2" y1="13" x2="38" y2="13" stroke="#3b82f6" stroke-width="2" marker-end="url(#a3)"/>
+        <line x1="2" y1="13" x2="32" y2="13" stroke="#3b82f6" stroke-width="2" marker-end="url(#a3)"/>
       </svg>
     </div>
-
+ 
     <!-- Dashboard -->
-    <div style="min-width:215px">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#3b82f6;margin-bottom:6px">Dashboard（矩陣視圖）</div>
-      <div class="card" style="padding:12px 14px;font-size:11px">
-        <div style="display:grid;grid-template-columns:88px repeat(3,1fr);gap:4px 6px;margin-bottom:5px">
-          <div style="color:#475569;font-size:10px">PART #</div>
-          <div style="text-align:center;color:#4b5e79;font-size:10px">R001</div>
-          <div style="text-align:center;color:#4b5e79;font-size:10px">R002</div>
-          <div style="text-align:center;color:#4b5e79;font-size:10px">R004</div>
-        </div>
-        <div style="display:grid;grid-template-columns:88px repeat(3,1fr);gap:4px 6px;margin-bottom:4px">
-          <div class="mono" style="font-size:11px;color:#93c5fd">12345678</div>
-          <div style="text-align:center"><span class="g gG" style="padding:1px 6px;font-size:10px">GREEN</span></div>
-          <div style="text-align:center"><span class="g gY" style="padding:1px 6px;font-size:10px">YELLOW</span></div>
-          <div style="text-align:center"><span class="g gG" style="padding:1px 6px;font-size:10px">GREEN</span></div>
-        </div>
-        <div style="display:grid;grid-template-columns:88px repeat(3,1fr);gap:4px 6px;margin-bottom:4px">
-          <div class="mono" style="font-size:11px;color:#93c5fd">23456789</div>
-          <div style="text-align:center"><span class="g gR" style="padding:1px 6px;font-size:10px">RED</span></div>
-          <div style="text-align:center"><span class="g gR" style="padding:1px 6px;font-size:10px">RED</span></div>
-          <div style="text-align:center"><span class="g gY" style="padding:1px 6px;font-size:10px">YELLOW</span></div>
-        </div>
-        <div style="display:grid;grid-template-columns:88px repeat(3,1fr);gap:4px 6px">
-          <div class="mono" style="font-size:11px;color:#93c5fd">34567890</div>
-          <div style="text-align:center"><span class="g gG" style="padding:1px 6px;font-size:10px">GREEN</span></div>
-          <div style="text-align:center"><span class="g gG" style="padding:1px 6px;font-size:10px">GREEN</span></div>
-          <div style="text-align:center"><span class="g gG" style="padding:1px 6px;font-size:10px">GREEN</span></div>
-        </div>
-      </div>
+    <div style="min-width:180px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#3b82f6;margin-bottom:6px">Dashboard 矩陣</div>
+      <table style="font-size:10px">
+        <tr><th></th><th>R-001</th><th>R-002</th><th>R-004</th></tr>
+        <tr><td>P1</td><td><span class="g gG">G</span></td><td><span class="g gY">Y</span></td><td><span class="g gG">G</span></td></tr>
+        <tr><td>P2</td><td><span class="g gR">R</span></td><td><span class="g gG">G</span></td><td><span class="g gY">Y</span></td></tr>
+        <tr><td>P3</td><td><span class="g gY">Y</span></td><td><span class="g gY">Y</span></td><td><span class="g gR">R</span></td></tr>
+      </table>
     </div>
   </div>
-
-  <div class="hl">
-    💡 <strong>核心精神</strong>：新增一條規則，只需「在 Denodo 建立 View」＋「在 Registry 登記」——核心彙總邏輯完全不動。所有規則輸出格式統一，Dashboard 可任意組合分析，未來也可加入加權評分或鏈式串接。
-  </div>
+ 
+  <div class="hl" style="margin-top:18px">核心精神：新增一條規則，只需「建 Denodo View + Registry 登記」——核心邏輯完全不動。Rule-C001（組合規則）可串接任意 Step 輸出 BEST_EST_EOL 供 BOM Report 使用，CONFIDENCE_LEVEL 供 Dashboard 可信度標示。</div>
 </div>
-
-
-<!-- ═══════════ SLIDE 2 · Design Principles ═══════════ -->
+ 
+<!-- ═══════════ SLIDE 2 · Design Philosophy ═══════════ -->
 <div class="slide" id="s2">
   <div class="tag">Design Philosophy</div>
   <div class="h1">架構設計五大原則</div>
   <div class="sub">確保系統長期可維護、可擴展，並符合 PRD v3 AC-18 要求</div>
-
-  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px">
-    <div class="card" style="text-align:center;padding:22px 14px">
-      <div style="font-size:34px;margin-bottom:10px">🔌</div>
-      <div style="font-size:14px;font-weight:700;color:#93c5fd;margin-bottom:8px">可擴充</div>
-      <div style="font-size:11px;color:#4b5e79;line-height:1.65">新增規則只需<br>「Register + Build View」<br>不改核心邏輯</div>
+ 
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:14px;margin-bottom:18px">
+    <div class="card">
+      <div style="font-size:20px;margin-bottom:8px">🔌</div>
+      <div style="font-weight:700;font-size:12px;color:#34d399;margin-bottom:8px">可擴充</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">新規則無需修改核心程式碼，直接註冊即用。Rule-C001 Cascade 模式支援鏈式組合。</div>
     </div>
-    <div class="card" style="text-align:center;padding:22px 14px">
-      <div style="font-size:34px;margin-bottom:10px">📐</div>
-      <div style="font-size:14px;font-weight:700;color:#93c5fd;margin-bottom:8px">標準化輸出</div>
-      <div style="font-size:11px;color:#4b5e79;line-height:1.65">每條規則 View<br>輸出相同欄位結構<br>方便下游彙總</div>
+    <div class="card">
+      <div style="font-size:20px;margin-bottom:8px">📐</div>
+      <div style="font-weight:700;font-size:12px;color:#34d399;margin-bottom:8px">標準化輸出</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">所有規則統一格式：RULE_ID、RULE_STATUS、RISK_GRADE、CONFIDENCE_LEVEL。</div>
     </div>
-    <div class="card" style="text-align:center;padding:22px 14px">
-      <div style="font-size:34px;margin-bottom:10px">🔍</div>
-      <div style="font-size:14px;font-weight:700;color:#93c5fd;margin-bottom:8px">可追溯</div>
-      <div style="font-size:11px;color:#4b5e79;line-height:1.65">每筆結果帶<br>RULE_ID + RULE_REASON<br>可回查任一料號原因</div>
+    <div class="card">
+      <div style="font-size:20px;margin-bottom:8px">🔍</div>
+      <div style="font-weight:700;font-size:12px;color:#34d399;margin-bottom:8px">可追溯</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">CASCADE_STEP、RULE_REASON 完整記錄決策路徑，支援審查與調試。</div>
     </div>
-    <div class="card" style="text-align:center;padding:22px 14px">
-      <div style="font-size:34px;margin-bottom:10px">🧩</div>
-      <div style="font-size:14px;font-weight:700;color:#93c5fd;margin-bottom:8px">可組合</div>
-      <div style="font-size:11px;color:#4b5e79;line-height:1.65">多條規則結果<br>UNION 成彙總表<br>供 Dashboard 使用</div>
+    <div class="card">
+      <div style="font-size:20px;margin-bottom:8px">🧩</div>
+      <div style="font-weight:700;font-size:12px;color:#34d399;margin-bottom:8px">可組合</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">Rule-C001 四階 Cascade 模式，優先序清晰，Fallback 機制可靠。</div>
     </div>
-    <div class="card" style="text-align:center;padding:22px 14px">
-      <div style="font-size:34px;margin-bottom:10px">🎯</div>
-      <div style="font-size:14px;font-weight:700;color:#93c5fd;margin-bottom:8px">獨立評級</div>
-      <div style="font-size:11px;color:#4b5e79;line-height:1.65">每條 Rule 獨立產出<br>RED / YELLOW / GREEN<br>未來可啟用加權組合</div>
+    <div class="card">
+      <div style="font-size:20px;margin-bottom:8px">🎯</div>
+      <div style="font-weight:700;font-size:12px;color:#34d399;margin-bottom:8px">獨立評級</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">各規則風險等級獨立計算，Dashboard 支援多維度篩選與交叉分析。</div>
     </div>
   </div>
-
-  <!-- Evaluation Model -->
-  <div class="card" style="padding:18px 22px">
-    <div style="font-size:13px;font-weight:700;color:#93c5fd;margin-bottom:14px">📊 Phase I 採用「獨立並行模式」（透明 · 易 Debug · 新增規則無副作用）</div>
-    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-      <div style="display:flex;flex-direction:column;gap:7px">
-        <div class="fn" style="font-size:11px;padding:8px 14px">Rule-001 獨立評估</div>
-        <div class="fn" style="font-size:11px;padding:8px 14px">Rule-002 獨立評估</div>
-        <div class="fn" style="font-size:11px;padding:8px 14px">Rule-004 獨立評估</div>
-      </div>
-      <div style="font-size:22px;color:#3b82f6;opacity:.7">→</div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <span class="g gR">RED</span>
-        <span class="g gY">YELLOW</span>
-        <span class="g gG">GREEN</span>
-      </div>
-      <div style="font-size:22px;color:#3b82f6;opacity:.7">→</div>
-      <div class="fn-o" style="font-size:11px;padding:12px 20px;text-align:center">
-        Dashboard 矩陣<br><span style="font-size:9px;color:#94a3b8;font-weight:400">Part × Rule 交叉風險</span>
-      </div>
-      <div style="flex:1;padding-left:14px;border-left:1px solid rgba(255,255,255,.07)">
-        <div style="font-size:11px;color:#4b5e79;margin-bottom:6px">🔮 Future Enhancement（Phase III+ 評估，勿現在實作）</div>
-        <div style="font-size:11px;color:#3a4a5e;padding:8px 12px;background:rgba(255,255,255,.02);border-radius:6px;border:1px dashed rgba(255,255,255,.05);line-height:1.6">
-          <span style="color:#4b5e79">鏈式串接：</span>Rule-001 → Rule-002 → Rule-008/009 → Final_Grade<br>
-          <span style="color:#4b5e79">加權組合：</span>Composite Score = Σ(Rule Score × WEIGHT) / Σ WEIGHT
-        </div>
-      </div>
-    </div>
+ 
+  <div class="card-b" style="margin-bottom:12px">
+    <div style="font-weight:700;color:#93c5fd;margin-bottom:8px">未來增強（ADR-001 Reference）</div>
+    <div style="font-size:12px;color:#94a3b8;line-height:1.7">Phase II 穩定後，支援平行模型評估（Rule-010~013 鏈式串接，如：Lifecycle Curve × Diff(Yrs) 評估）。Rule-C001 Cascade 模式在 Rule-007（中分類字典）+ Rule-008（SE API）就緒後啟用。</div>
   </div>
 </div>
-
-
-<!-- ═══════════ SLIDE 3 · Rule Inventory ═══════════ -->
+ 
+<!-- ═══════════ SLIDE 3 · Rule Inventory v4.3 (MAJOR) ═══════════ -->
 <div class="slide" id="s3">
-  <div class="tag">Rule Inventory · v3.0</div>
-  <div class="h1">現有規則清單　（11 條，分三階段實作）</div>
-  <div class="sub">Phase I 立即啟用 · Phase II 等待資料就緒 · Phase III 未來評估</div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
-
-    <!-- PHASE I -->
+  <div class="tag">Rule Inventory · v4.3</div>
+  <div class="h1">完整規則清單　（13 Standard + 1 Combination = 14 條）</div>
+  <div class="sub">Phase I 立即啟用 · Phase II 資料就緒後啟用 · Phase III 未來評估 · C系列：組合規則</div>
+ 
+  <div style="display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:12px;font-size:11px">
+    <!-- Phase I -->
     <div>
-      <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;padding:7px 12px;background:rgba(16,185,129,.1);border-radius:8px;border:1px solid rgba(16,185,129,.2)">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(16,185,129,.3)">
         <span class="sdot sA"></span>
-        <span style="font-size:13px;font-weight:700;color:#34d399">Phase I　進行中</span>
-        <span class="pillG" style="margin-left:auto">3 Rules</span>
+        <span style="font-weight:700;color:#34d399">Phase I (3 Rules)</span>
       </div>
-      <div style="font-size:10px;color:#3a4a5e;margin-bottom:8px">資料源：iv_allparts_info_for_ce</div>
-
-      <div class="card" style="margin-bottom:8px;border-color:rgba(16,185,129,.13)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-          <div><span style="font-size:11px;font-weight:700;color:#34d399">Rule-001</span>&nbsp;<span class="pill" style="background:rgba(239,68,68,.14);color:#f87171;border-color:rgba(239,68,68,.22);font-size:10px">CRITICAL</span></div>
-          <span class="g gG" style="font-size:9px;padding:1px 7px">Active ✓</span>
-        </div>
-        <div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:3px">Est EOL 日期完整性</div>
-        <div style="font-size:11px;color:#4b5e79">檢核 CO_ESTIMATED_EOL_DATUM 是否存在、格式正確且未過期</div>
-        <div class="mono" style="font-size:9px;color:#3a4a5e;margin-top:5px">vw_ce_rule_001_est_eol_data</div>
+      <div class="card" style="background:rgba(16,185,129,.05);border-color:rgba(16,185,129,.15);margin-bottom:7px;padding:10px">
+        <div style="font-weight:700;color:#93c5fd">Rule-001 <span class="pill" style="background:rgba(239,68,68,.14);color:#f87171">CRITICAL</span></div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:4px;line-height:1.5">停產風險可信度（EOL Risk Credibility）— 整合 CO_SURVEY_STATUS 與 Target EOL Date 動態評估，CONFIDENCE_LEVEL 供 Rule-C001 使用。</div>
       </div>
-
-      <div class="card" style="margin-bottom:8px;border-color:rgba(16,185,129,.13)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-          <div><span style="font-size:11px;font-weight:700;color:#34d399">Rule-002</span>&nbsp;<span class="pill" style="background:rgba(239,68,68,.14);color:#f87171;border-color:rgba(239,68,68,.22);font-size:10px">CRITICAL</span></div>
-          <span class="g gG" style="font-size:9px;padding:1px 7px">Active ✓</span>
-        </div>
-        <div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:3px">零件生命週期狀態</div>
-        <div style="font-size:11px;color:#4b5e79">依 LifeCycle_Phase 判斷：Phase Out→RED，NRND→YELLOW，M/P→GREEN</div>
-        <div class="mono" style="font-size:9px;color:#3a4a5e;margin-top:5px">vw_ce_rule_002_lifecycle_status</div>
+      <div class="card" style="background:rgba(16,185,129,.05);border-color:rgba(16,185,129,.15);margin-bottom:7px;padding:10px">
+        <div style="font-weight:700;color:#93c5fd">Rule-002 <span class="pill" style="background:rgba(239,68,68,.14);color:#f87171">CRITICAL</span></div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:4px;line-height:1.5">零件生命週期狀態 — 依 LifeCycle_Phase 分級：Phase Out→RED，NRND→YELLOW，M/P→GREEN。</div>
       </div>
-
-      <div class="card" style="border-color:rgba(16,185,129,.13)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-          <div><span style="font-size:11px;font-weight:700;color:#34d399">Rule-004</span>&nbsp;<span class="pillA" style="font-size:10px">MAJOR</span></div>
-          <span class="g gG" style="font-size:9px;padding:1px 7px">Active ✓</span>
-        </div>
-        <div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:3px">替代料可用性</div>
-        <div style="font-size:11px;color:#4b5e79">檢核 OTH_REPLACED_BY / OTH_COMMENT 是否有替代料資訊</div>
-        <div class="mono" style="font-size:9px;color:#3a4a5e;margin-top:5px">vw_ce_rule_004_alt_part</div>
+      <div class="card" style="background:rgba(16,185,129,.05);border-color:rgba(16,185,129,.15);padding:10px">
+        <div style="font-weight:700;color:#93c5fd">Rule-004 <span class="pill pillA">MAJOR</span></div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:4px;line-height:1.5">替代料可用性（B2B/P2P）v4.1 — Auto-GREEN (A1∧A2) → B2B → P2P → RED；N/A灰燈不計入。</div>
       </div>
     </div>
-
-    <!-- PHASE II -->
+ 
+    <!-- Phase II -->
     <div>
-      <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;padding:7px 12px;background:rgba(245,158,11,.08);border-radius:8px;border:1px solid rgba(245,158,11,.2)">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(245,158,11,.3)">
         <span class="sdot sP"></span>
-        <span style="font-size:13px;font-weight:700;color:#fbbf24">Phase II　資料等待中</span>
-        <span class="pillA" style="margin-left:auto">4 Rules</span>
+        <span style="font-weight:700;color:#fbbf24">Phase II (7 Rules)</span>
       </div>
-      <div style="font-size:10px;color:#3a4a5e;margin-bottom:8px">資料源：廠商回覆表 + SAP 用量（待就緒）</div>
-
-      <div class="card" style="margin-bottom:8px;opacity:.72">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-          <span style="font-size:11px;font-weight:700;color:#fbbf24">Rule-003</span>
-          <span class="g gY" style="font-size:9px;padding:1px 7px">⚠ 待 Action 1</span>
+ 
+      <!-- Sub-grid for 6 standard rules -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px">
+        <div class="card" style="padding:9px;background:rgba(245,158,11,.04);border-color:rgba(245,158,11,.12)">
+          <div style="font-weight:700;color:#fbbf24;font-size:10px">Rule-003</div>
+          <div style="font-size:9px;color:#94a3b8;margin-top:3px;line-height:1.4">廠商 PLP 推估 + 生命週期對齊 — 待 Action 1</div>
         </div>
-        <div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:3px">廠商生命週期階段對齊</div>
-        <div style="font-size:11px;color:#4b5e79">廠商回覆 Decline/EOL vs PLM 狀態比對，提前預警不一致</div>
+        <div class="card" style="padding:9px;background:rgba(245,158,11,.04);border-color:rgba(245,158,11,.12)">
+          <div style="font-weight:700;color:#fbbf24;font-size:10px">Rule-005</div>
+          <div style="font-size:9px;color:#94a3b8;margin-top:3px;line-height:1.4">年用量影響評估 — 待 SAP</div>
+        </div>
+        <div class="card" style="padding:9px;background:rgba(245,158,11,.04);border-color:rgba(245,158,11,.12)">
+          <div style="font-weight:700;color:#fbbf24;font-size:10px">Rule-006</div>
+          <div style="font-size:9px;color:#94a3b8;margin-top:3px;line-height:1.4">CE 信心度檢核 — 待 Action 1</div>
+        </div>
+        <div class="card" style="padding:9px;background:rgba(245,158,11,.04);border-color:rgba(245,158,11,.12)">
+          <div style="font-weight:700;color:#fbbf24;font-size:10px">Rule-007 ★</div>
+          <div style="font-size:9px;color:#94a3b8;margin-top:3px;line-height:1.4">中分類平均壽命推估 — NEW</div>
+        </div>
+        <div class="card" style="padding:9px;background:rgba(245,158,11,.04);border-color:rgba(245,158,11,.12)">
+          <div style="font-weight:700;color:#fbbf24;font-size:10px">Rule-008 ★</div>
+          <div style="font-size:9px;color:#94a3b8;margin-top:3px;line-height:1.4">SiliconExpert API 推估 — NEW</div>
+        </div>
+        <div class="card" style="padding:9px;background:rgba(245,158,11,.04);border-color:rgba(245,158,11,.12)">
+          <div style="font-weight:700;color:#fbbf24;font-size:10px">Rule-009</div>
+          <div style="font-size:9px;color:#94a3b8;margin-top:3px;line-height:1.4">Roadmap 變更旗標 ★ — 待 Action 1</div>
+        </div>
       </div>
-
-      <div class="card" style="margin-bottom:8px;opacity:.72">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-          <span style="font-size:11px;font-weight:700;color:#fbbf24">Rule-005</span>
-          <span class="g gN" style="font-size:9px;padding:1px 7px">待 SAP 接入</span>
-        </div>
-        <div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:3px">年用量影響評估</div>
-        <div style="font-size:11px;color:#4b5e79">高用量 + 高風險料優先處理（需 SAP 年用量資料）</div>
-      </div>
-
-      <div class="card" style="margin-bottom:8px;opacity:.72">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-          <span style="font-size:11px;font-weight:700;color:#fbbf24">Rule-006</span>
-          <span class="g gY" style="font-size:9px;padding:1px 7px">⚠ 待 Action 1</span>
-        </div>
-        <div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:3px">CE 信心度檢核</div>
-        <div style="font-size:11px;color:#4b5e79">廠商回覆資料可信度：Low→RED，High→GREEN（為 Rule-003 把關）</div>
-      </div>
-
-      <div class="card" style="opacity:.72">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-          <span style="font-size:11px;font-weight:700;color:#fbbf24">Rule-007</span>
-          <span class="g gY" style="font-size:9px;padding:1px 7px">⚠ 待 Action 1</span>
-        </div>
-        <div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:4px">Roadmap 變更旗標</div>
-        <div style="font-size:11px;color:#4b5e79;margin-bottom:5px">廠商發出 PDN / EOL / PCN 通知時，自動升級風險等級</div>
-        <div style="font-size:10px;background:rgba(239,68,68,.1);border-radius:4px;padding:2px 7px;color:#f87171;display:inline-block">★ 唯一「外部事件觸發」規則</div>
+ 
+      <!-- Combination Rule -->
+      <div class="card" style="background:rgba(6,182,212,.08);border:1.5px solid rgba(6,182,212,.3);padding:11px">
+        <div style="font-weight:700;color:#67e8f9;margin-bottom:6px">⚡ Rule-C001 ★ NEW — Combination</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.5">Component Lifecycle 最佳 Est EOL 組合推估。四階 Cascade：PLM(HIGH) → PLP(MEDIUM) → 中分類均值(LOW) → SiliconExpert(LOW)。輸出 BEST_EST_EOL + CASCADE_STEP + CONFIDENCE_LEVEL — 待 Rule-007/008 就緒啟用。</div>
       </div>
     </div>
-
-    <!-- PHASE III -->
+ 
+    <!-- Phase III -->
     <div>
-      <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;padding:7px 12px;background:rgba(71,85,105,.18);border-radius:8px;border:1px solid rgba(71,85,105,.28)">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(71,85,105,.3);opacity:.55">
         <span class="sdot sF"></span>
-        <span style="font-size:13px;font-weight:700;color:#64748b">Phase III　未來評估</span>
-        <span class="pillN" style="margin-left:auto">4 Rules</span>
+        <span style="font-weight:700;color:#64748b">Phase III (4 Rules)</span>
       </div>
-      <div style="font-size:10px;color:#3a4a5e;margin-bottom:8px">需 Phase I / II 全部穩定後再評估</div>
-
-      <div class="card" style="margin-bottom:8px;opacity:.42">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <span style="font-size:11px;font-weight:700;color:#475569">Rule-008</span>
-          <span class="g gN" style="font-size:9px;padding:1px 7px">Phase III</span>
+      <div style="opacity:.55">
+        <div class="card" style="background:rgba(71,85,105,.04);border-color:rgba(71,85,105,.12);margin-bottom:7px;padding:10px">
+          <div style="font-weight:700;color:#94a3b8;font-size:10px">Rule-010</div>
+          <div style="font-size:9px;color:#64748b;margin-top:3px">Lifecycle Curve × Diff(Yrs) — 原 Rule-008</div>
         </div>
-        <div style="font-size:13px;font-weight:600;color:#94a3b8;margin-bottom:3px">Lifecycle Curve × Diff(Yrs)</div>
-        <div style="font-size:11px;color:#475569">結合生命週期曲線與距 EOL 年數精算風險分級</div>
-      </div>
-
-      <div class="card" style="margin-bottom:8px;opacity:.42">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <span style="font-size:11px;font-weight:700;color:#475569">Rule-009</span>
-          <span class="g gN" style="font-size:9px;padding:1px 7px">Phase III</span>
+        <div class="card" style="background:rgba(71,85,105,.04);border-color:rgba(71,85,105,.12);margin-bottom:7px;padding:10px">
+          <div style="font-weight:700;color:#94a3b8;font-size:10px">Rule-011</div>
+          <div style="font-size:9px;color:#64748b;margin-top:3px">類別平台生命週期加權 — 原 Rule-009</div>
         </div>
-        <div style="font-size:13px;font-weight:600;color:#94a3b8;margin-bottom:3px">類別平台生命週期加權</div>
-        <div style="font-size:11px;color:#475569">依 ZZMCATG_M 類別調整風險加權</div>
-      </div>
-
-      <div class="card" style="margin-bottom:8px;opacity:.42">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <span style="font-size:11px;font-weight:700;color:#475569">Rule-010</span>
-          <span class="g gN" style="font-size:9px;padding:1px 7px">IND 類專屬</span>
+        <div class="card" style="background:rgba(71,85,105,.04);border-color:rgba(71,85,105,.12);margin-bottom:7px;padding:10px">
+          <div style="font-weight:700;color:#94a3b8;font-size:10px">Rule-012</div>
+          <div style="font-size:9px;color:#64748b;margin-top:3px">Inductor 市場主流優先 — IND 類專屬</div>
         </div>
-        <div style="font-size:13px;font-weight:600;color:#94a3b8;margin-bottom:3px">Inductor 市場主流優先</div>
-        <div style="font-size:11px;color:#475569">電感類：市場主流 + Tooling 判斷（其他料號輸出 N/A）</div>
-      </div>
-
-      <div class="card" style="opacity:.42">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <span style="font-size:11px;font-weight:700;color:#475569">Rule-011</span>
-          <span class="g gN" style="font-size:9px;padding:1px 7px">PWR 類專屬</span>
+        <div class="card" style="background:rgba(71,85,105,.04);border-color:rgba(71,85,105,.12);padding:10px">
+          <div style="font-weight:700;color:#94a3b8;font-size:10px">Rule-013</div>
+          <div style="font-size:9px;color:#64748b;margin-top:3px">Power 類壽命資料可信度 — PWR 類專屬</div>
         </div>
-        <div style="font-size:13px;font-weight:600;color:#94a3b8;margin-bottom:3px">Power 類壽命資料可信度</div>
-        <div style="font-size:11px;color:#475569">電源類：Actual EOL 歷史資料可信度（其他料號輸出 N/A）</div>
       </div>
     </div>
-
   </div>
 </div>
-
-
-<!-- ═══════════ SLIDE 4 · How to Add a Rule ═══════════ -->
+ 
+<!-- ═══════════ SLIDE 4 · New Rule SOP ═══════════ -->
 <div class="slide" id="s4">
   <div class="tag">New Rule SOP</div>
   <div class="h1">新增規則 — 6 步驟標準流程</div>
   <div class="sub">符合 PRD v3 AC-18：「新增規則不需修改核心程式碼」</div>
-
-  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:11px;margin-bottom:18px">
-
+ 
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
     <div class="sbox">
       <div class="snum">1</div>
-      <div style="font-size:28px;margin:12px 0 8px">🗄️</div>
-      <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:6px">確認資料來源</div>
-      <div style="font-size:11px;color:#4b5e79;line-height:1.6">資料 View 是否已在 Denodo？若無，先建立並完成測試</div>
+      <div style="margin-top:12px;font-weight:700;color:#93c5fd;font-size:12px;margin-bottom:6px">設計規則邏輯</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">定義判斷條件、輸出字段、風險分級。於 Rule_XXXX_Design_vN.md 記錄。</div>
     </div>
-
     <div class="sbox">
       <div class="snum">2</div>
-      <div style="font-size:28px;margin:12px 0 8px">📝</div>
-      <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:6px">定義規則</div>
-      <div style="font-size:11px;color:#4b5e79;line-height:1.6">決定 RULE_ID（<span class="mono">Rule-NNN-名稱</span>）、Category、Severity、PHASE，列出所有條件與 N/A 範疇</div>
+      <div style="margin-top:12px;font-weight:700;color:#93c5fd;font-size:12px;margin-bottom:6px">建立 Denodo View</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">命名規範：vw_ce_rule_NNN_xxx。包含 SQL 邏輯與資料定義。</div>
     </div>
-
     <div class="sbox">
       <div class="snum">3</div>
-      <div style="font-size:28px;margin:12px 0 8px">🔧</div>
-      <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:6px">建立 Denodo View</div>
-      <div style="font-size:11px;color:#4b5e79;line-height:1.6">建立 <span class="mono" style="color:#67e8f9">vw_ce_rule_NNN_xxx</span>，<strong style="color:#e2e8f0">必須</strong>遵守 Section 4 標準欄位，測試正常執行</div>
+      <div style="margin-top:12px;font-weight:700;color:#93c5fd;font-size:12px;margin-bottom:6px">Registry 登記</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">RuleRegistry.json：RULE_ID、View、Phase、IS_ACTIVE、SEVERITY。</div>
     </div>
-
     <div class="sbox">
       <div class="snum">4</div>
-      <div style="font-size:28px;margin:12px 0 8px">📋</div>
-      <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:6px">Registry 註冊</div>
-      <div style="font-size:11px;color:#4b5e79;line-height:1.6">在 <span class="mono" style="color:#67e8f9">vw_ce_rule_registry</span> 新增一筆記錄，設定 IS_ACTIVE、PHASE、DEPENDS_ON、WEIGHT</div>
+      <div style="margin-top:12px;font-weight:700;color:#93c5fd;font-size:12px;margin-bottom:6px">實作檢核器</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">rule_engine.py：讀取 Registry，生成標準 OUTPUT 格式。無需改核心邏輯。</div>
     </div>
-
     <div class="sbox">
       <div class="snum">5</div>
-      <div style="font-size:28px;margin:12px 0 8px">🔗</div>
-      <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:6px">加入彙總 View</div>
-      <div style="font-size:11px;color:#4b5e79;line-height:1.6">在 <span class="mono" style="color:#67e8f9">vw_ce_rule_check_summary</span> 加入 UNION ALL（未就緒可先 comment out）</div>
+      <div style="margin-top:12px;font-weight:700;color:#93c5fd;font-size:12px;margin-bottom:6px">單元測試</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">test_rule_NNN.py：10+ 案例涵蓋 PASS/WARN/FAIL 路徑。</div>
     </div>
-
-    <div class="sbox" style="border-color:rgba(16,185,129,.2)">
-      <div class="snum" style="background:#10b981">6</div>
-      <div style="font-size:28px;margin:12px 0 8px">✅</div>
-      <div style="font-size:12px;font-weight:700;color:#34d399;margin-bottom:6px">驗證</div>
-      <div style="font-size:11px;color:#4b5e79;line-height:1.6">確認 RED / YELLOW / GREEN / N/A 比例合理，Dashboard 正確呈現新規則</div>
+    <div class="sbox">
+      <div class="snum">6</div>
+      <div style="margin-top:12px;font-weight:700;color:#93c5fd;font-size:12px;margin-bottom:6px">上線與監控</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6">IS_ACTIVE=TRUE，日報儀表板監控覆蓋率與異常。定期審查。</div>
     </div>
-
   </div>
-
-  <!-- Flow connector -->
-  <div style="display:flex;align-items:center;padding:0 20px;margin-bottom:16px">
-    <div style="flex:1;height:3px;background:linear-gradient(90deg,rgba(59,130,246,.5),rgba(16,185,129,.5));border-radius:2px"></div>
-    <svg width="12" height="12" viewBox="0 0 12 12"><polygon points="0,0 0,12 12,6" fill="#10b981" opacity=".7"/></svg>
-  </div>
-
-  <!-- Registry key fields note -->
-  <div class="card-b" style="padding:14px 18px">
-    <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:8px">
-      📁 vw_ce_rule_registry — 關鍵欄位說明 <span style="font-weight:400;color:#3a4a5e;font-size:11px">（完整欄位定義見 Architecture Doc Section 3.1）</span>
-    </div>
-    <div style="font-size:11px;color:#4b5e79;line-height:1.85">
-      <span class="mono" style="color:#93c5fd">RULE_ID</span> ·
-      <span class="mono" style="color:#93c5fd">RULE_NAME</span> ·
-      <span class="mono" style="color:#93c5fd">RULE_CATEGORY</span>（DATA_QUALITY / RISK_ASSESSMENT / COMPLIANCE）·
-      <span class="mono" style="color:#93c5fd">SEVERITY</span>（CRITICAL / MAJOR / MINOR）·
-      <span class="mono" style="color:#93c5fd">IS_ACTIVE</span>（Boolean，未就緒先設 FALSE）·
-      <span class="mono" style="color:#93c5fd">PHASE</span>（I / II / III）·
-      <span class="mono" style="color:#93c5fd">DEPENDS_ON</span>（前置資料依賴）·
-      <span class="mono" style="color:#93c5fd">WEIGHT</span>（保留欄，預設 1.00，加權啟用後使用）
-    </div>
+ 
+  <div class="card-b">
+    <div style="font-weight:700;color:#93c5fd;margin-bottom:8px">核心特點：Registry 登記制度</div>
+    <div style="font-size:12px;color:#94a3b8;line-height:1.7">RuleRegistry.json 是唯一的「新規則入口」。加新規則只需：(1) 建 Denodo View，(2) 在 JSON 裡新增一筆物件。rule_engine.py 會自動掃描 Registry 並執行對應的 View。不動核心程式碼，確保系統穩定性與可維護性。</div>
   </div>
 </div>
-
-
-<!-- ═══════════ SLIDE 5 · Case 1 — Rule-001 ═══════════ -->
+ 
+<!-- ═══════════ SLIDE 5 · Rule-001 v4.3 (MAJOR UPDATE) ═══════════ -->
 <div class="slide" id="s5">
-  <div class="tag">Case Example 1</div>
-  <div class="h1">Rule-001：Est EOL 日期完整性</div>
-  <div class="sub">CRITICAL 等級 · Phase I · 資料來源：iv_allparts_info_for_ce</div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
-
-    <!-- Left: logic -->
+  <div class="tag">Case Example 1 · v4.3</div>
+  <div class="h1">Rule-001：停產風險可信度（EOL Risk Credibility）</div>
+  <div class="sub">CRITICAL 等級 · Phase I · 整合 CO_SURVEY_STATUS + Target EOL Date 動態覆寫</div>
+ 
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:11px">
+    <!-- Left: Logic -->
     <div>
-      <div style="font-size:13px;font-weight:700;color:#93c5fd;margin-bottom:13px">📋 檢核邏輯</div>
-
-      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:8px;margin-bottom:6px">
-        <div style="width:26px;height:26px;background:rgba(239,68,68,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#f87171;flex-shrink:0">C1</div>
-        <div style="flex:1;font-size:12px;color:#94a3b8"><span class="mono" style="color:#fca5a5">CO_ESTIMATED_EOL_DATUM IS NULL</span></div>
-        <span class="g gR">RED</span>
-        <div class="mono" style="font-size:10px;color:#4b5e79;min-width:110px;text-align:right">EOL_NULL</div>
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:10px;font-size:10px;color:#93c5fd;font-weight:600">❶ 優先判斷（共用，無視日期）</div>
+      <div class="card" style="padding:10px;margin-bottom:8px;background:rgba(16,185,129,.04);border-color:rgba(16,185,129,.12)">
+        <div style="font-size:10px;color:#94a3b8"><span style="color:#6ee7b7">C1:</span> CO_SURVEY_STATUS = 'No EOL Plan' → <span style="color:#34d399;font-weight:700">GREEN EOL_NO_PLAN</span> (HIGH)</div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:4px"><span style="color:#f87171">C2:</span> Est EOL NULL/空白 → <span style="color:#f87171;font-weight:700">RED EOL_NULL</span> (NONE)</div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:4px"><span style="color:#f87171">F3:</span> Est EOL 格式無法解析 → <span style="color:#f87171;font-weight:700">RED EOL_FORMAT_ERR</span> (NONE)</div>
       </div>
-
-      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:8px;margin-bottom:6px">
-        <div style="width:26px;height:26px;background:rgba(239,68,68,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#f87171;flex-shrink:0">C2</div>
-        <div style="flex:1;font-size:12px;color:#94a3b8">日期格式無法解析（非合法日期字串）</div>
-        <span class="g gR">RED</span>
-        <div class="mono" style="font-size:10px;color:#4b5e79;min-width:110px;text-align:right">EOL_FORMAT_ERR</div>
+ 
+      <div style="background:rgba(245,158,11,.06);border-left:3px solid #f59e0b;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:10px;margin-top:12px;font-size:10px;color:#fbbf24;font-weight:600">❷ 有 Target EOL Date（Python 動態覆寫）</div>
+      <div class="card" style="padding:10px;background:rgba(245,158,11,.04);border-color:rgba(245,158,11,.12)">
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6">C3/C4: Est EOL ≥ Target EOL → Vendor Update/Blank <span style="color:#34d399">GREEN EOL_MEET_TARGET</span>; No Response <span style="color:#fbbf24">YELLOW EOL_MEET_TARGET_UNCONFIRMED</span></div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6;margin-top:4px">C5: Target-2yr ≤ Est EOL < Target → <span style="color:#fbbf24">YELLOW EOL_NEAR_TARGET</span></div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6;margin-top:4px">C6/C7: Est EOL < Target-2yr → Vendor Update/Blank <span style="color:#f87171">RED EOL_SHORT_OF_TARGET</span>; No Response <span style="color:#fbbf24">YELLOW EOL_SHORT_UNCONFIRMED</span></div>
       </div>
-
-      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.18);border-radius:8px;margin-bottom:6px">
-        <div style="width:26px;height:26px;background:rgba(245,158,11,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fbbf24;flex-shrink:0">C3</div>
-        <div style="flex:1;font-size:12px;color:#94a3b8"><span class="mono" style="color:#fde68a">EOL_DATE &lt; TODAY</span>（日期已過期）</div>
-        <span class="g gY">YELLOW</span>
-        <div class="mono" style="font-size:10px;color:#4b5e79;min-width:110px;text-align:right">EOL_IN_PAST</div>
-      </div>
-
-      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.18);border-radius:8px">
-        <div style="width:26px;height:26px;background:rgba(16,185,129,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#34d399;flex-shrink:0">C4</div>
-        <div style="flex:1;font-size:12px;color:#94a3b8">日期有效、格式正確、未過期</div>
-        <span class="g gG">GREEN</span>
-        <div class="mono" style="font-size:10px;color:#4b5e79;min-width:110px;text-align:right">EOL_VALID</div>
-      </div>
-
-      <div style="margin-top:16px;padding:10px 14px;background:rgba(255,255,255,.03);border-radius:8px;font-size:11px;color:#4b5e79;line-height:1.7">
-        <strong style="color:#93c5fd">輸出欄位範例：</strong><br>
-        RULE_ID=<span class="mono" style="color:#67e8f9">Rule-001-Est_EOL_Data</span> ·
-        SEVERITY=<span class="mono" style="color:#f87171">CRITICAL</span><br>
-        CHECKED_VALUE=<span class="mono">CO_ESTIMATED_EOL_DATUM 實際值</span><br>
-        EXPECTED_VALUE=<span class="mono">NOT NULL, &gt;= TODAY, Valid Date</span>
+ 
+      <div style="background:rgba(71,85,105,.06);border-left:3px solid #64748b;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:10px;margin-top:12px;font-size:10px;color:#94a3b8;font-weight:600">❸ 無 Target EOL（Fallback 基礎檢核）</div>
+      <div class="card" style="padding:10px;background:rgba(71,85,105,.04);border-color:rgba(71,85,105,.12);font-size:10px">
+        <div style="color:#94a3b8;line-height:1.6">F4: Est EOL < TODAY → <span style="color:#fbbf24">YELLOW EOL_IN_PAST</span></div>
+        <div style="color:#94a3b8;line-height:1.6;margin-top:3px">F5: Vendor Update → <span style="color:#34d399">GREEN EOL_VALID_CONFIRMED</span></div>
+        <div style="color:#94a3b8;line-height:1.6;margin-top:3px">F6: No Response → <span style="color:#fbbf24">YELLOW EOL_VALID_UNCONFIRMED</span></div>
       </div>
     </div>
-
-    <!-- Right: examples -->
+ 
+    <!-- Right: CO_SURVEY_STATUS mapping + cases -->
     <div>
-      <div style="font-size:13px;font-weight:700;color:#93c5fd;margin-bottom:13px">🔬 實際案例模擬</div>
-
-      <div class="er erR">
-        <div class="ep">A1234567</div>
-        <div class="ev">EOL = <span style="color:#f87171">NULL</span></div>
-        <div style="font-size:14px;color:#475569">→</div>
-        <span class="g gR">🔴 RED</span>
-        <div class="rsn">EOL_NULL</div>
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:10px;font-size:10px;color:#93c5fd;font-weight:600">CO_SURVEY_STATUS → CONFIDENCE_LEVEL 對應</div>
+      <table style="font-size:10px;margin-bottom:12px">
+        <tr><th style="background:rgba(59,130,246,.08)">CO_SURVEY_STATUS</th><th style="background:rgba(59,130,246,.08)">CONFIDENCE</th><th style="background:rgba(59,130,246,.08)">Rule-C001</th></tr>
+        <tr><td style="color:#34d399">No EOL Plan</td><td style="color:#34d399">HIGH</td><td style="color:#94a3b8;font-size:9px">長期安全，不fallback</td></tr>
+        <tr><td style="color:#34d399">Vendor Update</td><td style="color:#34d399">HIGH</td><td style="color:#94a3b8;font-size:9px">Step1採用</td></tr>
+        <tr><td style="color:#fbbf24">Blank/NULL</td><td style="color:#fbbf24">MEDIUM</td><td style="color:#94a3b8;font-size:9px">Step1採用，標記MEDIUM</td></tr>
+        <tr><td style="color:#f87171">Vendor No Response</td><td style="color:#f87171">LOW</td><td style="color:#94a3b8;font-size:9px">fallback to Step2+</td></tr>
+      </table>
+ 
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:10px;font-size:10px;color:#93c5fd;font-weight:600">案例模擬</div>
+      <div class="erG" style="display:flex;flex-direction:column;gap:8px">
+        <div class="er" style="margin-bottom:0">
+          <div class="ep">A1234567</div>
+          <div class="ev">EOL=NULL | Co_Survey=—</div>
+          <div class="rsn">RED EOL_NULL</div>
+        </div>
+        <div class="er" style="margin-bottom:0">
+          <div class="ep">B2345678</div>
+          <div class="ev">EOL=2024-03 | No Response</div>
+          <div class="rsn">YELLOW (UNCONFIRMED)</div>
+        </div>
+        <div class="er">
+          <div class="ep">C3456789</div>
+          <div class="ev">EOL=2028-06 | Vendor Update | Target=2027</div>
+          <div class="rsn">GREEN EOL_MEET_TARGET</div>
+        </div>
       </div>
-      <div style="font-size:11px;color:#4b5e79;margin:2px 0 12px 14px">▸ 無法判斷此零件何時停產，風險未知——最高警戒等級</div>
-
-      <div class="er erY">
-        <div class="ep">B2345678</div>
-        <div class="ev">EOL = <span style="color:#fde68a">2024-03-15</span></div>
-        <div style="font-size:14px;color:#475569">→</div>
-        <span class="g gY">🟡 YELLOW</span>
-        <div class="rsn">EOL_IN_PAST</div>
-      </div>
-      <div style="font-size:11px;color:#4b5e79;margin:2px 0 12px 14px">▸ EOL 日期已過期（1.5年前），需確認是否仍在產或已有替代</div>
-
-      <div class="er erG">
-        <div class="ep">C3456789</div>
-        <div class="ev">EOL = <span style="color:#6ee7b7">2028-06-30</span></div>
-        <div style="font-size:14px;color:#475569">→</div>
-        <span class="g gG">🟢 GREEN</span>
-        <div class="rsn">EOL_VALID</div>
-      </div>
-      <div style="font-size:11px;color:#4b5e79;margin:2px 0 0 14px">▸ EOL 日期有效，距今 &gt;2年，風險可控</div>
-
-      <div class="hl" style="margin-top:18px">
-        💡 <strong>業務意義：</strong>Rule-001 是所有規則的<strong>數據品質守門員</strong>。若 EOL 日期缺失或格式錯誤，後續以 EOL 為依據的進階規則（如 Rule-008 Lifecycle Curve）結果亦不可信。因此 Rule-001 列為 CRITICAL，優先修正。
-      </div>
+ 
+      <div class="hl" style="margin-top:12px;font-size:10px">Rule-001 的 CONFIDENCE_LEVEL 是 Rule-C001 Cascade Step 1 的觸發條件——Vendor No Response 會讓 Rule-C001 跳過 PLM 資料，直接嘗試 PLP/中分類/SE API 備援。</div>
     </div>
-
   </div>
 </div>
-
-
-<!-- ═══════════ SLIDE 6 · Case 2 — Rule-002 ═══════════ -->
+ 
+<!-- ═══════════ SLIDE 6 · Rule-C001 Best EOL Cascade (NEW) ═══════════ -->
 <div class="slide" id="s6">
+  <div class="tag">Combination Rule · v4.0 NEW</div>
+  <div class="h1">Rule-C001：Component Lifecycle 最佳 Est EOL 組合推估</div>
+  <div class="sub">四階 Cascade 優先序 · 輸出 BEST_EST_EOL + CASCADE_STEP + CONFIDENCE_LEVEL · 待 Rule-007/008 就緒啟用</div>
+ 
+  <div style="display:grid;grid-template-columns:3fr 2fr;gap:22px;font-size:11px">
+    <!-- Left: 四階 Cascade -->
+    <div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <div class="card" style="background:rgba(16,185,129,.08);border-left:4px solid #10b981;padding:12px;margin-bottom:8px">
+          <div style="font-weight:700;color:#6ee7b7;margin-bottom:6px">Step 1：PLM Est EOL（Rule-001）</div>
+          <div style="font-size:10px;color:#94a3b8;line-height:1.6">條件: CO_ESTIMATED_EOL_DATUM NOT NULL AND CO_SURVEY_STATUS ≠ 'Vendor No Response' | 採用: BEST_EST_EOL = CO_ESTIMATED_EOL_DATUM | CONFIDENCE: Vendor Update→HIGH | 其他→MEDIUM | CASCADE_STEP: STEP1_PLM</div>
+        </div>
+ 
+        <div style="text-align:center;color:#94a3b8;font-size:9px;margin:-4px 0 4px">若不滿足 ↓</div>
+ 
+        <div class="card" style="background:rgba(245,158,11,.08);border-left:4px solid #f59e0b;padding:12px;margin-bottom:8px">
+          <div style="font-weight:700;color:#fbbf24;margin-bottom:6px">Step 2：廠商 PLP 推估（Rule-003）</div>
+          <div style="font-size:10px;color:#94a3b8;line-height:1.6">條件: PLP_EST_EOL NOT NULL AND Lifecycle_Stage ∉ {EOL, Decline} | 採用: BEST_EST_EOL = PLP_EST_EOL | CONFIDENCE: MEDIUM | CASCADE_STEP: STEP2_PLP</div>
+        </div>
+ 
+        <div style="text-align:center;color:#94a3b8;font-size:9px;margin:-4px 0 4px">↓</div>
+ 
+        <div class="card" style="background:rgba(245,158,11,.08);border-left:4px solid #f97316;padding:12px;margin-bottom:8px">
+          <div style="font-weight:700;color:#fbbf24;margin-bottom:6px">Step 3：中分類平均壽命（Rule-007）★NEW</div>
+          <div style="font-size:10px;color:#94a3b8;line-height:1.6">條件: CATE_M_EST_EOL NOT NULL | 採用: BEST_EST_EOL = CATE_M_EST_EOL | CONFIDENCE: LOW | CASCADE_STEP: STEP3_CATE_M</div>
+        </div>
+ 
+        <div style="text-align:center;color:#94a3b8;font-size:9px;margin:-4px 0 4px">↓</div>
+ 
+        <div class="card" style="background:rgba(239,68,68,.08);border-left:4px solid #dc2626;padding:12px;margin-bottom:8px">
+          <div style="font-weight:700;color:#f87171;margin-bottom:6px">Step 4：SiliconExpert API（Rule-008）★NEW</div>
+          <div style="font-size:10px;color:#94a3b8;line-height:1.6">條件: SE_EST_EOL NOT NULL AND SE_LIFECYCLE_STATUS ≠ 'EOL' | 採用: BEST_EST_EOL = SE_EST_EOL | CONFIDENCE: LOW | CASCADE_STEP: STEP4_SE_API</div>
+        </div>
+ 
+        <div style="text-align:center;color:#94a3b8;font-size:9px;margin:-4px 0 4px">↓</div>
+ 
+        <div class="card" style="background:rgba(71,85,105,.04);border-left:4px solid #475569;padding:12px">
+          <div style="font-weight:700;color:#94a3b8;margin-bottom:6px">Fallback</div>
+          <div style="font-size:10px;color:#64748b">BEST_EST_EOL = NULL | CONFIDENCE: NONE | CASCADE_STEP: NONE</div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Right: CONFIDENCE + Usage -->
+    <div>
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:12px;font-size:10px;color:#93c5fd;font-weight:600">CONFIDENCE_LEVEL 定義</div>
+      <table style="font-size:10px;margin-bottom:14px">
+        <tr><th style="background:rgba(59,130,246,.08)">等級</th><th style="background:rgba(59,130,246,.08)">定義</th><th style="background:rgba(59,130,246,.08)">來源</th></tr>
+        <tr><td style="color:#34d399;font-weight:700">HIGH</td><td style="color:#94a3b8;font-size:9px">PLM已廠商確認</td><td style="color:#94a3b8;font-size:9px">Step1</td></tr>
+        <tr><td style="color:#fbbf24;font-weight:700">MEDIUM</td><td style="color:#94a3b8;font-size:9px">PLM未確認 或 PLP</td><td style="color:#94a3b8;font-size:9px">Step1/2</td></tr>
+        <tr><td style="color:#f87171;font-weight:700">LOW</td><td style="color:#94a3b8;font-size:9px">中分類均值 或 SE</td><td style="color:#94a3b8;font-size:9px">Step3/4</td></tr>
+        <tr><td style="color:#64748b;font-weight:700">NONE</td><td style="color:#94a3b8;font-size:9px">四步均無資料</td><td style="color:#94a3b8;font-size:9px">Fallback</td></tr>
+      </table>
+ 
+      <div class="hl" style="font-size:10px;margin-bottom:12px">Rule-C001 的 BEST_EST_EOL 取代 CO_ESTIMATED_EOL_DATUM 用於 BOM Report 的 DIFF(Yrs) 計算。IS_ACTIVE=FALSE，待 Rule-007 + Rule-008 就緒啟用。</div>
+ 
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:10px;font-size:10px;color:#93c5fd;font-weight:600">RISK_GRADE 總結</div>
+      <div style="font-size:10px;color:#94a3b8;line-height:1.8">
+        <div><span style="color:#f87171">BEST_EST_EOL=NULL</span> → 🔴 RED (CASC_NO_DATA)</div>
+        <div style="margin-top:4px"><span style="color:#34d399">Vendor Update confirmed</span> → 🟢 GREEN (CASC_OK)</div>
+        <div style="margin-top:4px">Others → 🟡 YELLOW (CASC_OK, low confidence)</div>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════ SLIDE 7 · Rule-004 v4.1 (UPDATED) ═══════════ -->
+<div class="slide" id="s7">
+  <div class="tag">Case Example 3 · v4.1</div>
+  <div class="h1">Rule-004：替代料可用性（Auto-GREEN / B2B / P2P）</div>
+  <div class="sub">MAJOR 等級 · Phase I · iv_allparts_info_for_ce + iv_zparts_b2b_p2p (ODBC) · 141 IC/Part 等4類適用</div>
+ 
+  <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:20px;font-size:11px">
+    <!-- Left: 4-Layer logic -->
+    <div>
+      <div class="card" style="background:rgba(59,130,246,.05);border-left:3px solid #3b82f6;padding:11px;margin-bottom:10px">
+        <div style="font-weight:700;color:#93c5fd;margin-bottom:6px;font-size:10px">◆ Part_Cat 適用範圍篩選</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6">141 IC/Part / 132 Transistor / 130 Diode / 1212 Bead Core → 繼續判斷 | 其他 → ⬜ N/A（不計入最差Grade）</div>
+      </div>
+ 
+      <div class="card" style="background:rgba(16,185,129,.05);border-left:3px solid #10b981;padding:11px;margin-bottom:10px">
+        <div style="font-weight:700;color:#6ee7b7;margin-bottom:6px;font-size:10px">◆ Auto-GREEN 自動豁免（A1 AND A2 同時成立）</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6"><span style="color:#6ee7b7">A1:</span> len(item_number) == 10（研華10碼格式）</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6"><span style="color:#6ee7b7">A2:</span> co_matnr_cat ∈ {TKR|TKFR, TKR|SFTK, MCC|MLCC, ...}</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6;margin-top:4px">→ 🟢 GREEN ALT_AUTO_MANAGED（跳過後續查詢）</div>
+      </div>
+ 
+      <div class="card" style="background:rgba(245,158,11,.05);border-left:3px solid #f59e0b;padding:11px;margin-bottom:10px">
+        <div style="font-weight:700;color:#fbbf24;margin-bottom:6px;font-size:10px">◆ B2B 判斷（任一成立）</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6"><span style="color:#fbbf24">B1:</span> OTH_REPLACED_BY 含以'1'開頭研華料號</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6"><span style="color:#fbbf24">B2:</span> iv_zparts_b2b_p2p 有 BB_Group_ID（ODBC）</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6"><span style="color:#fbbf24">B3:</span> OTH_COMMENT 含"(B2B)"</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6;margin-top:4px">→ 🟢 GREEN ALT_B2B_AVAILABLE</div>
+      </div>
+ 
+      <div class="card" style="background:rgba(239,68,68,.05);border-left:3px solid #dc2626;padding:11px">
+        <div style="font-weight:700;color:#f87171;margin-bottom:6px;font-size:10px">◆ P2P 判斷（任一成立）</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6"><span style="color:#f87171">P1:</span> OTH_COMMENT 含"(P2P)"</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6"><span style="color:#f87171">P2:</span> iv_zparts_b2b_p2p 有 P2P_Group_ID（ODBC）</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6;margin-top:4px">→ 🟡 YELLOW ALT_P2P_ONLY（需驗證周邊）</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6">否則 → 🔴 RED ALT_NONE</div>
+      </div>
+    </div>
+ 
+    <!-- Right: Risk matrix + cases -->
+    <div>
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:12px;font-size:10px;color:#93c5fd;font-weight:600">Risk Matrix 與判斷</div>
+      <table style="font-size:9px;margin-bottom:14px">
+        <tr><th style="background:rgba(59,130,246,.08)">情境</th><th style="background:rgba(59,130,246,.08)">STATUS</th><th style="background:rgba(59,130,246,.08)">REASON</th><th style="background:rgba(59,130,246,.08)">GRADE</th></tr>
+        <tr><td>Part_Cat 不在範圍</td><td style="color:#94a3b8">N/A</td><td style="font-size:8px;color:#64748b">NOT_APPLICABLE</td><td style="color:#94a3b8">⬜</td></tr>
+        <tr><td>Auto-GREEN (A1∧A2)</td><td style="color:#34d399">PASS</td><td style="font-size:8px;color:#64748b">AUTO_MANAGED</td><td style="color:#34d399">🟢</td></tr>
+        <tr><td>有 B2B (任一)</td><td style="color:#34d399">PASS</td><td style="font-size:8px;color:#64748b">B2B_AVAILABLE</td><td style="color:#34d399">🟢</td></tr>
+        <tr><td>僅 P2P</td><td style="color:#fbbf24">WARN</td><td style="font-size:8px;color:#64748b">P2P_ONLY</td><td style="color:#fbbf24">🟡</td></tr>
+        <tr><td>無替代料</td><td style="color:#f87171">FAIL</td><td style="font-size:8px;color:#64748b">ALT_NONE</td><td style="color:#f87171">🔴</td></tr>
+      </table>
+ 
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:12px;font-size:10px;color:#93c5fd;font-weight:600">案例模擬</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="erG">
+          <div class="ep">G1111111</div>
+          <div class="ev">CO_MATNR_CAT=MCC|MLCC + 10碼</div>
+          <div class="rsn">GREEN AUTO_MANAGED</div>
+        </div>
+        <div class="erG">
+          <div class="ep">H2222222</div>
+          <div class="ev">OTH_COMMENT含"(B2B)"</div>
+          <div class="rsn">GREEN B2B_AVAILABLE</div>
+        </div>
+        <div class="erY">
+          <div class="ep">I3333333</div>
+          <div class="ev">OTH_COMMENT含"(P2P)"</div>
+          <div class="rsn">YELLOW P2P_ONLY</div>
+        </div>
+      </div>
+ 
+      <div class="hl" style="margin-top:12px;font-size:10px">⚠️ iv_zparts_b2b_p2p 目前僅支援 Denodo ODBC 存取（RESTful API 申請中）。Auto-GREEN 豁免料號不查詢此表，直接回傳 GREEN，提升效能。</div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ═══════════ SLIDE 8 · Rule-002 Case Example ═══════════ -->
+<div class="slide" id="s8">
   <div class="tag">Case Example 2</div>
   <div class="h1">Rule-002：零件生命週期狀態</div>
-  <div class="sub">CRITICAL 等級 · Phase I · 依 LifeCycle_Phase 值域判斷風險</div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
-
-    <!-- Left: mapping -->
+  <div class="sub">CRITICAL 等級 · Phase I · 依 LifeCycle_Phase 值域判斷風險（2026-02 已確認）</div>
+ 
+  <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:20px;font-size:11px">
+    <!-- Left: Phase mapping -->
     <div>
-      <div style="font-size:13px;font-weight:700;color:#93c5fd;margin-bottom:12px">🗂 LifeCycle_Phase 值域對應（2026-02 已確認）</div>
-
-      <div style="margin-bottom:10px">
-        <div style="font-size:11px;color:#f87171;margin-bottom:5px;display:flex;align-items:center;gap:5px">
-          <div style="width:10px;height:10px;background:#ef4444;border-radius:2px;flex-shrink:0"></div>
-          RED — 停產 / 淘汰（FAIL）
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px;background:rgba(239,68,68,.06);border-radius:7px;border:1px solid rgba(239,68,68,.15)">
-          <span class="pill" style="background:rgba(239,68,68,.14);color:#f87171;border-color:rgba(239,68,68,.25)">Phase Out</span>
-          <span class="pill" style="background:rgba(239,68,68,.14);color:#f87171;border-color:rgba(239,68,68,.25)">Inactive</span>
-          <span class="pill" style="background:rgba(239,68,68,.14);color:#f87171;border-color:rgba(239,68,68,.25)">Discard</span>
-          <span class="pill" style="background:rgba(239,68,68,.14);color:#f87171;border-color:rgba(239,68,68,.25)">Document Obsolete</span>
-          <span class="pill" style="background:rgba(239,68,68,.14);color:#f87171;border-color:rgba(239,68,68,.25)">NULL / blank</span>
-        </div>
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:10px;font-size:10px;color:#93c5fd;font-weight:600">LifeCycle_Phase 風險對應</div>
+ 
+      <div class="card" style="background:rgba(239,68,68,.05);border-left:4px solid #dc2626;padding:10px;margin-bottom:8px">
+        <div style="font-weight:700;color:#f87171;margin-bottom:6px">🔴 RED — Phase Out</div>
+        <div style="font-size:10px;color:#94a3b8">廠商已宣佈停產計畫；Part Number Release 或 Phase Out 最高警戒。</div>
       </div>
-
-      <div style="margin-bottom:10px">
-        <div style="font-size:11px;color:#fbbf24;margin-bottom:5px;display:flex;align-items:center;gap:5px">
-          <div style="width:10px;height:10px;background:#f59e0b;border-radius:2px;flex-shrink:0"></div>
-          YELLOW — 條件許可 / 觀察中（WARN）
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px;background:rgba(245,158,11,.06);border-radius:7px;border:1px solid rgba(245,158,11,.15)">
-          <span class="pillA">NRND</span>
-          <span class="pillA">Hold Shipment</span>
-          <span class="pillA">PVT</span>
-          <span class="pillA">Conditional Approve</span>
-          <span class="pillA">其他未知值</span>
-        </div>
+ 
+      <div class="card" style="background:rgba(239,68,68,.05);border-left:4px solid #dc2626;padding:10px;margin-bottom:8px">
+        <div style="font-weight:700;color:#f87171;margin-bottom:6px">🔴 RED — End of Life</div>
+        <div style="font-size:10px;color:#94a3b8">已進入 EOL 階段；停產在即或已停止供應。</div>
       </div>
-
-      <div style="margin-bottom:16px">
-        <div style="font-size:11px;color:#34d399;margin-bottom:5px;display:flex;align-items:center;gap:5px">
-          <div style="width:10px;height:10px;background:#10b981;border-radius:2px;flex-shrink:0"></div>
-          GREEN — 正常量產（PASS）
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px;background:rgba(16,185,129,.06);border-radius:7px;border:1px solid rgba(16,185,129,.15)">
-          <span class="pillG">M/P（Mass Production）</span>
-          <span class="pillG">Part Approve</span>
-          <span class="pillG">Part Number Release</span>
-        </div>
+ 
+      <div class="card" style="background:rgba(245,158,11,.05);border-left:4px solid #f59e0b;padding:10px;margin-bottom:8px">
+        <div style="font-weight:700;color:#fbbf24;margin-bottom:6px">🟡 YELLOW — NRND</div>
+        <div style="font-size:10px;color:#94a3b8">No Recommended for New Design；不建議用於新設計，但可持續供應。</div>
       </div>
-
-      <div style="font-size:11px;color:#3a4a5e;padding:8px 12px;background:rgba(255,255,255,.02);border-radius:6px;border:1px solid rgba(255,255,255,.04)">
-        ℹ️ 值域已於 2026-02 完整確認，PLM 系統若新增 Phase 類型，需同步更新此對應表
+ 
+      <div class="card" style="background:rgba(245,158,11,.05);border-left:4px solid #f59e0b;padding:10px;margin-bottom:8px">
+        <div style="font-weight:700;color:#fbbf24;margin-bottom:6px">🟡 YELLOW — Declining</div>
+        <div style="font-size:10px;color:#94a3b8">供應逐漸萎縮；用量需監控。</div>
+      </div>
+ 
+      <div class="card" style="background:rgba(16,185,129,.05);border-left:4px solid #10b981;padding:10px;margin-bottom:8px">
+        <div style="font-weight:700;color:#6ee7b7;margin-bottom:6px">🟢 GREEN — Product</div>
+        <div style="font-size:10px;color:#94a3b8">成品在 M/P 階段（Production/Main）；供應穩定，無風險。</div>
+      </div>
+ 
+      <div class="card" style="background:rgba(16,185,129,.05);border-left:4px solid #10b981;padding:10px">
+        <div style="font-weight:700;color:#6ee7b7;margin-bottom:6px">🟢 GREEN — Part Approve</div>
+        <div style="font-size:10px;color:#94a3b8">141 IC/Part 已核准，正常供應中。</div>
       </div>
     </div>
-
-    <!-- Right: examples + dashboard preview -->
+ 
+    <!-- Right: Dashboard + Cases -->
     <div>
-      <div style="font-size:13px;font-weight:700;color:#93c5fd;margin-bottom:12px">🔬 實際案例模擬</div>
-
-      <div class="er erR" style="margin-bottom:4px">
-        <div class="ep">D1111111</div>
-        <div class="ev">Phase = <span style="color:#f87171">"Phase Out"</span></div>
-        <div style="font-size:14px;color:#475569">→</div>
-        <span class="g gR">🔴 RED</span>
-        <div class="rsn">PHASE_PHASEOUT</div>
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:10px;font-size:10px;color:#93c5fd;font-weight:600">12 個檢核狀態 Dashboard</div>
+      <table style="font-size:9px;margin-bottom:12px">
+        <tr><th style="background:rgba(59,130,246,.08)">LifeCycle_Phase</th><th style="background:rgba(59,130,246,.08)">RISK_GRADE</th><th style="background:rgba(59,130,246,.08)">COUNT</th></tr>
+        <tr><td>Phase Out</td><td style="color:#f87171">🔴</td><td>12</td></tr>
+        <tr><td>End of Life</td><td style="color:#f87171">🔴</td><td>145</td></tr>
+        <tr><td>NRND</td><td style="color:#fbbf24">🟡</td><td>856</td></tr>
+        <tr><td>Declining</td><td style="color:#fbbf24">🟡</td><td>234</td></tr>
+        <tr><td>Product</td><td style="color:#34d399">🟢</td><td>3421</td></tr>
+        <tr><td>Part Approve</td><td style="color:#34d399">🟢</td><td>2890</td></tr>
+      </table>
+ 
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:12px;font-size:10px;color:#93c5fd;font-weight:600">案例模擬</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="erR">
+          <div class="ep">ABC123</div>
+          <div class="ev">LifeCycle_Phase = Phase Out</div>
+          <div class="rsn">RED LIFECYCLE_PHASEOUT</div>
+        </div>
+        <div class="erY">
+          <div class="ep">DEF456</div>
+          <div class="ev">LifeCycle_Phase = NRND</div>
+          <div class="rsn">YELLOW LIFECYCLE_NRND</div>
+        </div>
+        <div class="erG">
+          <div class="ep">GHI789</div>
+          <div class="ev">LifeCycle_Phase = Product</div>
+          <div class="rsn">GREEN LIFECYCLE_PRODUCT</div>
+        </div>
       </div>
-      <div style="font-size:11px;color:#4b5e79;margin:2px 0 10px 14px">▸ 廠商已宣告停產，高風險，需立即規劃替代或備料</div>
-
-      <div class="er erY" style="margin-bottom:4px">
-        <div class="ep">E2222222</div>
-        <div class="ev">Phase = <span style="color:#fde68a">"NRND"</span></div>
-        <div style="font-size:14px;color:#475569">→</div>
-        <span class="g gY">🟡 YELLOW</span>
-        <div class="rsn">PHASE_NRND</div>
-      </div>
-      <div style="font-size:11px;color:#4b5e79;margin:2px 0 10px 14px">▸ Not Recommended for New Design，現有設計可用，新設計勿採用</div>
-
-      <div class="er erG" style="margin-bottom:14px">
-        <div class="ep">F3333333</div>
-        <div class="ev">Phase = <span style="color:#6ee7b7">"M/P"</span></div>
-        <div style="font-size:14px;color:#475569">→</div>
-        <span class="g gG">🟢 GREEN</span>
-        <div class="rsn">PHASE_ACTIVE</div>
-      </div>
-
-      <!-- Dashboard preview combining rules -->
-      <div class="card" style="padding:13px 15px">
-        <div style="font-size:12px;font-weight:700;color:#93c5fd;margin-bottom:10px">📊 Dashboard 矩陣預覽（Rule-001 + Rule-002 + Rule-004 綜合）</div>
-        <table>
-          <tr>
-            <th style="text-align:left;width:82px">PART #</th>
-            <th>Rule-001<br><span style="font-weight:400;font-size:10px">EOL日期</span></th>
-            <th>Rule-002<br><span style="font-weight:400;font-size:10px">生命週期</span></th>
-            <th>Rule-004<br><span style="font-weight:400;font-size:10px">替代料</span></th>
-            <th>建議行動</th>
-          </tr>
-          <tr>
-            <td class="mono" style="text-align:left;color:#93c5fd">A1234567</td>
-            <td><span class="g gR" style="font-size:10px;padding:1px 6px">RED</span></td>
-            <td><span class="g gR" style="font-size:10px;padding:1px 6px">RED</span></td>
-            <td><span class="g gY" style="font-size:10px;padding:1px 6px">YELLOW</span></td>
-            <td style="font-size:11px;color:#f87171">⚠ 立即行動</td>
-          </tr>
-          <tr>
-            <td class="mono" style="text-align:left;color:#93c5fd">B2345678</td>
-            <td><span class="g gY" style="font-size:10px;padding:1px 6px">YELLOW</span></td>
-            <td><span class="g gG" style="font-size:10px;padding:1px 6px">GREEN</span></td>
-            <td><span class="g gG" style="font-size:10px;padding:1px 6px">GREEN</span></td>
-            <td style="font-size:11px;color:#fbbf24">📋 持續觀察</td>
-          </tr>
-          <tr>
-            <td class="mono" style="text-align:left;color:#93c5fd">F3333333</td>
-            <td><span class="g gG" style="font-size:10px;padding:1px 6px">GREEN</span></td>
-            <td><span class="g gG" style="font-size:10px;padding:1px 6px">GREEN</span></td>
-            <td><span class="g gG" style="font-size:10px;padding:1px 6px">GREEN</span></td>
-            <td style="font-size:11px;color:#34d399">✓ 無需行動</td>
-          </tr>
-        </table>
-      </div>
+ 
+      <div class="hl" style="font-size:10px">2026-02 值域確認：M/P 用於 Product 階段；Part Number Release/Part Approve 用於 141 IC/Part；其他取決於廠商 Status 欄位。</div>
     </div>
-
   </div>
 </div>
-
-
-<!-- ═══════════ SLIDE 7 · Roadmap & Summary ═══════════ -->
-<div class="slide" id="s7">
-  <div class="tag">Roadmap &amp; Summary</div>
-  <div class="h1">架構演進路線圖　&amp;　重點摘要</div>
-  <div class="sub">從 Phase I 到 Phase III，逐步擴充評估維度，提升精準度</div>
-
-  <div style="display:grid;grid-template-columns:3fr 2fr;gap:22px">
-
-    <!-- Left: roadmap timeline -->
+ 
+<!-- ═══════════ SLIDE 9 · Roadmap & Summary v4.3 ═══════════ -->
+<div class="slide" id="s9">
+  <div class="tag">Roadmap &amp; Summary · v4.3</div>
+  <div class="h1">架構演進路線圖　&amp;　v4.3 重點變更</div>
+  <div class="sub">從 Phase I 到 Phase III，逐步擴充評估維度 · v4.0~v4.3 重要異動</div>
+ 
+  <div style="display:grid;grid-template-columns:3fr 2fr;gap:22px;font-size:11px">
+    <!-- Left: Roadmap -->
     <div>
-      <div style="font-size:13px;font-weight:700;color:#93c5fd;margin-bottom:16px">📅 實作路線圖</div>
-
-      <!-- Phase I -->
-      <div style="display:flex;gap:14px;margin-bottom:14px">
-        <div style="display:flex;flex-direction:column;align-items:center">
-          <div style="width:14px;height:14px;border-radius:50%;background:#10b981;box-shadow:0 0 12px rgba(16,185,129,.5);flex-shrink:0;margin-top:2px"></div>
-          <div style="width:2px;flex:1;background:linear-gradient(#10b981,#f59e0b);margin:4px 0;min-height:40px"></div>
+      <div class="card" style="background:rgba(16,185,129,.08);border-left:4px solid #10b981;padding:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <span class="sdot sA"></span>
+          <span style="font-weight:700;color:#6ee7b7">Phase I — Core Rules (Active ✓)</span>
         </div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#34d399;margin-bottom:6px">Phase I　進行中</div>
-          <div style="display:flex;gap:7px;margin-bottom:7px;flex-wrap:wrap">
-            <span class="pillG">Rule-001 ✓</span>
-            <span class="pillG">Rule-002 ✓</span>
-            <span class="pillG">Rule-004 ✓</span>
-          </div>
-          <div style="font-size:11px;color:#4b5e79;line-height:1.6">使用現有 iv_allparts_info_for_ce，立即可用。覆蓋 <strong style="color:#e2e8f0">EOL 日期品質、生命週期狀態、替代料</strong>三大核心指標。</div>
-        </div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.7">Rule-001 ✓ EOL可信度（含CO_SURVEY_STATUS）· Rule-002 ✓ 生命週期狀態 · Rule-004 ✓ 替代料B2B/P2P。三大核心指標上線，涵蓋 EOL可信度、生命週期狀態、替代料可用性。</div>
       </div>
-
-      <!-- Phase II -->
-      <div style="display:flex;gap:14px;margin-bottom:14px">
-        <div style="display:flex;flex-direction:column;align-items:center">
-          <div style="width:14px;height:14px;border-radius:50%;background:#f59e0b;flex-shrink:0;margin-top:2px"></div>
-          <div style="width:2px;flex:1;background:linear-gradient(#f59e0b,#475569);margin:4px 0;min-height:40px"></div>
+ 
+      <div class="card" style="background:rgba(245,158,11,.08);border-left:4px solid #f59e0b;padding:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <span class="sdot sP"></span>
+          <span style="font-weight:700;color:#fbbf24">Phase II — Extended Rules (Pending)</span>
         </div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#fbbf24;margin-bottom:6px">Phase II　Action 1 廠商回覆完成後啟用</div>
-          <div style="display:flex;gap:7px;margin-bottom:7px;flex-wrap:wrap">
-            <span class="pillA">+ Rule-003</span>
-            <span class="pillA">+ Rule-006</span>
-            <span class="pillA">+ Rule-007 ★</span>
-            <span class="pillN">+ Rule-005（SAP 接入後）</span>
-          </div>
-          <div style="font-size:11px;color:#4b5e79;line-height:1.6">加入<strong style="color:#e2e8f0">廠商視角</strong>：廠商認定的生命週期、資料可信度、PCN/PDN/EOL 通知旗標。Rule-007 具備外部事件自動觸發能力。</div>
-        </div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6;margin-bottom:6px">Action 1 廠商回覆完成後：+Rule-003(PLP推估) +Rule-006(CE信心度) +Rule-009(Roadmap★)</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6;margin-bottom:6px">中分類字典+SE API就緒後：+Rule-007★(中分類均值) +Rule-008★(SE API) → +Rule-C001★(Best EOL Cascade)</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6">SAP接入後：+Rule-005(年用量)</div>
+        <div style="font-size:10px;color:#34d399;margin-top:6px;font-weight:600">BEST_EST_EOL覆蓋率大幅提升，CONFIDENCE_LEVEL供 Dashboard 可信度標示</div>
       </div>
-
-      <!-- Phase III -->
-      <div style="display:flex;gap:14px">
-        <div style="display:flex;flex-direction:column;align-items:center">
-          <div style="width:14px;height:14px;border-radius:50%;background:#475569;flex-shrink:0;margin-top:2px"></div>
+ 
+      <div class="card" style="background:rgba(71,85,105,.04);border-left:4px solid #475569;padding:12px;opacity:.55">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+          <span class="sdot sF"></span>
+          <span style="font-weight:700;color:#94a3b8">Phase III — Advanced Chains (Future)</span>
         </div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#64748b;margin-bottom:6px">Phase III　Phase I/II 穩定後評估（2026 H2）</div>
-          <div style="display:flex;gap:7px;margin-bottom:7px;flex-wrap:wrap">
-            <span class="pillN">Rule-008</span>
-            <span class="pillN">Rule-009</span>
-            <span class="pillN">Rule-010（IND）</span>
-            <span class="pillN">Rule-011（PWR）</span>
-          </div>
-          <div style="font-size:11px;color:#3a4a5e;line-height:1.6">進階加權分析，屆時評估是否改採「鏈式串接模式」（ADR-001）。Rule-010/011 為類別專屬規則（其他料號輸出 N/A）。</div>
+        <div style="font-size:10px;color:#94a3b8;line-height:1.6">Rule-010~013 鏈式串接模式（Phase I/II 穩定後評估，參考 ADR-001）。支援 Lifecycle Curve × Diff(Yrs) 評估，類別平台加權分析。</div>
+      </div>
+    </div>
+ 
+    <!-- Right: v4.0~v4.3 Changes -->
+    <div>
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:10px;font-size:10px;color:#93c5fd;font-weight:600">版本異動摘要</div>
+      <div class="card" style="padding:11px;background:rgba(59,130,246,.05);border-color:rgba(59,130,246,.15)">
+        <div style="font-weight:600;color:#93c5fd;font-size:10px;margin-bottom:8px">v4.0 (2026-03)</div>
+        <div style="font-size:9px;color:#94a3b8;line-height:1.6;margin-bottom:6px">新增Rule-C001組合規則、Rule-007中分類推估、Rule-008 SE API；Rule-007~011重新編號至9~13；Rule-001整合CO_SURVEY_STATUS；Rule-003擴充PLP廠商規格。</div>
+ 
+        <div style="font-weight:600;color:#93c5fd;font-size:10px;margin-bottom:8px;margin-top:8px">v4.1 (2026-03-20)</div>
+        <div style="font-size:9px;color:#94a3b8;line-height:1.6;margin-bottom:6px">Rule-004全面改版：B2B/P2P二階邏輯、iv_zparts_b2b_p2p ODBC、Auto-GREEN機制(A1∧A2)、Part_Cat適用範圍篩選。</div>
+ 
+        <div style="font-weight:600;color:#93c5fd;font-size:10px;margin-bottom:8px;margin-top:8px">v4.3 (2026-03-26)</div>
+        <div style="font-size:9px;color:#94a3b8;line-height:1.6">Python實作對齊（F1-F7 Fallback條件）；Auto-GREEN修正(A1 AND A2)；Part_Cat篩選移至RuleConfigurationMatrix.json。</div>
+      </div>
+ 
+      <div style="background:rgba(59,130,246,.06);border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:9px 11px;margin-bottom:10px;margin-top:12px;font-size:10px;color:#93c5fd;font-weight:600">規則統計</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="card" style="text-align:center;padding:12px;background:rgba(16,185,129,.05);border-color:rgba(16,185,129,.15)">
+          <div style="font-size:18px;font-weight:700;color:#6ee7b7">3</div>
+          <div style="font-size:9px;color:#94a3b8;margin-top:4px">Phase I Active</div>
+        </div>
+        <div class="card" style="text-align:center;padding:12px;background:rgba(245,158,11,.05);border-color:rgba(245,158,11,.15)">
+          <div style="font-size:18px;font-weight:700;color:#fbbf24">7</div>
+          <div style="font-size:9px;color:#94a3b8;margin-top:4px">Phase II Pending</div>
+        </div>
+        <div class="card" style="text-align:center;padding:12px;background:rgba(71,85,105,.04);border-color:rgba(71,85,105,.12);opacity:.55">
+          <div style="font-size:18px;font-weight:700;color:#94a3b8">4</div>
+          <div style="font-size:9px;color:#64748b;margin-top:4px">Phase III Future</div>
+        </div>
+        <div class="card" style="text-align:center;padding:12px;background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.2)">
+          <div style="font-size:18px;font-weight:700;color:#93c5fd">14</div>
+          <div style="font-size:9px;color:#94a3b8;margin-top:4px">Total (13+C001)</div>
         </div>
       </div>
     </div>
-
-    <!-- Right: tables + metrics -->
-    <div>
-      <div style="font-size:13px;font-weight:700;color:#93c5fd;margin-bottom:12px">📋 關鍵 Tables / Views 參照</div>
-      <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:18px">
-        <div style="padding:8px 12px;background:rgba(6,182,212,.08);border-radius:7px;border:1px solid rgba(6,182,212,.15)">
-          <div class="mono" style="font-size:11px;font-weight:700;color:#67e8f9">vw_ce_rule_registry</div>
-          <div style="font-size:11px;color:#4b5e79;margin-top:2px">所有規則的中央登記表</div>
-        </div>
-        <div style="padding:8px 12px;background:rgba(6,182,212,.08);border-radius:7px;border:1px solid rgba(6,182,212,.15)">
-          <div class="mono" style="font-size:11px;font-weight:700;color:#67e8f9">vw_ce_rule_check_summary</div>
-          <div style="font-size:11px;color:#4b5e79;margin-top:2px">UNION ALL 彙總，Dashboard 主查詢</div>
-        </div>
-        <div style="padding:8px 12px;background:rgba(59,130,246,.08);border-radius:7px;border:1px solid rgba(59,130,246,.15)">
-          <div class="mono" style="font-size:11px;font-weight:700;color:#93c5fd">iv_allparts_info_for_ce</div>
-          <div style="font-size:11px;color:#4b5e79;margin-top:2px">PLM/BOM 主數據（Phase I 核心）</div>
-        </div>
-        <div style="padding:8px 12px;background:rgba(245,158,11,.07);border-radius:7px;border:1px solid rgba(245,158,11,.15);opacity:.8">
-          <div class="mono" style="font-size:11px;font-weight:700;color:#fbbf24">mv_ce_supplier_lifecycle_feedback</div>
-          <div style="font-size:11px;color:#4b5e79;margin-top:2px">Action 1 廠商回覆落地表（Phase II）</div>
-        </div>
-      </div>
-
-      <!-- Metrics -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div style="text-align:center;padding:12px 8px;background:rgba(16,185,129,.08);border-radius:9px;border:1px solid rgba(16,185,129,.15)">
-          <div style="font-size:30px;font-weight:800;color:#34d399">3</div>
-          <div style="font-size:11px;color:#4b5e79;margin-top:2px">Phase I Active</div>
-        </div>
-        <div style="text-align:center;padding:12px 8px;background:rgba(245,158,11,.07);border-radius:9px;border:1px solid rgba(245,158,11,.15)">
-          <div style="font-size:30px;font-weight:800;color:#fbbf24">4</div>
-          <div style="font-size:11px;color:#4b5e79;margin-top:2px">Phase II Pending</div>
-        </div>
-        <div style="text-align:center;padding:12px 8px;background:rgba(71,85,105,.12);border-radius:9px;border:1px solid rgba(71,85,105,.2)">
-          <div style="font-size:30px;font-weight:800;color:#94a3b8">4</div>
-          <div style="font-size:11px;color:#4b5e79;margin-top:2px">Phase III Future</div>
-        </div>
-        <div style="text-align:center;padding:12px 8px;background:rgba(59,130,246,.08);border-radius:9px;border:1px solid rgba(59,130,246,.15)">
-          <div style="font-size:30px;font-weight:800;color:#93c5fd">11</div>
-          <div style="font-size:11px;color:#4b5e79;margin-top:2px">Total Registered</div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
-
-</div><!-- /slides -->
-
-<!-- Nav -->
-<div class="nav" id="nav">
-  <button class="nbtn" onclick="go(-1)">‹ Prev</button>
-  <div id="dots" style="display:flex;gap:8px"></div>
-  <button class="nbtn" onclick="go(1)">Next ›</button>
-  <button class="nbtn" id="abtn" onclick="toggleAuto()" style="margin-left:8px;min-width:64px">⏵ Auto</button>
+ 
 </div>
-
+ 
+<!-- Navigation UI -->
+<div class="nav">
+  <button class="nbtn" id="pbtn">← PREV</button>
+  <div id="dots" style="display:flex;gap:4px"></div>
+  <button class="nbtn" id="nbtn">NEXT →</button>
+  <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8">
+    <input type="checkbox" id="auto" style="width:12px;height:12px">
+    Auto
+  </label>
+</div>
+ 
 <script>
-const N=7;let cur=1,auto=false,timer=null;
-
-function go(d){
-  const from=document.getElementById('s'+cur);
-  from.classList.remove('active');from.classList.add('exit');
-  setTimeout(()=>from.classList.remove('exit'),620);
-  cur+=d;if(cur<1)cur=N;if(cur>N)cur=1;
-  const to=document.getElementById('s'+cur);
-  to.classList.add('active');
-  document.getElementById('ctr').textContent=cur+' / '+N;
-  document.getElementById('prog').style.width=(cur/N*100)+'%';
-  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i+1===cur));
-  if(auto)reset();
+const N = 9;
+let slide = 0, timer;
+ 
+function go(i) {
+  const s = document.querySelectorAll('.slide');
+  s[slide].classList.remove('active');
+  s[slide].classList.add('exit');
+  slide = (i + N) % N;
+  s[slide].classList.remove('exit');
+  s[slide].classList.add('active');
+  document.querySelectorAll('.dot').forEach((d, j) => d.classList.toggle('on', j === slide));
+  document.getElementById('ctr').textContent = (slide + 1) + ' / ' + N;
+  document.getElementById('prog').style.width = ((slide + 1) / N * 100) + '%';
 }
-
-function toggleAuto(){
-  auto=!auto;
-  const b=document.getElementById('abtn');
-  if(auto){b.textContent='⏸ Pause';b.classList.add('on');reset();}
-  else{b.textContent='⏵ Auto';b.classList.remove('on');clearTimeout(timer);}
+ 
+function toggleAuto() {
+  const auto = document.getElementById('auto').checked;
+  clearInterval(timer);
+  if (auto) timer = setInterval(() => go(slide + 1), 9000);
 }
-
-function reset(){clearTimeout(timer);timer=setTimeout(()=>{if(auto){go(1);}},9000);}
-
-// dots
-const dc=document.getElementById('dots');
-for(let i=1;i<=N;i++){
-  const d=document.createElement('div');
-  d.className='dot'+(i===1?' on':'');
-  const j=i;d.onclick=()=>{go(j-cur);};
-  dc.appendChild(d);
+ 
+function reset() {
+  slide = 0;
+  document.querySelectorAll('.slide').forEach((s, j) => {
+    s.classList.toggle('active', j === 0);
+    s.classList.remove('exit');
+  });
+  document.querySelectorAll('.dot').forEach((d, j) => d.classList.toggle('on', j === 0));
+  document.getElementById('ctr').textContent = '1 / ' + N;
+  document.getElementById('prog').style.width = '1%';
 }
-
-// keyboard
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight'||e.key===' ')go(1);
-  if(e.key==='ArrowLeft')go(-1);
+ 
+// Init dots
+const dots = document.getElementById('dots');
+for (let i = 0; i < N; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === 0 ? ' on' : '');
+  dot.onclick = () => go(i);
+  dots.appendChild(dot);
+}
+ 
+document.getElementById('pbtn').onclick = () => go(slide - 1);
+document.getElementById('nbtn').onclick = () => go(slide + 1);
+document.getElementById('auto').onchange = toggleAuto;
+ 
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') go(slide - 1);
+  if (e.key === 'ArrowRight') go(slide + 1);
+  if (e.key === ' ') toggleAuto();
+  if (e.key === 'r' || e.key === 'R') reset();
 });
-
-// init
-document.getElementById('prog').style.width=(1/N*100)+'%';
+ 
+reset();
 </script>
+ 
 </body>
 </html>
