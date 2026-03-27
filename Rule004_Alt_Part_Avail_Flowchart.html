@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rule-004 替代料可用性 — 檢核流程圖</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Microsoft JhengHei', Arial, sans-serif;
+      background: #f4f6f9;
+      padding: 32px 24px;
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    header h1 {
+      font-size: 22px;
+      color: #1a2340;
+      letter-spacing: 0.5px;
+    }
+    header p {
+      font-size: 13px;
+      color: #5a6a85;
+      margin-top: 6px;
+    }
+    .badge {
+      display: inline-block;
+      background: #e8ecf5;
+      border: 1px solid #c4cfe8;
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 12px;
+      color: #3a4a70;
+      margin-top: 8px;
+      margin-right: 6px;
+    }
+    .badge-warn {
+      background: #fff4e5;
+      border-color: #f5a623;
+      color: #7a4a00;
+    }
+    .chart-wrap {
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+    svg text { font-family: 'Segoe UI', 'Microsoft JhengHei', Arial, sans-serif; }
+
+    /* Sub-condition panels */
+    .sub-panels {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .sub-panel {
+      background: white;
+      border-radius: 10px;
+      padding: 14px 18px;
+      border: 1.5px solid #d0d8ee;
+      min-width: 220px;
+      max-width: 280px;
+      box-shadow: 0 2px 6px #0000000f;
+    }
+    .sub-panel h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #3050d0;
+      margin-bottom: 8px;
+      border-bottom: 1.5px solid #e0e6f5;
+      padding-bottom: 5px;
+    }
+    .sub-panel ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sub-panel ul li {
+      font-size: 12px;
+      color: #444;
+      padding: 3px 0;
+      border-bottom: 1px dashed #eee;
+      line-height: 1.5;
+    }
+    .sub-panel ul li:last-child { border-bottom: none; }
+    .sub-panel .cond-tag {
+      display: inline-block;
+      background: #e8ecf5;
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #3050d0;
+      margin-right: 4px;
+    }
+    .or-tag {
+      display: inline-block;
+      background: #fef5e4;
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #8a5500;
+      margin: 4px 0;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #333;
+    }
+    .legend-box {
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      border: 1.5px solid rgba(0,0,0,.15);
+    }
+    .lg-start   { background: #4a6cf7; }
+    .lg-diamond { background: #fff4c2; border-color: #e6b800; }
+    .lg-red     { background: #fde8e8; border-color: #e05252; }
+    .lg-yellow  { background: #fff8e1; border-color: #f5a623; }
+    .lg-green   { background: #e6f9ec; border-color: #34a853; }
+    .lg-grey    { background: #f0f0f0; border-color: #aaa; }
+
+    footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 12px;
+      color: #8a9ab8;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Rule-004：替代料可用性檢核演算法</h1>
+  <p>Rule-004-Alt_Part_Avail ｜ Source: <code>iv_allparts_info_for_ce</code> + <code>iv_zparts_b2b_p2p</code>(ODBC) ｜ Output: <code>vw_ce_rule_004_alt_part</code></p>
+  <span class="badge">Phase I ｜ SEVERITY: MAJOR ｜ IS_ACTIVE: ✅ TRUE</span>
+  <span class="badge badge-warn">⚠️ iv_zparts_b2b_p2p 僅支援 ODBC（RESTful API 申請中）</span>
+</header>
+
+<div class="chart-wrap">
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="870" viewBox="0 0 940 870">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#5a6a85"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#00000018"/>
+    </filter>
+  </defs>
+
+  <!-- ===== START ===== -->
+  <rect x="330" y="20" width="280" height="50" rx="25" ry="25"
+        fill="#4a6cf7" stroke="#3050d0" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="470" y="48" text-anchor="middle" fill="white" font-size="14" font-weight="600">開始 START</text>
+  <text x="470" y="63" text-anchor="middle" fill="#c8d4ff" font-size="11">輸入：PART_CAT、Item_Number、CO_MATNR_CAT、OTH_REPLACED_BY、OTH_COMMENT</text>
+
+  <!-- Arrow down -->
+  <line x1="470" y1="70" x2="470" y2="110" stroke="#5a6a85" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+  <!-- ===== STEP 0: RuleConfigurationMatrix 外層控制 ===== -->
+  <rect x="310" y="110" width="320" height="40" rx="8"
+        fill="#eef0fa" stroke="#a0aad0" stroke-width="1.4" filter="url(#shadow)"/>
+  <text x="470" y="128" text-anchor="middle" fill="#3a4a80" font-size="11.5" font-weight="600">⚙️ evaluate_rules() 主循環</text>
+  <text x="470" y="143" text-anchor="middle" fill="#6070a0" font-size="10.5">比對 RuleConfigurationMatrix.json → 取得 PART_CAT 範圍</text>
+
+  <!-- Arrow down -->
+  <line x1="470" y1="150" x2="470" y2="190" stroke="#5a6a85" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+  <!-- ===== DECISION 1: Part_Cat in scope ===== -->
+  <polygon points="470,185 630,235 470,285 310,235"
+           fill="#fff4c2" stroke="#e6b800" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="470" y="224" text-anchor="middle" fill="#5a4000" font-size="12" font-weight="600">PART_CAT ∈ 適用範圍？</text>
+  <text x="470" y="240" text-anchor="middle" fill="#5a4000" font-size="10.5">{141 IC/Part, 132 Transistor,</text>
+  <text x="470" y="254" text-anchor="middle" fill="#5a4000" font-size="10.5">130 Diode, 1212 Bead Core}</text>
+
+  <!-- NO → left → GREY N/A -->
+  <line x1="310" y1="235" x2="220" y2="235" stroke="#5a6a85" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="263" y="228" text-anchor="middle" fill="#c0392b" font-size="11" font-weight="600">NO</text>
+  <!-- GREY box -->
+  <rect x="30" y="205" width="190" height="60" rx="8"
+        fill="#f0f0f0" stroke="#aaa" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="125" y="226" text-anchor="middle" fill="#444" font-size="12" font-weight="700">⬜ N/A — 灰燈</text>
+  <text x="125" y="242" text-anchor="middle" fill="#555" font-size="11">RULE_REASON: NOT_APPLICABLE</text>
+  <text x="125" y="256" text-anchor="middle" fill="#777" font-size="10">不計入 Worst Grade 統計</text>
+
+  <!-- YES → down -->
+  <line x1="470" y1="285" x2="470" y2="330" stroke="#5a6a85" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="455" y="314" text-anchor="end" fill="#27ae60" font-size="11" font-weight="600">YES</text>
+
+  <!-- ===== DECISION 2: Auto-GREEN ===== -->
+  <polygon points="470,325 615,370 470,415 325,370"
+           fill="#fff4c2" stroke="#e6b800" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="470" y="358" text-anchor="middle" fill="#5a4000" font-size="12" font-weight="600">Auto-GREEN？</text>
+  <text x="470" y="374" text-anchor="middle" fill="#5a4000" font-size="10.5">A1: len(item_number)==10</text>
+  <text x="470" y="388" text-anchor="middle" fill="#5a4000" font-size="10.5">OR A2: co_matnr_cat ∈ 豁免清單</text>
+
+  <!-- YES → right → GREEN AUTO -->
+  <line x1="615" y1="370" x2="700" y2="370" stroke="#5a6a85" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="654" y="363" text-anchor="middle" fill="#27ae60" font-size="11" font-weight="600">YES</text>
+  <!-- GREEN box auto -->
+  <rect x="700" y="340" width="210" height="60" rx="8"
+        fill="#e6f9ec" stroke="#34a853" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="805" y="361" text-anchor="middle" fill="#1a5c2a" font-size="12" font-weight="700">🟢 GREEN — PASS</text>
+  <text x="805" y="377" text-anchor="middle" fill="#1a5c2a" font-size="11">RULE_REASON: ALT_AUTO_MANAGED</text>
+  <text x="805" y="391" text-anchor="middle" fill="#2e7d32" font-size="10">研華主動管理，必然建有替代料</text>
+
+  <!-- NO → down -->
+  <line x1="470" y1="415" x2="470" y2="460" stroke="#5a6a85" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="455" y="444" text-anchor="end" fill="#c0392b" font-size="11" font-weight="600">NO</text>
+
+  <!-- ===== DECISION 3: B2B ===== -->
+  <polygon points="470,455 615,500 470,545 325,500"
+           fill="#fff4c2" stroke="#e6b800" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="470" y="489" text-anchor="middle" fill="#5a4000" font-size="12" font-weight="600">有 B2B 替代料？</text>
+  <text x="470" y="505" text-anchor="middle" fill="#5a4000" font-size="10.5">B1 OR B2 OR B3 任一成立</text>
+  <text x="470" y="519" text-anchor="middle" fill="#888" font-size="10">（直接替代，無需修改周邊）</text>
+
+  <!-- YES → right → GREEN B2B -->
+  <line x1="615" y1="500" x2="700" y2="500" stroke="#5a6a85" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="654" y="493" text-anchor="middle" fill="#27ae60" font-size="11" font-weight="600">YES</text>
+  <!-- GREEN box B2B -->
+  <rect x="700" y="470" width="210" height="60" rx="8"
+        fill="#e6f9ec" stroke="#34a853" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="805" y="491" text-anchor="middle" fill="#1a5c2a" font-size="12" font-weight="700">🟢 GREEN — PASS</text>
+  <text x="805" y="507" text-anchor="middle" fill="#1a5c2a" font-size="11">RULE_REASON: ALT_B2B_AVAILABLE</text>
+  <text x="805" y="521" text-anchor="middle" fill="#2e7d32" font-size="10">Ball-to-Ball，可直接替換</text>
+
+  <!-- NO → down -->
+  <line x1="470" y1="545" x2="470" y2="590" stroke="#5a6a85" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="455" y="574" text-anchor="end" fill="#c0392b" font-size="11" font-weight="600">NO</text>
+
+  <!-- ===== DECISION 4: P2P ===== -->
+  <polygon points="470,585 615,630 470,675 325,630"
+           fill="#fff4c2" stroke="#e6b800" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="470" y="619" text-anchor="middle" fill="#5a4000" font-size="12" font-weight="600">有 P2P 替代料？</text>
+  <text x="470" y="635" text-anchor="middle" fill="#5a4000" font-size="10.5">P1 OR P2 任一成立</text>
+  <text x="470" y="649" text-anchor="middle" fill="#888" font-size="10">（Pin 腳相同，但需驗證周邊）</text>
+
+  <!-- YES → right → YELLOW P2P -->
+  <line x1="615" y1="630" x2="700" y2="630" stroke="#5a6a85" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="654" y="623" text-anchor="middle" fill="#27ae60" font-size="11" font-weight="600">YES</text>
+  <!-- YELLOW box P2P -->
+  <rect x="700" y="600" width="210" height="60" rx="8"
+        fill="#fff8e1" stroke="#f5a623" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="805" y="621" text-anchor="middle" fill="#7a4a00" font-size="12" font-weight="700">🟡 YELLOW — WARN</text>
+  <text x="805" y="637" text-anchor="middle" fill="#7a4a00" font-size="11">RULE_REASON: ALT_P2P_ONLY</text>
+  <text x="805" y="651" text-anchor="middle" fill="#8a6000" font-size="10">Pin-to-Pin，需工程驗證後替換</text>
+
+  <!-- NO → down → RED -->
+  <line x1="470" y1="675" x2="470" y2="720" stroke="#5a6a85" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <text x="455" y="704" text-anchor="end" fill="#c0392b" font-size="11" font-weight="600">NO</text>
+
+  <!-- RED box final -->
+  <rect x="355" y="720" width="230" height="60" rx="8"
+        fill="#fde8e8" stroke="#e05252" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="470" y="741" text-anchor="middle" fill="#b71c1c" font-size="12" font-weight="700">🔴 RED — FAIL</text>
+  <text x="470" y="757" text-anchor="middle" fill="#7b1c1c" font-size="11">RULE_REASON: ALT_NONE</text>
+  <text x="470" y="771" text-anchor="middle" fill="#7b1c1c" font-size="10">無任何替代料，停產風險極高</text>
+
+  <!-- ===== PRIORITY LABEL ===== -->
+  <!-- left side vertical label -->
+  <rect x="5" y="190" width="18" height="500" rx="4" fill="#e8ecf5" stroke="#c4cfe8" stroke-width="1"/>
+  <text x="14" y="448" text-anchor="middle" fill="#3a4a80" font-size="10" font-weight="700"
+        transform="rotate(-90, 14, 448)">判 斷 優 先 序 ↓  Part_Cat 篩選 → Auto-GREEN → B2B → P2P</text>
+
+  <!-- Separator line between decisions -->
+  <line x1="30" y1="460" x2="290" y2="460" stroke="#d0d8ee" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="36" y="456" fill="#9aaac8" font-size="10">B2B 判斷層</text>
+  <line x1="30" y1="590" x2="290" y2="590" stroke="#d0d8ee" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="36" y="586" fill="#9aaac8" font-size="10">P2P 判斷層</text>
+
+  <!-- ===== RESULT SUMMARY TABLE at bottom ===== -->
+  <rect x="30" y="800" width="880" height="58" rx="8" fill="#f8faff" stroke="#c4cfe8" stroke-width="1.2"/>
+  <text x="44" y="817" fill="#3a4a80" font-size="11" font-weight="700">輸出結果彙整：</text>
+  <!-- cols -->
+  <text x="160" y="817" fill="#888" font-size="10.5" font-weight="600">條件</text>
+  <text x="310" y="817" fill="#888" font-size="10.5" font-weight="600">RULE_STATUS</text>
+  <text x="450" y="817" fill="#888" font-size="10.5" font-weight="600">RULE_REASON</text>
+  <text x="640" y="817" fill="#888" font-size="10.5" font-weight="600">RISK_GRADE</text>
+  <text x="760" y="817" fill="#888" font-size="10.5" font-weight="600">計入 Worst Grade</text>
+  <!-- rows -->
+  <text x="44"  y="834" fill="#555" font-size="10">Part_Cat 不適用</text>
+  <text x="160" y="834" fill="#555" font-size="10">N/A</text>
+  <text x="310" y="834" fill="#555" font-size="10">N/A</text>
+  <text x="450" y="834" fill="#555" font-size="10">NOT_APPLICABLE</text>
+  <text x="640" y="834" fill="#999" font-size="10">⬜ N/A</text>
+  <text x="760" y="834" fill="#c0392b" font-size="10">❌ 不計入</text>
+
+  <text x="44"  y="848" fill="#27ae60" font-size="10">Auto-GREEN（A1/A2）</text>
+  <text x="160" y="848" fill="#27ae60" font-size="10">PASS</text>
+  <text x="310" y="848" fill="#27ae60" font-size="10">PASS</text>
+  <text x="450" y="848" fill="#27ae60" font-size="10">ALT_AUTO_MANAGED</text>
+  <text x="640" y="848" fill="#27ae60" font-size="10">🟢 GREEN</text>
+  <text x="760" y="848" fill="#27ae60" font-size="10">✅ 計入</text>
+
+  <line x1="30" y1="852" x2="910" y2="852" stroke="#e0e6f5" stroke-width="1"/>
+  <text x="44"  y="850" fill="#888" font-size="9">              B2B → GREEN/PASS/ALT_B2B_AVAILABLE  ｜  P2P → YELLOW/WARN/ALT_P2P_ONLY  ｜  無替代 → RED/FAIL/ALT_NONE（皆計入）</text>
+</svg>
+</div>
+
+<!-- Sub-condition detail panels -->
+<div class="sub-panels">
+  <div class="sub-panel">
+    <h3>🟢 Auto-GREEN 豁免條件（A1 OR A2）</h3>
+    <ul>
+      <li><span class="cond-tag">A1</span> <code>len(item_number) == 10</code><br>
+          → 10 碼料號（研華主動管理格式）</li>
+      <div class="or-tag">OR</div>
+      <li><span class="cond-tag">A2</span> <code>co_matnr_cat</code> ∈ {TKR|TKFR, TKR|SFTK, TKR|ASTK, TNR|TNFR, CSR|CSRX, RAY|TKRA, RAY|SFKA, MCC|MLCC, MCC|RFMC, CAY|CAYX}
+      </li>
+    </ul>
+  </div>
+
+  <div class="sub-panel">
+    <h3>🟢 B2B 判斷條件（任一成立）</h3>
+    <ul>
+      <li><span class="cond-tag">B1</span> <code>OTH_REPLACED_BY</code> 非空，且包含以 <code>1</code> 開頭的研華料號</li>
+      <div class="or-tag">OR</div>
+      <li><span class="cond-tag">B2</span> <code>iv_zparts_b2b_p2p</code>（ODBC）有對應 <code>BB_Group_ID</code></li>
+      <div class="or-tag">OR</div>
+      <li><span class="cond-tag">B3</span> <code>OTH_COMMENT</code> 包含文字 <code>"(B2B)"</code></li>
+    </ul>
+  </div>
+
+  <div class="sub-panel">
+    <h3>🟡 P2P 判斷條件（任一成立）</h3>
+    <ul>
+      <li><span class="cond-tag">P1</span> <code>OTH_COMMENT</code> 包含文字 <code>"(P2P)"</code></li>
+      <div class="or-tag">OR</div>
+      <li><span class="cond-tag">P2</span> <code>iv_zparts_b2b_p2p</code>（ODBC）有對應 <code>P2P_Group_ID</code></li>
+    </ul>
+  </div>
+
+  <div class="sub-panel">
+    <h3>⬜ 適用 Part_Cat（§8.2）</h3>
+    <ul>
+      <li>✅ 141 IC/Part</li>
+      <li>✅ 132 Transistor</li>
+      <li>✅ 130 Diode</li>
+      <li>✅ 1212 Bead Core</li>
+      <li style="color:#aaa">⬜ 其他 Part_Cat → N/A，不計入 Worst Grade</li>
+    </ul>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-box lg-start"></div>開始節點</div>
+  <div class="legend-item"><div class="legend-box lg-diamond"></div>條件判斷（Decision）</div>
+  <div class="legend-item"><div class="legend-box lg-grey"></div>⬜ N/A 灰燈（不計入）</div>
+  <div class="legend-item"><div class="legend-box lg-red"></div>🔴 RED — FAIL（高風險）</div>
+  <div class="legend-item"><div class="legend-box lg-yellow"></div>🟡 YELLOW — WARN（警示）</div>
+  <div class="legend-item"><div class="legend-box lg-green"></div>🟢 GREEN — PASS（通過）</div>
+</div>
+
+<footer>
+  Rule-004-Alt_Part_Avail v4.1 ｜ Rule Registry Architecture v4.0 ｜ 96階BOM風險評估系統 ｜ 2026-03-26
+</footer>
+
+</body>
+</html>
