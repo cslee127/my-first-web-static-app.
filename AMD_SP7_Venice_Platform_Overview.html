@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMD EPYC "Venice" SP7 Platform Overview</title>
+<style>
+  :root {
+    --amd-red: #ED1C24;
+    --amd-dark: #1a1a2e;
+    --amd-navy: #16213e;
+    --amd-blue: #0f3460;
+    --amd-accent: #e94560;
+    --amd-green: #00b09b;
+    --amd-purple: #7c3aed;
+    --amd-orange: #f59e0b;
+    --text-light: #e2e8f0;
+    --text-muted: #94a3b8;
+    --card-bg: rgba(255,255,255,0.05);
+    --card-border: rgba(255,255,255,0.1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--amd-dark);
+    color: var(--text-light);
+    overflow-x: hidden;
+  }
+
+  /* Navigation */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(26,26,46,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(237,28,36,0.3);
+    padding: 0 2rem;
+  }
+  nav ul {
+    display: flex; list-style: none; gap: 0; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav ul::-webkit-scrollbar { display: none; }
+  nav ul li a {
+    display: block; padding: 1rem 1.2rem;
+    color: var(--text-muted); text-decoration: none;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; white-space: nowrap;
+    transition: color 0.2s, border-bottom 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+  nav ul li a:hover, nav ul li a.active {
+    color: var(--amd-red);
+    border-bottom-color: var(--amd-red);
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 40%, #16213e 70%, #0f3460 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden; padding-top: 60px;
+  }
+  .hero-bg-grid {
+    position: absolute; inset: 0; opacity: 0.05;
+    background-image: linear-gradient(rgba(237,28,36,0.5) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(237,28,36,0.5) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  .hero-content {
+    text-align: center; z-index: 10; padding: 2rem;
+    max-width: 1100px;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--amd-red), #ff6b35);
+    color: white; font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.35rem 1rem; border-radius: 20px;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    font-weight: 800; line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, #e2e8f0 50%, var(--amd-red) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    color: var(--text-muted); margin-bottom: 2rem; font-weight: 400;
+  }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 1.5rem;
+    flex-wrap: wrap; margin-top: 2.5rem;
+  }
+  .hero-stat {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 1.2rem 1.8rem;
+    backdrop-filter: blur(10px); text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+  .hero-stat:hover {
+    transform: translateY(-3px);
+    border-color: var(--amd-red);
+  }
+  .hero-stat .val {
+    font-size: 2rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--amd-red), #ff9500);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-stat .lbl {
+    font-size: 0.72rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.3rem;
+  }
+  .hero-tag-row {
+    display: flex; justify-content: center; gap: 0.6rem;
+    flex-wrap: wrap; margin-top: 1.5rem;
+  }
+  .tag {
+    background: rgba(237,28,36,0.15);
+    border: 1px solid rgba(237,28,36,0.3);
+    color: #fca5a5; font-size: 0.72rem; font-weight: 600;
+    padding: 0.3rem 0.8rem; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* Sections */
+  section {
+    padding: 5rem 2rem; max-width: 1300px; margin: 0 auto;
+    scroll-margin-top: 60px;
+  }
+  .section-label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--amd-red);
+    margin-bottom: 0.6rem;
+  }
+  h2 {
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    font-weight: 800; margin-bottom: 0.8rem;
+    background: linear-gradient(135deg, #fff, #cbd5e1);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .section-desc {
+    color: var(--text-muted); font-size: 0.95rem;
+    max-width: 700px; line-height: 1.6; margin-bottom: 3rem;
+  }
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(237,28,36,0.4), transparent);
+    margin: 0 0 0;
+  }
+
+  /* Cards grid */
+  .cards { display: grid; gap: 1.2rem; }
+  .cards-2 { grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); }
+  .cards-3 { grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); }
+  .cards-4 { grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px; padding: 1.5rem;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    cursor: default;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(237,28,36,0.4);
+    box-shadow: 0 8px 30px rgba(237,28,36,0.15);
+  }
+  .card-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 1rem;
+  }
+  .card h3 {
+    font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff;
+  }
+  .card p, .card li {
+    font-size: 0.82rem; color: var(--text-muted); line-height: 1.55;
+  }
+  .card ul { padding-left: 1rem; }
+  .card ul li { margin-bottom: 0.3rem; }
+  .highlight { color: #f87171; font-weight: 600; }
+  .highlight-green { color: #34d399; font-weight: 600; }
+  .highlight-orange { color: #fbbf24; font-weight: 600; }
+  .highlight-blue { color: #60a5fa; font-weight: 600; }
+
+  /* Architecture SVG diagram */
+  .arch-wrapper {
+    background: linear-gradient(135deg, rgba(15,52,96,0.4), rgba(22,33,62,0.6));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px; padding: 2rem;
+    overflow-x: auto;
+  }
+
+  /* Comparison table */
+  .compare-wrap { overflow-x: auto; border-radius: 16px; }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  thead tr {
+    background: linear-gradient(135deg, rgba(237,28,36,0.2), rgba(15,52,96,0.3));
+  }
+  thead th {
+    padding: 1rem 1.2rem; text-align: left;
+    font-size: 0.8rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    border-bottom: 2px solid rgba(237,28,36,0.4);
+    color: #e2e8f0;
+  }
+  tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.15s;
+  }
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  tbody td { padding: 0.85rem 1.2rem; color: var(--text-muted); }
+  tbody td:first-child { color: #e2e8f0; font-weight: 600; }
+  .new-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff; font-size: 0.6rem; font-weight: 700;
+    padding: 0.15rem 0.45rem; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    vertical-align: middle; margin-left: 0.4rem;
+  }
+  .up-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #059669, #047857);
+    color: #fff; font-size: 0.6rem; font-weight: 700;
+    padding: 0.15rem 0.45rem; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    vertical-align: middle; margin-left: 0.4rem;
+  }
+
+  /* Timeline */
+  .timeline { position: relative; padding: 1rem 0; }
+  .timeline::before {
+    content: ''; position: absolute; left: 24px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--amd-red), rgba(237,28,36,0.1));
+  }
+  .tl-item {
+    display: flex; gap: 1.5rem; margin-bottom: 2rem;
+    padding-left: 0; align-items: flex-start;
+  }
+  .tl-dot {
+    flex-shrink: 0; width: 50px; height: 50px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 800;
+    border: 2px solid var(--amd-red);
+    background: var(--amd-dark); z-index: 1;
+    color: var(--amd-red);
+  }
+  .tl-dot.done { background: rgba(237,28,36,0.2); }
+  .tl-dot.active {
+    background: linear-gradient(135deg, var(--amd-red), #ff6b35);
+    color: #fff; border-color: transparent;
+    box-shadow: 0 0 20px rgba(237,28,36,0.5);
+  }
+  .tl-content {
+    flex: 1; background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 1.2rem 1.5rem;
+    margin-top: 6px;
+  }
+  .tl-content h4 { font-size: 0.95rem; margin-bottom: 0.3rem; color: #fff; }
+  .tl-content p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+  .tl-date {
+    font-size: 0.7rem; font-weight: 700; color: var(--amd-red);
+    text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.4rem;
+  }
+
+  /* Ecosystem pills */
+  .eco-section h3 {
+    font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--amd-red); margin-bottom: 0.8rem;
+  }
+  .pill-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .pill {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-light); font-size: 0.78rem; font-weight: 500;
+    padding: 0.3rem 0.8rem; border-radius: 20px;
+    transition: all 0.2s; cursor: default;
+  }
+  .pill:hover {
+    background: rgba(237,28,36,0.15);
+    border-color: rgba(237,28,36,0.4);
+    color: #fca5a5;
+  }
+
+  /* Socket info */
+  .socket-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+  }
+  .socket-card {
+    background: linear-gradient(135deg, rgba(15,52,96,0.3), rgba(22,33,62,0.4));
+    border: 1px solid rgba(96,165,250,0.2);
+    border-radius: 14px; padding: 1.4rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .socket-card:hover {
+    border-color: rgba(96,165,250,0.5);
+    transform: translateY(-3px);
+  }
+  .socket-card h4 {
+    font-size: 0.85rem; font-weight: 700; color: #93c5fd;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.8rem;
+  }
+  .socket-card p, .socket-card li {
+    font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;
+  }
+
+  /* Progress bar */
+  .prog-item { margin-bottom: 1rem; }
+  .prog-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.78rem; color: #cbd5e1; margin-bottom: 0.4rem;
+  }
+  .prog-bar {
+    height: 8px; background: rgba(255,255,255,0.1);
+    border-radius: 10px; overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%; border-radius: 10px;
+    transition: width 1.5s ease;
+    background: linear-gradient(90deg, var(--amd-red), #ff9500);
+  }
+
+  /* Tab system */
+  .tabs { display: flex; gap: 0; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .tab-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-muted); font-size: 0.78rem; font-weight: 600;
+    padding: 0.6rem 1.2rem; cursor: pointer;
+    transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.05em;
+    margin-right: 4px; margin-bottom: 4px; border-radius: 8px;
+  }
+  .tab-btn.active {
+    background: rgba(237,28,36,0.2);
+    border-color: rgba(237,28,36,0.5);
+    color: #fca5a5;
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Floating scroll indicator */
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    color: var(--text-muted); font-size: 0.75rem; text-align: center;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+
+  /* Footer */
+  footer {
+    background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 2rem; text-align: center;
+    color: var(--text-muted); font-size: 0.75rem; line-height: 1.6;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    nav ul li a { padding: 0.8rem 0.8rem; font-size: 0.7rem; }
+    .hero-stats { gap: 0.8rem; }
+    .hero-stat { padding: 0.8rem 1rem; }
+    .hero-stat .val { font-size: 1.5rem; }
+    section { padding: 3rem 1.2rem; }
+  }
+
+  /* SVG overrides */
+  svg text { font-family: 'Segoe UI', sans-serif; }
+  .tooltip {
+    position: fixed; z-index: 9999;
+    background: rgba(26,26,46,0.96);
+    border: 1px solid rgba(237,28,36,0.4);
+    border-radius: 8px; padding: 0.7rem 1rem;
+    font-size: 0.78rem; color: #e2e8f0;
+    max-width: 220px; line-height: 1.5;
+    pointer-events: none; display: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .tooltip strong { color: #fca5a5; }
+</style>
+</head>
+<body>
+
+<div id="tooltip" class="tooltip"></div>
+
+<!-- Navigation -->
+<nav>
+  <ul>
+    <li><a href="#overview" class="active">Overview</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#memory">Memory</a></li>
+    <li><a href="#io">I/O & PCIe</a></li>
+    <li><a href="#security">Security & AI</a></li>
+    <li><a href="#compare">SP5 vs SP7</a></li>
+    <li><a href="#socket">Socket</a></li>
+    <li><a href="#ecosystem">Ecosystem</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<div class="hero" id="overview">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">AMD Confidential · NDA Required · Q1 2026 Roadmap</div>
+    <h1>AMD EPYC "Venice" SP7</h1>
+    <div class="hero-subtitle">Next-Generation High-Performance Server Platform · Zen6 Architecture</div>
+    <div class="hero-tag-row">
+      <span class="tag">Zen6 / Zen6c</span>
+      <span class="tag">SP7 Socket</span>
+      <span class="tag">PCIe Gen6</span>
+      <span class="tag">CXL 3.1</span>
+      <span class="tag">DDR5 / MRDIMM</span>
+      <span class="tag">H2 2026 Production</span>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="val">256</div><div class="lbl">Max Zen6c Cores</div></div>
+      <div class="hero-stat"><div class="val">96</div><div class="lbl">Max Zen6 Cores</div></div>
+      <div class="hero-stat"><div class="val">16ch</div><div class="lbl">DDR5 Channels</div></div>
+      <div class="hero-stat"><div class="val">Gen6</div><div class="lbl">PCIe / CXL 3.1</div></div>
+      <div class="hero-stat"><div class="val">600W</div><div class="lbl">Max TDP</div></div>
+      <div class="hero-stat"><div class="val">96L</div><div class="lbl">PCIe Lanes (1P)</div></div>
+    </div>
+  </div>
+  <div class="scroll-hint">▼ Scroll to explore</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Architecture Diagram -->
+<section id="architecture">
+  <div class="section-label">Silicon Architecture</div>
+  <h2>Venice SP7 Block Diagram</h2>
+  <p class="section-desc">
+    The Venice SP7 platform is built around AMD's latest Zen6/Zen6c cores with a new 4th-generation Infinity Fabric,
+    PCIe Gen6 I/O, and a massively expanded 16-channel DDR5/MRDIMM memory subsystem.
+  </p>
+
+  <div class="arch-wrapper">
+    <svg viewBox="0 0 960 560" style="width:100%;max-width:960px;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gRed" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ED1C24"/>
+          <stop offset="100%" stop-color="#ff6b35"/>
+        </linearGradient>
+        <linearGradient id="gBlue" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0f3460"/>
+          <stop offset="100%" stop-color="#1e6fd9"/>
+        </linearGradient>
+        <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#059669"/>
+          <stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+        <linearGradient id="gPurple" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#5b21b6"/>
+          <stop offset="100%" stop-color="#8b5cf6"/>
+        </linearGradient>
+        <linearGradient id="gOrange" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#b45309"/>
+          <stop offset="100%" stop-color="#f59e0b"/>
+        </linearGradient>
+        <linearGradient id="gTeal" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0e7490"/>
+          <stop offset="100%" stop-color="#22d3ee"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="shadow">
+          <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.5)"/>
+        </filter>
+      </defs>
+
+      <!-- Background -->
+      <rect width="960" height="560" fill="rgba(15,20,40,0.8)" rx="12"/>
+
+      <!-- Title -->
+      <text x="480" y="36" text-anchor="middle" fill="white" font-size="17" font-weight="800">
+        AMD EPYC "Venice" SP7 — Platform Architecture
+      </text>
+      <text x="480" y="56" text-anchor="middle" fill="#94a3b8" font-size="10.5">
+        Zen6 / Zen6c · PCIe Gen6 · CXL 3.1 · 16-Channel DDR5/MRDIMM · SP7 Socket
+      </text>
+
+      <!-- ===== PROCESSOR DIE (center) ===== -->
+      <rect x="250" y="80" width="460" height="380" rx="12" fill="rgba(15,52,96,0.5)" stroke="#1e6fd9" stroke-width="1.5"/>
+      <text x="480" y="104" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="700" text-transform="uppercase" letter-spacing="1">PROCESSOR PACKAGE (SP7 Socket — 76×80mm, up to 600W TDP)</text>
+
+      <!-- IOD Die -->
+      <rect x="340" y="115" width="280" height="90" rx="8" fill="url(#gBlue)" filter="url(#shadow)"/>
+      <text x="480" y="140" text-anchor="middle" fill="white" font-size="11.5" font-weight="800">I/O Die (IOD)</text>
+      <text x="480" y="158" text-anchor="middle" fill="#bfdbfe" font-size="9.5">4th-Gen Infinity Fabric · Secure Processor</text>
+      <text x="480" y="173" text-anchor="middle" fill="#bfdbfe" font-size="9.5">PCIe Gen6 Controller · CXL 3.1 · xGMI Gen4</text>
+      <text x="480" y="188" text-anchor="middle" fill="#fcd34d" font-size="9">SDXI Datamover · SDCI · MP-RAS Sideband</text>
+
+      <!-- CCD tiles - Zen6 -->
+      <!-- Top row CCDs -->
+      <rect x="262" y="222" width="98" height="70" rx="6" fill="url(#gRed)" filter="url(#shadow)"/>
+      <text x="311" y="246" text-anchor="middle" fill="white" font-size="10" font-weight="700">CCD (Zen6)</text>
+      <text x="311" y="262" text-anchor="middle" fill="#fecaca" font-size="8.5">12 cores · 1MB L2/c</text>
+      <text x="311" y="276" text-anchor="middle" fill="#fecaca" font-size="8.5">48MB L3 shared</text>
+
+      <rect x="370" y="222" width="98" height="70" rx="6" fill="url(#gRed)" filter="url(#shadow)"/>
+      <text x="419" y="246" text-anchor="middle" fill="white" font-size="10" font-weight="700">CCD (Zen6)</text>
+      <text x="419" y="262" text-anchor="middle" fill="#fecaca" font-size="8.5">12 cores · 1MB L2/c</text>
+      <text x="419" y="276" text-anchor="middle" fill="#fecaca" font-size="8.5">48MB L3 shared</text>
+
+      <!-- CCD tiles - Zen6c -->
+      <rect x="478" y="222" width="98" height="70" rx="6" fill="url(#gPurple)" filter="url(#shadow)"/>
+      <text x="527" y="246" text-anchor="middle" fill="white" font-size="10" font-weight="700">CCD (Zen6c)</text>
+      <text x="527" y="262" text-anchor="middle" fill="#e9d5ff" font-size="8.5">32 cores · 1MB L2/c</text>
+      <text x="527" y="276" text-anchor="middle" fill="#e9d5ff" font-size="8.5">128MB L3 shared</text>
+
+      <rect x="586" y="222" width="98" height="70" rx="6" fill="url(#gPurple)" filter="url(#shadow)"/>
+      <text x="635" y="246" text-anchor="middle" fill="white" font-size="10" font-weight="700">CCD (Zen6c)</text>
+      <text x="635" y="262" text-anchor="middle" fill="#e9d5ff" font-size="8.5">32 cores · 1MB L2/c</text>
+      <text x="635" y="276" text-anchor="middle" fill="#e9d5ff" font-size="8.5">128MB L3 shared</text>
+
+      <!-- Bottom row CCDs -->
+      <rect x="262" y="306" width="98" height="60" rx="6" fill="url(#gRed)" opacity="0.8"/>
+      <text x="311" y="325" text-anchor="middle" fill="white" font-size="9.5" font-weight="700">CCD (Zen6) ×4</text>
+      <text x="311" y="340" text-anchor="middle" fill="#fecaca" font-size="8">up to 8×CCD/socket</text>
+      <text x="311" y="354" text-anchor="middle" fill="#fecaca" font-size="8">96 Zen6 max cores</text>
+
+      <rect x="586" y="306" width="98" height="60" rx="6" fill="url(#gPurple)" opacity="0.8"/>
+      <text x="635" y="325" text-anchor="middle" fill="white" font-size="9.5" font-weight="700">CCD (Zen6c) ×4</text>
+      <text x="635" y="340" text-anchor="middle" fill="#e9d5ff" font-size="8">up to 8×CCD/socket</text>
+      <text x="635" y="354" text-anchor="middle" fill="#e9d5ff" font-size="8">256 Zen6c max cores</text>
+
+      <!-- Infinity Fabric bus -->
+      <rect x="262" y="373" width="422" height="18" rx="4" fill="rgba(30,111,217,0.4)" stroke="#3b82f6" stroke-width="1"/>
+      <text x="473" y="386" text-anchor="middle" fill="#93c5fd" font-size="9.5" font-weight="700">4th-Generation Infinity Fabric Interconnect (64 GT/s)</text>
+
+      <!-- Security block -->
+      <rect x="340" y="398" width="120" height="46" rx="6" fill="url(#gGreen)" opacity="0.85"/>
+      <text x="400" y="420" text-anchor="middle" fill="white" font-size="9.5" font-weight="700">Security Engines</text>
+      <text x="400" y="436" text-anchor="middle" fill="#d1fae5" font-size="8">ART · Caliptra · ASP</text>
+
+      <!-- AI/Compute block -->
+      <rect x="500" y="398" width="120" height="46" rx="6" fill="url(#gOrange)" opacity="0.85"/>
+      <text x="560" y="420" text-anchor="middle" fill="white" font-size="9.5" font-weight="700">AI Inferencing</text>
+      <text x="560" y="436" text-anchor="middle" fill="#fef3c7" font-size="8">FP16 · AVX-VNNI-INT8 · ZenDNN</text>
+
+      <!-- ===== MEMORY (bottom) ===== -->
+      <!-- Left DIMM slots -->
+      <rect x="20" y="300" width="200" height="140" rx="10" fill="rgba(14,116,144,0.2)" stroke="#22d3ee" stroke-width="1.5"/>
+      <text x="120" y="322" text-anchor="middle" fill="#22d3ee" font-size="10.5" font-weight="700">DDR5 / MRDIMM</text>
+      <text x="120" y="338" text-anchor="middle" fill="#a5f3fc" font-size="9">16 Channels (8 shown per side)</text>
+      <!-- Mini DIMM slots left -->
+      <rect x="30" y="348" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.7"/>
+      <text x="70" y="359" text-anchor="middle" fill="white" font-size="7.5">DDR5 8000 MT/s</text>
+      <rect x="120" y="348" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.7"/>
+      <text x="160" y="359" text-anchor="middle" fill="white" font-size="7.5">MRDIMM 12.8 GT/s</text>
+      <rect x="30" y="368" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.5"/>
+      <rect x="120" y="368" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.5"/>
+      <rect x="30" y="385" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.35"/>
+      <rect x="120" y="385" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.35"/>
+      <text x="120" y="415" text-anchor="middle" fill="#a5f3fc" font-size="8.5">RDIMM · 3DS RDIMM · MRDIMM</text>
+      <text x="120" y="427" text-anchor="middle" fill="#a5f3fc" font-size="8.5">Tall MRDIMM · ECC</text>
+
+      <!-- Right DIMM slots -->
+      <rect x="740" y="300" width="200" height="140" rx="10" fill="rgba(14,116,144,0.2)" stroke="#22d3ee" stroke-width="1.5"/>
+      <text x="840" y="322" text-anchor="middle" fill="#22d3ee" font-size="10.5" font-weight="700">DDR5 / MRDIMM</text>
+      <text x="840" y="338" text-anchor="middle" fill="#a5f3fc" font-size="9">16 Channels Total (1DPC)</text>
+      <rect x="750" y="348" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.7"/>
+      <text x="790" y="359" text-anchor="middle" fill="white" font-size="7.5">DDR5 8000 MT/s</text>
+      <rect x="840" y="348" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.7"/>
+      <text x="880" y="359" text-anchor="middle" fill="white" font-size="7.5">MRDIMM 12.8 GT/s</text>
+      <rect x="750" y="368" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.5"/>
+      <rect x="840" y="368" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.5"/>
+      <rect x="750" y="385" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.35"/>
+      <rect x="840" y="385" width="80" height="12" rx="2" fill="url(#gTeal)" opacity="0.35"/>
+      <text x="840" y="415" text-anchor="middle" fill="#a5f3fc" font-size="8.5">1,4,8,12,16-ch interleaving</text>
+      <text x="840" y="427" text-anchor="middle" fill="#a5f3fc" font-size="8.5">Micron · Samsung · SK Hynix</text>
+
+      <!-- Memory connection lines -->
+      <line x1="220" y1="360" x2="250" y2="290" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.7"/>
+      <line x1="740" y1="360" x2="710" y2="290" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="5,3" opacity="0.7"/>
+
+      <!-- ===== PCIe / CXL I/O (top) ===== -->
+      <!-- Left PCIe -->
+      <rect x="20" y="110" width="200" height="155" rx="10" fill="rgba(91,33,182,0.2)" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="120" y="132" text-anchor="middle" fill="#c4b5fd" font-size="10.5" font-weight="700">PCIe Gen6 / CXL 3.1</text>
+      <text x="120" y="148" text-anchor="middle" fill="#ede9fe" font-size="9">1P: 96 lanes @ 64 Gbps/lane</text>
+      <text x="120" y="162" text-anchor="middle" fill="#ede9fe" font-size="9">2P: up to 128 lanes</text>
+      <!-- PCIe slot illustrations -->
+      <rect x="30" y="172" width="160" height="14" rx="3" fill="url(#gPurple)" opacity="0.6"/>
+      <text x="110" y="183" text-anchor="middle" fill="white" font-size="8">x16 Gen6 slot</text>
+      <rect x="30" y="192" width="120" height="14" rx="3" fill="url(#gPurple)" opacity="0.5"/>
+      <text x="110" y="203" text-anchor="middle" fill="white" font-size="8">x16 Gen6 slot</text>
+      <rect x="30" y="212" width="80" height="14" rx="3" fill="url(#gPurple)" opacity="0.4"/>
+      <text x="110" y="223" text-anchor="middle" fill="white" font-size="8">x16 Gen6 slot</text>
+      <text x="120" y="250" text-anchor="middle" fill="#c4b5fd" font-size="8.5">GPU · NIC · Switch</text>
+      <text x="120" y="263" text-anchor="middle" fill="#c4b5fd" font-size="8.5">CXL Type 1/2/3 · SSD</text>
+
+      <!-- Right I/O block -->
+      <rect x="740" y="110" width="200" height="155" rx="10" fill="rgba(5,150,105,0.2)" stroke="#34d399" stroke-width="1.5"/>
+      <text x="840" y="132" text-anchor="middle" fill="#6ee7b7" font-size="10.5" font-weight="700">xGMI / Platform I/O</text>
+      <text x="840" y="148" text-anchor="middle" fill="#d1fae5" font-size="9">3× xGMI links @ 64 Gbps</text>
+      <text x="840" y="162" text-anchor="middle" fill="#d1fae5" font-size="9">Gen4 Infinity Fabric</text>
+      <!-- Links -->
+      <rect x="750" y="172" width="160" height="14" rx="3" fill="url(#gGreen)" opacity="0.6"/>
+      <text x="830" y="183" text-anchor="middle" fill="white" font-size="8">xGMI Link ×3 (2P)</text>
+      <rect x="750" y="192" width="160" height="14" rx="3" fill="url(#gGreen)" opacity="0.4"/>
+      <text x="830" y="203" text-anchor="middle" fill="white" font-size="8">Bonus PCIe Gen4 Lanes</text>
+      <rect x="750" y="212" width="160" height="14" rx="3" fill="url(#gGreen)" opacity="0.3"/>
+      <text x="830" y="223" text-anchor="middle" fill="white" font-size="8">BMC / SPI / eSPI / I2C</text>
+      <text x="840" y="250" text-anchor="middle" fill="#6ee7b7" font-size="8.5">OpenBMC · DC-SCM 2.1</text>
+      <text x="840" y="263" text-anchor="middle" fill="#6ee7b7" font-size="8.5">PLDM · MCTP · APML</text>
+
+      <!-- Connections from die to I/O blocks -->
+      <line x1="250" y1="175" x2="220" y2="185" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+      <line x1="710" y1="175" x2="740" y2="185" stroke="#34d399" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+
+      <!-- xGMI 2P label at bottom -->
+      <rect x="350" y="470" width="260" height="36" rx="8" fill="rgba(234,179,8,0.15)" stroke="rgba(234,179,8,0.4)" stroke-width="1"/>
+      <text x="480" y="487" text-anchor="middle" fill="#fde68a" font-size="9.5" font-weight="700">2P Configuration: 2 or 3 xGMI Links (64 Gb/s)</text>
+      <text x="480" y="501" text-anchor="middle" fill="#fde68a" font-size="8.5">Up to 128 PCIe lanes available · Supports 2×1P or 2P topology</text>
+
+      <!-- Connector arrows 2P -->
+      <line x1="480" y1="460" x2="480" y2="470" stroke="#fcd34d" stroke-width="1.5" opacity="0.6"/>
+      <line x1="262" y1="456" x2="350" y2="473" stroke="#fcd34d" stroke-width="1" opacity="0.4" stroke-dasharray="3,2"/>
+      <line x1="698" y1="456" x2="610" y2="473" stroke="#fcd34d" stroke-width="1" opacity="0.4" stroke-dasharray="3,2"/>
+
+      <!-- Legend -->
+      <rect x="22" y="468" width="10" height="10" rx="2" fill="url(#gRed)"/>
+      <text x="38" y="478" fill="#fca5a5" font-size="8.5" font-weight="600">Zen6 CCD</text>
+      <rect x="100" y="468" width="10" height="10" rx="2" fill="url(#gPurple)"/>
+      <text x="116" y="478" fill="#c4b5fd" font-size="8.5" font-weight="600">Zen6c CCD</text>
+      <rect x="185" y="468" width="10" height="10" rx="2" fill="url(#gTeal)"/>
+      <text x="201" y="478" fill="#a5f3fc" font-size="8.5" font-weight="600">DDR5/MRDIMM</text>
+
+      <rect x="680" y="468" width="10" height="10" rx="2" fill="url(#gPurple)"/>
+      <text x="696" y="478" fill="#c4b5fd" font-size="8.5" font-weight="600">PCIe Gen6</text>
+      <rect x="755" y="468" width="10" height="10" rx="2" fill="url(#gGreen)"/>
+      <text x="771" y="478" fill="#6ee7b7" font-size="8.5" font-weight="600">xGMI / I/O</text>
+      <rect x="830" y="468" width="10" height="10" rx="2" fill="url(#gBlue)"/>
+      <text x="846" y="478" fill="#60a5fa" font-size="8.5" font-weight="600">IOD</text>
+    </svg>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Memory Section -->
+<section id="memory">
+  <div class="section-label">Memory Subsystem</div>
+  <h2>DDR5 & MRDIMM Support</h2>
+  <p class="section-desc">
+    Venice SP7 delivers a massive leap with 16 memory channels — up from 12 in Turin/SP5 — supporting both DDR5 at 8000 MT/s
+    and the next-generation MRDIMM format at 12.8 GT/s, enabling unprecedented memory bandwidth.
+  </p>
+
+  <div class="cards cards-2" style="margin-bottom:2rem;">
+    <div class="card" style="border-color:rgba(34,211,238,0.3);">
+      <div class="card-icon" style="background:rgba(14,116,144,0.3);">🧠</div>
+      <h3>DDR5 Channels & Speed</h3>
+      <ul>
+        <li><span class="highlight-blue">16 channels</span> DDR5 with ECC (vs 12 on SP5)</li>
+        <li>RDIMM &amp; 3DS RDIMM: up to <span class="highlight-blue">8000 MT/s</span> (1DPC)</li>
+        <li>MRDIMM &amp; Tall MRDIMM: up to <span class="highlight">12,800 MT/s</span> (1DPC)</li>
+        <li>Supports 2DPC (DDR5 RDIMM)</li>
+        <li>16Gb, 24Gb, and 32Gb DRAM die densities</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(34,211,238,0.3);">
+      <div class="card-icon" style="background:rgba(14,116,144,0.3);">⚡</div>
+      <h3>Memory Interleaving & DIMM Types</h3>
+      <ul>
+        <li>Support for <span class="highlight">1, 4, 8, 12, 16-channel</span> interleaving</li>
+        <li>RDIMM · 3DS RDIMM · MRDIMM · Tall MRDIMM</li>
+        <li>NPS1, NPS2 (performance-focus), NPS4 OPN-specific</li>
+        <li>Memory self-healing (PMU MBIST / MHB)</li>
+        <li>Post Package Repair (PPR) — in-band &amp; out-of-band</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Memory bandwidth visual -->
+  <div class="card" style="border-color:rgba(34,211,238,0.2);">
+    <h3 style="margin-bottom:1.2rem;">Theoretical Peak Bandwidth Comparison</h3>
+    <div class="prog-item">
+      <div class="prog-label"><span>Venice SP7 — MRDIMM 12.8 GT/s × 16ch</span><span style="color:#f87171;font-weight:700;">~3,276 GB/s</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-label"><span>Venice SP7 — DDR5 8000 MT/s × 16ch</span><span style="color:#fbbf24;font-weight:700;">~2,048 GB/s</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:62%;background:linear-gradient(90deg,#b45309,#f59e0b)"></div></div>
+    </div>
+    <div class="prog-item">
+      <div class="prog-label"><span>Turin SP5 — DDR5 6400 MT/s × 12ch</span><span style="color:#94a3b8;font-weight:700;">~1,229 GB/s</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:37%;background:linear-gradient(90deg,#374151,#6b7280)"></div></div>
+    </div>
+    <p style="margin-top:1rem;font-size:0.75rem;color:var(--text-muted);">Approximate theoretical peak. Actual bandwidth depends on configuration, frequency grade, and workload.</p>
+  </div>
+
+  <div class="cards cards-3" style="margin-top:1.5rem;">
+    <div class="socket-card">
+      <h4>DIMM Suppliers</h4>
+      <p><span class="highlight-blue">Micron</span> — DDR5 RDIMMs &amp; MRDIMMs (16/24/32Gb)</p>
+      <p style="margin-top:0.4rem;"><span class="highlight-blue">Samsung</span> — DDR5 RDIMMs &amp; MRDIMMs (16/24/32Gb)</p>
+      <p style="margin-top:0.4rem;"><span class="highlight-blue">SK Hynix</span> — DDR5 RDIMMs &amp; MRDIMMs (16/24/32Gb)</p>
+    </div>
+    <div class="socket-card">
+      <h4>MRDIMM Notes</h4>
+      <p>12,800 MT/s requires specific "Green Listed" DIMMs published in AMD Memory AVL (PID #68495).</p>
+      <p style="margin-top:0.5rem;">10,400 MT/s supported on other 12,800 MT/s speed-grade DIMMs.</p>
+    </div>
+    <div class="socket-card">
+      <h4>RAS Features</h4>
+      <p>PMIC error reporting · DDR5 address/command parity &amp; replay · Memory margining tool (MMT)</p>
+      <p style="margin-top:0.4rem;">CXL memory pooling · Memory-managed hotplug/hotswap</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- I/O Section -->
+<section id="io">
+  <div class="section-label">I/O & Connectivity</div>
+  <h2>PCIe Gen6 · CXL 3.1 · xGMI Gen4</h2>
+  <p class="section-desc">
+    Venice SP7 introduces PCIe Gen6 (64 Gbps/lane) and CXL 3.1 — a significant leap from Gen5/CXL 2.0 in Turin/SP5,
+    with more flexible lane configurations and up to 3 xGMI links for 2P systems.
+  </p>
+
+  <div class="arch-wrapper" style="margin-bottom:2rem;">
+    <svg viewBox="0 0 900 280" style="width:100%;max-width:900px;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gR2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ED1C24"/>
+          <stop offset="100%" stop-color="#7f1d1d"/>
+        </linearGradient>
+        <linearGradient id="gP2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7c3aed"/>
+          <stop offset="100%" stop-color="#3b0764"/>
+        </linearGradient>
+        <linearGradient id="gG2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#059669"/>
+          <stop offset="100%" stop-color="#064e3b"/>
+        </linearGradient>
+        <linearGradient id="gO2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d97706"/>
+          <stop offset="100%" stop-color="#451a03"/>
+        </linearGradient>
+      </defs>
+
+      <rect width="900" height="280" fill="rgba(10,15,30,0.6)" rx="10"/>
+      <text x="450" y="28" text-anchor="middle" fill="white" font-size="14" font-weight="800">I/O Connectivity Overview — Venice SP7</text>
+
+      <!-- PCIe Gen6 -->
+      <rect x="30" y="50" width="190" height="200" rx="10" fill="rgba(124,58,237,0.2)" stroke="#7c3aed" stroke-width="1.5"/>
+      <text x="125" y="75" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="700">PCIe Gen6</text>
+      <text x="125" y="93" text-anchor="middle" fill="#ede9fe" font-size="9">64 Gbps / lane</text>
+      <rect x="45" y="103" width="160" height="20" rx="4" fill="url(#gP2)" opacity="0.7"/>
+      <text x="125" y="118" text-anchor="middle" fill="white" font-size="8.5">1P: 96 lanes (P-links)</text>
+      <rect x="45" y="128" width="160" height="20" rx="4" fill="url(#gP2)" opacity="0.6"/>
+      <text x="125" y="143" text-anchor="middle" fill="white" font-size="8.5">2P: up to 128 lanes</text>
+      <rect x="45" y="153" width="160" height="20" rx="4" fill="url(#gP2)" opacity="0.5"/>
+      <text x="125" y="168" text-anchor="middle" fill="white" font-size="8.5">G-links: 3×x16 bonus</text>
+      <text x="125" y="200" text-anchor="middle" fill="#a78bfa" font-size="8.5">GPU · NIC · RAID</text>
+      <text x="125" y="215" text-anchor="middle" fill="#a78bfa" font-size="8.5">SSD · Retimer · Switch</text>
+      <text x="125" y="232" text-anchor="middle" fill="#fcd34d" font-size="8">↑ Upgrade from Gen5 (32 Gbps)</text>
+
+      <!-- CXL 3.1 -->
+      <rect x="245" y="50" width="190" height="200" rx="10" fill="rgba(237,28,36,0.2)" stroke="#ED1C24" stroke-width="1.5"/>
+      <text x="340" y="75" text-anchor="middle" fill="#fca5a5" font-size="11" font-weight="700">CXL 3.1</text>
+      <text x="340" y="93" text-anchor="middle" fill="#fecaca" font-size="9">12.8 GT/s · Shared Fabric</text>
+      <rect x="260" y="103" width="160" height="20" rx="4" fill="url(#gR2)" opacity="0.7"/>
+      <text x="340" y="118" text-anchor="middle" fill="white" font-size="8.5">Type 1 · Type 2 · Type 3</text>
+      <rect x="260" y="128" width="160" height="20" rx="4" fill="url(#gR2)" opacity="0.6"/>
+      <text x="340" y="143" text-anchor="middle" fill="white" font-size="8.5">Memory Pooling &amp; Tiering</text>
+      <rect x="260" y="153" width="160" height="20" rx="4" fill="url(#gR2)" opacity="0.5"/>
+      <text x="340" y="168" text-anchor="middle" fill="white" font-size="8.5">Memory Expansion</text>
+      <text x="340" y="200" text-anchor="middle" fill="#fca5a5" font-size="8.5">SDXI · SDCI</text>
+      <text x="340" y="215" text-anchor="middle" fill="#fca5a5" font-size="8.5">Hotplug/Hotswap</text>
+      <text x="340" y="232" text-anchor="middle" fill="#fcd34d" font-size="8">↑ Upgrade from CXL 2.0 (Turin)</text>
+
+      <!-- xGMI -->
+      <rect x="460" y="50" width="190" height="200" rx="10" fill="rgba(5,150,105,0.2)" stroke="#34d399" stroke-width="1.5"/>
+      <text x="555" y="75" text-anchor="middle" fill="#6ee7b7" font-size="11" font-weight="700">xGMI Gen4</text>
+      <text x="555" y="93" text-anchor="middle" fill="#d1fae5" font-size="9">64 Gbps · Infinity Fabric</text>
+      <rect x="475" y="103" width="160" height="20" rx="4" fill="url(#gG2)" opacity="0.7"/>
+      <text x="555" y="118" text-anchor="middle" fill="white" font-size="8.5">3 links (2P platform)</text>
+      <rect x="475" y="128" width="160" height="20" rx="4" fill="url(#gG2)" opacity="0.6"/>
+      <text x="555" y="143" text-anchor="middle" fill="white" font-size="8.5">Cross-socket: 2 or 3 links</text>
+      <rect x="475" y="153" width="160" height="20" rx="4" fill="url(#gG2)" opacity="0.5"/>
+      <text x="555" y="168" text-anchor="middle" fill="white" font-size="8.5">1-link for AI 2P (special)</text>
+      <text x="555" y="200" text-anchor="middle" fill="#6ee7b7" font-size="8.5">AMD EPYC Naples→Venice</text>
+      <text x="555" y="215" text-anchor="middle" fill="#6ee7b7" font-size="8.5">xGMI Dynamic Link Width</text>
+      <text x="555" y="232" text-anchor="middle" fill="#fcd34d" font-size="8">↑ Upgrade from Turin xGMI3</text>
+
+      <!-- Bonus PCIe Gen4 -->
+      <rect x="675" y="50" width="195" height="200" rx="10" fill="rgba(245,158,11,0.15)" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="772" y="75" text-anchor="middle" fill="#fde68a" font-size="11" font-weight="700">Platform I/O</text>
+      <text x="772" y="93" text-anchor="middle" fill="#fef3c7" font-size="9">BMC · Management</text>
+      <rect x="690" y="103" width="165" height="20" rx="4" fill="url(#gO2)" opacity="0.7"/>
+      <text x="772" y="118" text-anchor="middle" fill="white" font-size="8.5">2P: 16 bonus PCIe Gen4</text>
+      <rect x="690" y="128" width="165" height="20" rx="4" fill="url(#gO2)" opacity="0.6"/>
+      <text x="772" y="143" text-anchor="middle" fill="white" font-size="8.5">1P: 8 bonus PCIe Gen4</text>
+      <rect x="690" y="153" width="165" height="20" rx="4" fill="url(#gO2)" opacity="0.5"/>
+      <text x="772" y="168" text-anchor="middle" fill="white" font-size="8.5">eSPI / SPI / I2C / I3C</text>
+      <text x="772" y="200" text-anchor="middle" fill="#fde68a" font-size="8.5">Min bifurcation: ×2</text>
+      <text x="772" y="215" text-anchor="middle" fill="#fde68a" font-size="8.5">(×1 no longer supported)</text>
+      <text x="772" y="232" text-anchor="middle" fill="#fcd34d" font-size="8">OpenBMC · PLDM · MCTP</text>
+    </svg>
+  </div>
+
+  <div class="cards cards-4">
+    <div class="card">
+      <div class="card-icon" style="background:rgba(124,58,237,0.2);">🔌</div>
+      <h3>PCIe Gen6</h3>
+      <p>64 Gbps/lane — <span class="highlight">2× bandwidth</span> vs Gen5. Supports GPU, NIC, Switch, RAID, SSD accelerators.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:rgba(237,28,36,0.2);">🔗</div>
+      <h3>CXL 3.1</h3>
+      <p>12.8 GT/s · Type 1/2/3 devices · Memory pooling, tiering, expansion. <span class="highlight">Upgraded from CXL 2.0</span>.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:rgba(5,150,105,0.2);">↔️</div>
+      <h3>xGMI Gen4</h3>
+      <p>3 links at 64 Gbps for 2P. <span class="highlight-green">4th-gen Infinity Fabric</span>. Dynamic link width management.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:rgba(245,158,11,0.2);">🖥️</div>
+      <h3>Accelerator I/O</h3>
+      <p>SDXI (Smart Data Accelerator Interface) with Datamover Encryption + SDCI (Smart Data Cache Injection).</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Security & AI -->
+<section id="security">
+  <div class="section-label">Security & AI Inferencing</div>
+  <h2>Hardened Security · AI-Ready</h2>
+  <p class="section-desc">
+    Venice SP7 adds triple-engine security with enhanced Root of Trust, Post-Quantum Cryptography support,
+    and FIPS 140-3 certification. FP16/AVX-VNNI-INT8 ISA updates enable efficient AI inference.
+  </p>
+
+  <div class="cards cards-2">
+    <div class="card" style="border-color:rgba(52,211,153,0.3);">
+      <div class="card-icon" style="background:rgba(5,150,105,0.2);">🔒</div>
+      <h3>Triple Security Engines</h3>
+      <ul>
+        <li><span class="highlight-green">ART</span> (AMD Root of Trust) · <span class="highlight-green">Caliptra</span> · <span class="highlight-green">ASP</span> (AMD Security Processor)</li>
+        <li>Enhanced RoT with <span class="highlight-green">RSA 4K</span> support</li>
+        <li>Post-Quantum Cryptography: <span class="highlight-green">PQC (LMS)</span> <span class="new-badge">NEW</span></li>
+        <li>FIPS 140-3 Level 1 Certification for RoT engines</li>
+        <li>Confidential Compute: SEV, SEV-ES, SEV-SNP, SEV-TIO</li>
+        <li>Platform Secure Boot · Secured Update · Debug · Recovery</li>
+        <li>Platform Attestation · Device Identity</li>
+        <li>Discrete TPM / DRTM support</li>
+        <li>Physical &amp; Side Channel Attack Mitigations</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(245,158,11,0.3);">
+      <div class="card-icon" style="background:rgba(180,83,9,0.2);">🤖</div>
+      <h3>AI Inferencing Capabilities</h3>
+      <ul>
+        <li>ISA: <span class="highlight-orange">FP16</span> — half-precision floating point <span class="new-badge">NEW</span></li>
+        <li>ISA: <span class="highlight-orange">AVX-VNNI-INT8</span> — vector neural network INT8</li>
+        <li>ISA: <span class="highlight-orange">FRED</span> — Flexible Return and Event Delivery <span class="new-badge">NEW</span></li>
+        <li>ISA: <span class="highlight-orange">PML</span> — Page Modification Logging <span class="new-badge">NEW</span></li>
+        <li>ISA: <span class="highlight-orange">IBS-Lite</span> — Memory profiler / page migration</li>
+        <li><span class="highlight-orange">ZenDNN</span> framework support</li>
+        <li>High Frequency (HF) SKUs for GPU efficiency</li>
+        <li>Companion to AMD GPUs (MI300X, MI325X, MI355X)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- RAS -->
+  <div class="card" style="margin-top:1.2rem; border-color:rgba(96,165,250,0.3);">
+    <div class="card-icon" style="background:rgba(15,52,96,0.3);">⚠️</div>
+    <h3>RAS &amp; Manageability (MP-RAS)</h3>
+    <ul style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.3rem;">
+      <li>Dedicated MP-RAS sideband processor <span class="new-badge">NEW</span></li>
+      <li>Platform-First Error Handling (PFEH)</li>
+      <li>OOB Error Management via PLDM/RDE</li>
+      <li>PMIC error reporting (RDIMM, MRDIMM)</li>
+      <li>CXL protocol error handling</li>
+      <li>MPRAS CXL component error handling</li>
+      <li>In-band MCA error reporting</li>
+      <li>Out-of-band: APML SB-RMI / SB-TSI</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SP5 vs SP7 Comparison -->
+<section id="compare">
+  <div class="section-label">Platform Generation Comparison</div>
+  <h2>SP5 (Turin) → SP7 (Venice): Key Upgrades</h2>
+  <p class="section-desc">
+    Venice SP7 represents a major generational leap. Every subsystem has been significantly upgraded,
+    with particular emphasis on I/O bandwidth, memory capacity, and AI/security features.
+  </p>
+
+  <div class="compare-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>SP5 — Turin "EPYC 9005"</th>
+          <th>SP7 — Venice "EPYC 9006-S7"</th>
+          <th>Improvement</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CPU Architecture</td>
+          <td>"Zen 5" / "Zen 5c"</td>
+          <td><span class="highlight">"Zen 6" / "Zen 6c"</span> <span class="new-badge">NEW</span></td>
+          <td style="color:#34d399;">Next-gen microarchitecture</td>
+        </tr>
+        <tr>
+          <td>Max Cores (per socket)</td>
+          <td>192 cores (Zen 5c)</td>
+          <td><span class="highlight">256 cores (Zen 6c)</span> <span class="up-badge">+33%</span></td>
+          <td style="color:#34d399;">+64 more cores</td>
+        </tr>
+        <tr>
+          <td>Max Zen cores</td>
+          <td>96 cores (Zen 5)</td>
+          <td><span class="highlight">96 cores (Zen 6)</span> + ISA updates</td>
+          <td style="color:#34d399;">FP16, FRED, PML, IBS-Lite added</td>
+        </tr>
+        <tr>
+          <td>Socket</td>
+          <td>SP5 (72×75mm)</td>
+          <td><span class="highlight">SP7 (76×80mm)</span> <span class="new-badge">NEW</span></td>
+          <td style="color:#34d399;">Larger LGA socket, new ecosystem</td>
+        </tr>
+        <tr>
+          <td>Max TDP</td>
+          <td>Up to 500W</td>
+          <td><span class="highlight">Up to 600W</span> <span class="up-badge">+20%</span></td>
+          <td style="color:#34d399;">+100W headroom</td>
+        </tr>
+        <tr>
+          <td>Memory Channels</td>
+          <td>12 channels DDR5</td>
+          <td><span class="highlight">16 channels DDR5/MRDIMM</span> <span class="up-badge">+33%</span></td>
+          <td style="color:#34d399;">4 more channels</td>
+        </tr>
+        <tr>
+          <td>DDR5 Max Speed</td>
+          <td>6400 MT/s (1DPC)</td>
+          <td><span class="highlight">8000 MT/s RDIMM</span> <span class="up-badge">+25%</span></td>
+          <td style="color:#34d399;">Higher freq per channel</td>
+        </tr>
+        <tr>
+          <td>MRDIMM Support</td>
+          <td>Limited / N/A</td>
+          <td><span class="highlight">12,800 MT/s MRDIMM</span> <span class="new-badge">NEW</span></td>
+          <td style="color:#34d399;">All-new memory type</td>
+        </tr>
+        <tr>
+          <td>Memory Interleaving</td>
+          <td>Up to 12-channel</td>
+          <td><span class="highlight">Up to 16-channel</span> <span class="up-badge">↑</span></td>
+          <td style="color:#34d399;">Full cross-channel interleave</td>
+        </tr>
+        <tr>
+          <td>PCIe Generation</td>
+          <td>PCIe Gen5 (32 Gbps)</td>
+          <td><span class="highlight">PCIe Gen6 (64 Gbps)</span> <span class="up-badge">2×</span></td>
+          <td style="color:#34d399;">Double lane bandwidth</td>
+        </tr>
+        <tr>
+          <td>PCIe Lanes (1P)</td>
+          <td>128 lanes Gen5</td>
+          <td><span class="highlight">96 lanes Gen6</span> (same total BW)</td>
+          <td style="color:#fbbf24;">Fewer lanes but 2× speed/lane</td>
+        </tr>
+        <tr>
+          <td>CXL Version</td>
+          <td>CXL 2.0</td>
+          <td><span class="highlight">CXL 3.1</span> <span class="up-badge">↑</span></td>
+          <td style="color:#34d399;">Type 1/2/3 · memory pooling/tiering</td>
+        </tr>
+        <tr>
+          <td>Infinity Fabric</td>
+          <td>3rd-Gen (Turin)</td>
+          <td><span class="highlight">4th-Gen, 64 GT/s</span> <span class="up-badge">↑</span></td>
+          <td style="color:#34d399;">Higher bandwidth xGMI links</td>
+        </tr>
+        <tr>
+          <td>xGMI Links (2P)</td>
+          <td>3 links (Turin)</td>
+          <td><span class="highlight">3 links @ 64 Gbps (Gen4)</span></td>
+          <td style="color:#34d399;">Higher xGMI frequency</td>
+        </tr>
+        <tr>
+          <td>Security</td>
+          <td>ART + ASP (2 engines)</td>
+          <td><span class="highlight">ART + Caliptra + ASP (3 engines)</span> <span class="new-badge">NEW</span></td>
+          <td style="color:#34d399;">Added Caliptra RoT + PQC</td>
+        </tr>
+        <tr>
+          <td>Post-Quantum Crypto</td>
+          <td>Not supported</td>
+          <td><span class="highlight">PQC (LMS) support</span> <span class="new-badge">NEW</span></td>
+          <td style="color:#34d399;">Future-proof security</td>
+        </tr>
+        <tr>
+          <td>SDXI Accelerator</td>
+          <td>Basic</td>
+          <td><span class="highlight">SDXI + Datamover Encryption</span> <span class="up-badge">↑</span></td>
+          <td style="color:#34d399;">Enhanced data mover</td>
+        </tr>
+        <tr>
+          <td>AI ISA</td>
+          <td>AVX-VNNI-INT8</td>
+          <td><span class="highlight">FP16 + AVX-VNNI-INT8 + FRED</span> <span class="new-badge">NEW</span></td>
+          <td style="color:#34d399;">Added FP16, FRED, PML</td>
+        </tr>
+        <tr>
+          <td>VR Interface</td>
+          <td>SVI3</td>
+          <td><span class="highlight">SVI3 Rev 2.0</span> <span class="up-badge">↑</span></td>
+          <td style="color:#34d399;">Updated VR protocol</td>
+        </tr>
+        <tr>
+          <td>SDLE Tool</td>
+          <td>SDLE-2 (4 load pods)</td>
+          <td><span class="highlight">SDLE-3 (2 load pods)</span> <span class="up-badge">↑</span></td>
+          <td style="color:#34d399;">Reduced to 2 load pods</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Socket Section -->
+<section id="socket">
+  <div class="section-label">Socket & Infrastructure</div>
+  <h2>SP7 Socket Specifications</h2>
+  <p class="section-desc">
+    The new SP7 socket (76×80mm) is a major platform change from SP5, with three approved socket suppliers
+    and multiple backplate configurations supporting various PCB thicknesses.
+  </p>
+
+  <div class="cards cards-2" style="margin-bottom:2rem;">
+    <!-- Socket SVG -->
+    <div class="card" style="border-color:rgba(245,158,11,0.3);">
+      <h3 style="margin-bottom:1.2rem;">SP7 Socket Specification</h3>
+      <svg viewBox="0 0 380 240" style="width:100%;max-width:380px;display:block;" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="socketGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#b45309"/>
+            <stop offset="100%" stop-color="#f59e0b"/>
+          </linearGradient>
+        </defs>
+        <!-- Backplate -->
+        <rect x="20" y="160" width="340" height="60" rx="6" fill="rgba(30,30,50,0.9)" stroke="#374151" stroke-width="1.5"/>
+        <text x="190" y="195" text-anchor="middle" fill="#9ca3af" font-size="9">PCB / Backplate (1.78–4.20mm thickness options)</text>
+        <!-- SRM -->
+        <rect x="40" y="120" width="300" height="42" rx="5" fill="rgba(55,65,81,0.8)" stroke="#4b5563" stroke-width="1.5"/>
+        <text x="190" y="147" text-anchor="middle" fill="#d1d5db" font-size="9.5" font-weight="600">Socket Retention Mechanism (SRM)</text>
+        <!-- Socket body -->
+        <rect x="60" y="60" width="260" height="62" rx="6" fill="url(#socketGrad)" filter="url(#shadow)"/>
+        <text x="190" y="88" text-anchor="middle" fill="white" font-size="12" font-weight="800">SP7 Socket</text>
+        <text x="190" y="106" text-anchor="middle" fill="#fef3c7" font-size="9">76 × 80 mm Package · LGA</text>
+        <!-- Processor -->
+        <rect x="90" y="10" width="200" height="52" rx="5" fill="rgba(15,52,96,0.9)" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="190" y="34" text-anchor="middle" fill="white" font-size="11" font-weight="700">Venice Processor</text>
+        <text x="190" y="52" text-anchor="middle" fill="#bfdbfe" font-size="8.5">Zen6/Zen6c · up to 600W TDP</text>
+        <!-- Stud height label -->
+        <line x1="330" y1="120" x2="330" y2="160" stroke="#f59e0b" stroke-width="1.5"/>
+        <line x1="325" y1="120" x2="335" y2="120" stroke="#f59e0b" stroke-width="1.5"/>
+        <line x1="325" y1="160" x2="335" y2="160" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="342" y="143" fill="#fde68a" font-size="8">Stud</text>
+        <text x="342" y="153" fill="#fde68a" font-size="8">Ht.</text>
+      </svg>
+    </div>
+
+    <div class="card" style="border-color:rgba(245,158,11,0.3);">
+      <h3 style="margin-bottom:1rem;">Backplate Options</h3>
+      <table style="font-size:0.78rem;width:100%;">
+        <thead>
+          <tr style="background:rgba(245,158,11,0.15);">
+            <th style="padding:0.5rem;text-align:left;border-bottom:1px solid rgba(245,158,11,0.3);color:#fde68a;">PCB Thickness</th>
+            <th style="padding:0.5rem;text-align:left;border-bottom:1px solid rgba(245,158,11,0.3);color:#fde68a;">Stud Height</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:0.45rem;">1.78–2.36 mm</td><td style="padding:0.45rem;color:#fde68a;">5.4 mm</td></tr>
+          <tr><td style="padding:0.45rem;">2.36–2.93 mm</td><td style="padding:0.45rem;color:#fde68a;">6.0 mm</td></tr>
+          <tr><td style="padding:0.45rem;">2.93–3.60 mm</td><td style="padding:0.45rem;color:#fde68a;">6.6 mm</td></tr>
+          <tr><td style="padding:0.45rem;">3.60–4.20 mm</td><td style="padding:0.45rem;color:#fde68a;">7.4 mm</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:1rem;font-size:0.78rem;color:var(--text-muted);">
+        Note: Same-supplier combinations required; component intermixing between suppliers not supported.
+      </p>
+      <p style="margin-top:0.5rem;font-size:0.78rem;color:var(--text-muted);">
+        All socket versions approved for <span class="highlight-orange">Development Build</span> status.
+      </p>
+    </div>
+  </div>
+
+  <div class="socket-grid">
+    <div class="socket-card">
+      <h4>Foxconn Interconnect Technology</h4>
+      <p>Socket: PE75363-11AN0-1H (AMD #: 6090108002G)</p>
+      <p style="margin-top:0.4rem;">SRM: PMPL100-11AN0-EH</p>
+      <p style="margin-top:0.4rem;">4 backplate options (stud: 5.4–7.4mm)</p>
+    </div>
+    <div class="socket-card">
+      <h4>Lotes Co. Ltd.</h4>
+      <p>Socket: AZIFA271-P001CCS (AMD #: 6090107201G)</p>
+      <p style="margin-top:0.4rem;">SRM: AZIFA226-P001CC</p>
+      <p style="margin-top:0.4rem;">4 backplate options (stud: 5.4–7.4mm)</p>
+    </div>
+    <div class="socket-card">
+      <h4>TE Connectivity</h4>
+      <p>Socket: 2504029-1 (AMD #: 6090110000G)</p>
+      <p style="margin-top:0.4rem;">SRM: 2473437-1</p>
+      <p style="margin-top:0.4rem;">4 backplate options (stud: 5.4–7.4mm)</p>
+    </div>
+    <div class="socket-card">
+      <h4>SVI3 VR Partners</h4>
+      <p style="line-height:1.6;">
+        <span class="highlight-blue">Infineon</span> · <span class="highlight-blue">Renesas</span> ·
+        <span class="highlight-blue">MPS</span> · <span class="highlight-blue">Texas Instruments</span> ·
+        <span class="highlight-blue">Analog Devices</span>
+      </p>
+      <p style="margin-top:0.4rem;">All using SVI3 Revision 2.0 · 8-phase &amp; 16-phase controllers</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Ecosystem Section -->
+<section id="ecosystem">
+  <div class="section-label">3rd Party Ecosystem</div>
+  <h2>Validated Partner Solutions</h2>
+  <p class="section-desc">
+    Venice SP7 has a broad ecosystem of validated 3rd party components across GPU, NIC, PCIe switches,
+    retimers, SSDs, CXL memory, and OS/hypervisor platforms.
+  </p>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('gpu')">GPU</button>
+    <button class="tab-btn" onclick="switchTab('nic')">NIC / Networking</button>
+    <button class="tab-btn" onclick="switchTab('pcie')">PCIe Switches</button>
+    <button class="tab-btn" onclick="switchTab('retimer')">Retimers</button>
+    <button class="tab-btn" onclick="switchTab('ssd')">NVMe SSD</button>
+    <button class="tab-btn" onclick="switchTab('cxl')">CXL Devices</button>
+    <button class="tab-btn" onclick="switchTab('os')">OS / Hypervisors</button>
+  </div>
+
+  <div id="tab-gpu" class="tab-panel active">
+    <div class="eco-section">
+      <h3>GPU Accelerators (PCIe Gen5)</h3>
+      <div class="pill-group">
+        <span class="pill">AMD MI355X (Gen5)</span>
+        <span class="pill">AMD MI325X (Gen5)</span>
+        <span class="pill">AMD MI300X (Gen5)</span>
+        <span class="pill">AMD MI200 Series (Gen4)</span>
+        <span class="pill">Nvidia H100 (Gen5)</span>
+        <span class="pill">Nvidia H200 (Gen5)</span>
+        <span class="pill">Nvidia B200 (Gen5)</span>
+        <span class="pill">Nvidia A100 (Gen4)</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-nic" class="tab-panel">
+    <div class="eco-section">
+      <h3>Network Interface Cards</h3>
+      <div class="pill-group">
+        <span class="pill">Nvidia Mellanox CX-8 (PCIe Gen6)</span>
+        <span class="pill">Nvidia Mellanox CX-7 (PCIe Gen5)</span>
+        <span class="pill">AMD Pensando Pollara-400 (Gen5)</span>
+        <span class="pill">AMD Pensando DSC3-2Q400 (Gen5)</span>
+        <span class="pill">AMD XILINX Versal Premium (Gen5)</span>
+        <span class="pill">AMD XILINX X4 Series (Gen5)</span>
+        <span class="pill">Broadcom P1800G0 (PCIe Gen6)</span>
+        <span class="pill">Broadcom P1400G/P2200G (Gen5)</span>
+        <span class="pill">Cornelis CN5000 (Gen5)</span>
+        <span class="pill">Intel E810 (Gen4)</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-pcie" class="tab-panel">
+    <div class="eco-section">
+      <h3>PCIe Switches</h3>
+      <div class="pill-group">
+        <span class="pill">Broadcom PEX90000 — Atlas 3 (Gen6)</span>
+        <span class="pill">Broadcom PEX89000 — Atlas 2 (Gen5)</span>
+        <span class="pill">Microchip PFX PM6x160 (PCIe 6.0)</span>
+        <span class="pill">Microchip PFX PM52100-KIT (Gen5)</span>
+        <span class="pill">Astera Scorpio 1 (PCIe Gen6)</span>
+      </div>
+      <h3>RAID &amp; HBA</h3>
+      <div class="pill-group">
+        <span class="pill">Broadcom LPe 36000 FC (Gen4)</span>
+        <span class="pill">Broadcom 9600 Series RAID (Gen4)</span>
+        <span class="pill">Microchip SmartRAID 3200 (Gen4)</span>
+        <span class="pill">Marvell 2700/2800 FC (Gen4)</span>
+        <span class="pill">MaxLinear MxL8807 Storage Accel (Gen4)</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-retimer" class="tab-panel">
+    <div class="eco-section">
+      <h3>PCIe Gen6 Retimers</h3>
+      <div class="pill-group">
+        <span class="pill">Astera Aries PT6162L (Gen6)</span>
+        <span class="pill">Marvell Alaska P (Gen6)</span>
+        <span class="pill">Montage M88RT61632 (Gen6)</span>
+      </div>
+      <h3>PCIe Gen5 Retimers</h3>
+      <div class="pill-group">
+        <span class="pill">Astera Aries PT5161L (Gen5)</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-ssd" class="tab-panel">
+    <div class="eco-section">
+      <h3>NVMe SSDs (PCIe Gen6)</h3>
+      <div class="pill-group">
+        <span class="pill">Micron 9650 E3.S</span>
+        <span class="pill">Samsung PM1763 E1.S</span>
+      </div>
+      <h3>NVMe SSDs (PCIe Gen5)</h3>
+      <div class="pill-group">
+        <span class="pill">KIOXIA CM7, CD8P</span>
+        <span class="pill">Micron 9550, 7600</span>
+        <span class="pill">Samsung PM1753/PM1743/PM9D3</span>
+        <span class="pill">SK Hynix PS1010/PS1030, PEB110</span>
+        <span class="pill">Solidigm D7-PS1010/D7-PS1030</span>
+        <span class="pill">Phison X200P</span>
+      </div>
+      <h3>NVMe SSDs (PCIe Gen4)</h3>
+      <div class="pill-group">
+        <span class="pill">KIOXIA CD8, CD7</span>
+        <span class="pill">Micron 9400/7500/7450/6500</span>
+        <span class="pill">Sandisk SN6/8 Series</span>
+        <span class="pill">Solidigm D5/D7 Series</span>
+        <span class="pill">SK Hynix PE8010/PE8030</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-cxl" class="tab-panel">
+    <div class="eco-section">
+      <h3>CXL Type-3 Memory Expansion</h3>
+      <div class="pill-group">
+        <span class="pill">Astera Leo — CXL 2.0</span>
+        <span class="pill">Marvell Structera-X — CXL 2.0</span>
+        <span class="pill">Microchip Pioneer PM8720 — CXL 2.0</span>
+        <span class="pill">Micron CZ122 — CXL 2.0</span>
+        <span class="pill">Montage MXCGen2 — CXL 2.0</span>
+        <span class="pill">Montage MXCGen3 — CXL 3.1</span>
+        <span class="pill">Samsung MD220 — CXL 2.0</span>
+        <span class="pill">Samsung MD310 — CXL 3.1</span>
+        <span class="pill">SK Hynix CMM-DDR5 — CXL 2.0</span>
+        <span class="pill">SK Hynix CMM-DDR5 — CXL 3.1</span>
+        <span class="pill">Scaleflux Cypress — CXL 3.0/Gen5</span>
+        <span class="pill">Scaleflux Pine — CXL 3.0/Gen6</span>
+      </div>
+      <h3>CXL Switching</h3>
+      <div class="pill-group">
+        <span class="pill">XConn (Marvell) Apollo I — CXL 2.0</span>
+        <span class="pill">XConn (Marvell) Apollo II / Structera S — CXL 3.1</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-os" class="tab-panel">
+    <div class="eco-section">
+      <h3>Operating Systems &amp; Hypervisors</h3>
+      <div class="pill-group">
+        <span class="pill">Windows Server 2025</span>
+        <span class="pill">Azure Local</span>
+        <span class="pill">VMware vSphere 9.2</span>
+        <span class="pill">RHEL 9.8 (N-1) → RHEL 10.2</span>
+        <span class="pill">SLES 16.1</span>
+        <span class="pill">Ubuntu 24.04.5 → Ubuntu 26.04</span>
+        <span class="pill">Oracle UEK 8.2 / 9.0</span>
+        <span class="pill">Nutanix AOS 7.6</span>
+        <span class="pill">FreeBSD 15.1</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Timeline -->
+<section id="timeline">
+  <div class="section-label">Development Timeline</div>
+  <h2>Venice SP7 Roadmap &amp; Milestones</h2>
+  <p class="section-desc">
+    From the first engineering samples in August 2025 to production ramp in H2 2026,
+    the Venice SP7 program is on track with regular AGESA PI releases.
+  </p>
+
+  <!-- Roadmap SVG -->
+  <div class="arch-wrapper" style="margin-bottom:2.5rem;">
+    <svg viewBox="0 0 900 130" style="width:100%;max-width:900px;display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="tlLine" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#ED1C24"/>
+          <stop offset="60%" stop-color="#f59e0b"/>
+          <stop offset="100%" stop-color="rgba(245,158,11,0.2)"/>
+        </linearGradient>
+      </defs>
+      <rect width="900" height="130" fill="rgba(10,15,30,0.6)" rx="10"/>
+      <!-- Timeline line -->
+      <line x1="60" y1="65" x2="860" y2="65" stroke="url(#tlLine)" stroke-width="2.5"/>
+      <!-- Milestones -->
+      <!-- ES1: Aug 2025 -->
+      <circle cx="120" cy="65" r="14" fill="#ED1C24"/>
+      <text x="120" y="70" text-anchor="middle" fill="white" font-size="9" font-weight="800">ES1</text>
+      <text x="120" y="48" text-anchor="middle" fill="#fca5a5" font-size="8.5">Aug 2025</text>
+      <text x="120" y="90" text-anchor="middle" fill="#94a3b8" font-size="7.5">48–128C</text>
+      <text x="120" y="100" text-anchor="middle" fill="#94a3b8" font-size="7.5">BIOS bring-up</text>
+      <!-- ES2: Nov 2025 -->
+      <circle cx="270" cy="65" r="14" fill="#ED1C24"/>
+      <text x="270" y="70" text-anchor="middle" fill="white" font-size="9" font-weight="800">ES2</text>
+      <text x="270" y="48" text-anchor="middle" fill="#fca5a5" font-size="8.5">Nov 2025</text>
+      <text x="270" y="90" text-anchor="middle" fill="#94a3b8" font-size="7.5">48–192C</text>
+      <text x="270" y="100" text-anchor="middle" fill="#94a3b8" font-size="7.5">System validation</text>
+      <!-- PI 0.0.8.0: May 2026 -->
+      <circle cx="460" cy="65" r="10" fill="#f59e0b" opacity="0.9"/>
+      <text x="460" y="69" text-anchor="middle" fill="white" font-size="7" font-weight="700">PI</text>
+      <text x="460" y="48" text-anchor="middle" fill="#fde68a" font-size="8.5">May 11–15 2026</text>
+      <text x="460" y="90" text-anchor="middle" fill="#94a3b8" font-size="7.5">PI 0.0.8.0</text>
+      <text x="460" y="100" text-anchor="middle" fill="#94a3b8" font-size="7.5">Min for PC support</text>
+      <!-- PC: May 2026 -->
+      <circle cx="560" cy="65" r="14" fill="rgba(245,158,11,0.8)" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="560" y="70" text-anchor="middle" fill="white" font-size="9" font-weight="800">PC</text>
+      <text x="560" y="48" text-anchor="middle" fill="#fde68a" font-size="8.5">May 2026</text>
+      <text x="560" y="90" text-anchor="middle" fill="#94a3b8" font-size="7.5">64–256C</text>
+      <text x="560" y="100" text-anchor="middle" fill="#94a3b8" font-size="7.5">Final electrical</text>
+      <!-- PR: Jul 2026 -->
+      <circle cx="700" cy="65" r="14" fill="rgba(245,158,11,0.5)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="700" y="70" text-anchor="middle" fill="white" font-size="9" font-weight="800">PR</text>
+      <text x="700" y="48" text-anchor="middle" fill="#fde68a" font-size="8.5">Jul 2026</text>
+      <text x="700" y="90" text-anchor="middle" fill="#94a3b8" font-size="7.5">Fused secure</text>
+      <text x="700" y="100" text-anchor="middle" fill="#94a3b8" font-size="7.5">Certification tests</text>
+      <!-- IP: H2 2026 -->
+      <circle cx="830" cy="65" r="14" fill="rgba(52,211,153,0.3)" stroke="#34d399" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="830" y="70" text-anchor="middle" fill="#34d399" font-size="8" font-weight="800">PROD</text>
+      <text x="830" y="48" text-anchor="middle" fill="#6ee7b7" font-size="8.5">H2 2026</text>
+      <text x="830" y="90" text-anchor="middle" fill="#94a3b8" font-size="7.5">Production</text>
+      <text x="830" y="100" text-anchor="middle" fill="#94a3b8" font-size="7.5">Ramp</text>
+      <!-- "Today" marker -->
+      <line x1="478" y1="15" x2="478" y2="115" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+      <text x="478" y="13" text-anchor="middle" fill="#22d3ee" font-size="8" font-weight="700">Apr 2026</text>
+    </svg>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot done">ES1</div>
+      <div class="tl-content">
+        <div class="tl-date">August 2025 · Completed</div>
+        <h4>Engineering Samples 1 — BIOS Bring-Up</h4>
+        <p>48C / 64C / 96C / 128C (CCD32) · Fused non-secure · Intended for BIOS development, bring-up testing, early system validation, electrical margining per guidance.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot done">ES2</div>
+      <div class="tl-content">
+        <div class="tl-date">November 2025 · Completed</div>
+        <h4>Engineering Samples 2 — System Validation</h4>
+        <p>48C / 64C / 96C / 128C / 144C / 192C (CCD32) · Fused non-secure · AGESA PI 0.0.7.0 (Oct 2025). System stress and validation, electrical compliance and margining.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot active">NOW</div>
+      <div class="tl-content">
+        <div class="tl-date">Apr 2026 · Current</div>
+        <h4>PI 0.0.7.4 Released — Final Pre-PC Development</h4>
+        <p>AGESA PI 0.0.7.4 released Mar 12, 2026. Added FAST, UPP, UBPS power management features. OpenBMC v2.18.0.074 released Apr 1, 2026 with ALERT-L driver, APML 5.1.1 support.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot">PC</div>
+      <div class="tl-content">
+        <div class="tl-date">May 2026 · Upcoming</div>
+        <h4>Production Candidate — Final Electrical Validation</h4>
+        <p>128C / 256C (CCD32), 64C (CCD12) · Fused non-secure · AGESA PI 0.0.8.0 (Min PI for PC support). Final electrical margining at POR speeds, initial thermal testing.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot">PR</div>
+      <div class="tl-content">
+        <div class="tl-date">July 2026 · Target</div>
+        <h4>Production Ready — Certification &amp; Pilot</h4>
+        <p>Up to 256C (CCD32), up to 96C (CCD12) · Fused secure · AGESA PI 0.0.9.0 (Production Ready, All Features Optimized). Final system validation, certification tests, pilot/production testing.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot">🚀</div>
+      <div class="tl-content">
+        <div class="tl-date">H2 2026 · Production Target</div>
+        <h4>AMD Production Ramp (IP)</h4>
+        <p>Fused secure production. AGESA PI 1.0.0.0 (Production Release). 7-year product availability planned. Target TDP up to 600W with full SP7 IRM Group support.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGESA schedule -->
+  <div class="card" style="margin-top:1.5rem; border-color:rgba(96,165,250,0.2);">
+    <h3 style="margin-bottom:1rem;">AGESA PI Schedule Summary</h3>
+    <div style="overflow-x:auto;">
+      <table style="font-size:0.78rem;">
+        <thead>
+          <tr style="background:rgba(15,52,96,0.4);">
+            <th style="padding:0.5rem 1rem;text-align:left;color:#93c5fd;">Release</th>
+            <th style="padding:0.5rem 1rem;text-align:left;color:#93c5fd;">Date</th>
+            <th style="padding:0.5rem 1rem;text-align:left;color:#93c5fd;">Status / Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:0.4rem 1rem;">0.0.6.0</td><td style="padding:0.4rem 1rem;color:#34d399;">Released Jun 30, 2025</td><td style="padding:0.4rem 1rem;color:#94a3b8;">Initial PI for early BIOS development</td></tr>
+          <tr><td style="padding:0.4rem 1rem;">0.0.6.1–0.0.6.2</td><td style="padding:0.4rem 1rem;color:#34d399;">Aug–Sep 2025</td><td style="padding:0.4rem 1rem;color:#94a3b8;">Min PI for ES1 support</td></tr>
+          <tr><td style="padding:0.4rem 1rem;">0.0.7.0–0.0.7.4</td><td style="padding:0.4rem 1rem;color:#34d399;">Oct 2025–Mar 2026</td><td style="padding:0.4rem 1rem;color:#94a3b8;">Min PI for ES2; power mgmt features</td></tr>
+          <tr><td style="padding:0.4rem 1rem;">0.0.8.0</td><td style="padding:0.4rem 1rem;color:#fbbf24;">May 11–15, 2026</td><td style="padding:0.4rem 1rem;color:#94a3b8;">Min PI for PC samples support</td></tr>
+          <tr><td style="padding:0.4rem 1rem;">0.0.9.0</td><td style="padding:0.4rem 1rem;color:#fbbf24;">Mid–Late Jun 2026</td><td style="padding:0.4rem 1rem;color:#94a3b8;">Production Ready — All features optimized</td></tr>
+          <tr><td style="padding:0.4rem 1rem;">1.0.0.0</td><td style="padding:0.4rem 1rem;color:#f59e0b;">Q3 2026</td><td style="padding:0.4rem 1rem;color:#94a3b8;">Production Release</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p><strong style="color:#fca5a5;">AMD CONFIDENTIAL — Distribution Under NDA Only</strong></p>
+  <p style="margin-top:0.5rem;">
+    Source: AMD Q1 2026 Embedded x86 Product Roadmap (v1.0) &amp; SP7 Venice Interlock Rev 2026.04.13 for Advantech.
+    Information subject to change. AMD is under no obligation to notify customers of changes.
+  </p>
+  <p style="margin-top:0.4rem;">
+    © 2026 Advanced Micro Devices, Inc. All rights reserved. AMD, the AMD Arrow logo, EPYC, Zen, and combinations thereof are trademarks of Advanced Micro Devices, Inc.
+  </p>
+  <p style="margin-top:0.4rem; color:#475569;">Compiled for Advantech internal reference · April 2026</p>
+</footer>
+
+<script>
+// Tab switching
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Nav active state on scroll
+const sections = document.querySelectorAll('section[id], .hero[id]');
+const navLinks = document.querySelectorAll('nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.getBoundingClientRect().top;
+    if (top <= 80) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+}, { passive: true });
+
+// Smooth scroll for nav links
+navLinks.forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// Animate progress bars on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.prog-fill').forEach(fill => {
+        fill.style.width = fill.dataset.width || fill.style.width;
+      });
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('#memory').forEach(s => observer.observe(s));
+
+// Tooltip for SVG elements
+const tooltip = document.getElementById('tooltip');
+const tooltips = {
+  'IOD': '<strong>I/O Die (IOD)</strong><br>Contains PCIe Gen6, CXL 3.1, DDR5 controllers, and 4th-gen Infinity Fabric. Connects all CCDs via the fabric.',
+  'CCD (Zen6)': '<strong>Zen6 CCD</strong><br>12 cores per CCD · 1MB L2/core · Up to 48MB L3 shared. Up to 8 CCDs = 96 cores total per socket.',
+  'CCD (Zen6c)': '<strong>Zen6c CCD</strong><br>32 cores per CCD · 1MB L2/core · Up to 128MB L3 shared. Up to 8 CCDs = 256 cores total per socket.',
+};
+document.querySelectorAll('svg text').forEach(el => {
+  const key = el.textContent.trim();
+  if (tooltips[key]) {
+    el.style.cursor = 'pointer';
+    el.addEventListener('mousemove', (e) => {
+      tooltip.innerHTML = tooltips[key];
+      tooltip.style.display = 'block';
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+    });
+    el.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+  }
+});
+</script>
+</body>
+</html>
