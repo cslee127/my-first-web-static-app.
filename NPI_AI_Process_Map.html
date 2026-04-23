@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NPI AI Tools Process Map</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f4f6fb; color: #1e293b; font-size: 13px; }
+
+  .header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); color: white; padding: 18px 24px; }
+  .header h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+  .header p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+
+  .phase-flow { display: flex; align-items: center; padding: 16px 24px 8px; gap: 0; overflow-x: auto; }
+  .phase-pill {
+    flex: 1; min-width: 80px; text-align: center; padding: 10px 6px;
+    font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;
+    position: relative; transition: transform 0.15s, box-shadow 0.15s; white-space: nowrap;
+  }
+  .phase-pill:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .phase-arrow { font-size: 18px; color: #94a3b8; padding: 0 2px; flex-shrink: 0; }
+  .phase-count { font-size: 16px; font-weight: 800; display: block; }
+  .phase-sub { font-size: 9px; opacity: 0.85; }
+
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; padding: 6px 24px 12px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .filter-bar { display: flex; gap: 8px; padding: 4px 24px 12px; align-items: center; flex-wrap: wrap; }
+  .filter-bar label { font-size: 11px; font-weight: 700; color: #475569; }
+  .filter-btn { font-size: 10px; padding: 3px 10px; border-radius: 12px; border: 1.5px solid #cbd5e1; background: white; cursor: pointer; font-weight: 600; transition: all 0.15s; }
+  .filter-btn.active { color: white; border-color: transparent; }
+  .filter-btn.fall.active  { background: #1e3a5f; }
+  .filter-btn.f1.active   { background: #94a3b8; }
+  .filter-btn.f2.active   { background: #f97316; }
+  .filter-btn.f3.active   { background: #ca8a04; color:#fff; }
+  .filter-btn.f4.active   { background: #22c55e; }
+  .filter-btn.f6.active   { background: #3b82f6; }
+  .filter-btn.f7.active   { background: #8b5cf6; }
+
+  .summary-row { display: flex; gap: 12px; padding: 0 24px 20px; flex-wrap: wrap; }
+  .stat-card { background: white; border-radius: 8px; padding: 12px 16px; flex: 1; min-width: 110px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); text-align: center; }
+  .stat-card .n { font-size: 24px; font-weight: 800; color: #1e3a5f; }
+  .stat-card .lbl { font-size: 10px; color: #64748b; margin-top: 2px; }
+
+  .matrix-wrap { padding: 0 24px 20px; overflow-x: auto; }
+  .matrix { border-collapse: collapse; width: 100%; min-width: 820px; }
+  .matrix th, .matrix td { border: 1px solid #e2e8f0; padding: 0; vertical-align: top; }
+  .matrix thead th { background: #1e3a5f; color: white; text-align: center; padding: 8px 4px; font-size: 11px; font-weight: 700; }
+  .matrix thead th.glue-col { background: #475569; }
+  .domain-cell { background: #f1f5f9; font-size: 11px; font-weight: 700; padding: 8px 10px; min-width: 95px; color: #1e3a5f; border-right: 2px solid #94a3b8; }
+  .domain-en { font-size: 9px; font-weight: 400; color: #64748b; }
+  .tool-cell { padding: 4px; min-width: 90px; cursor: pointer; transition: background 0.15s; }
+  .tool-cell:hover { filter: brightness(0.93); }
+  .tool-cell.empty { background: #f8fafc; cursor: default; }
+
+  .sub-group { margin-bottom: 4px; }
+  .sub-label { font-size: 9px; font-weight: 700; color: #64748b; margin-bottom: 2px; padding: 1px 3px; background: rgba(255,255,255,0.6); border-radius: 2px; }
+  .tool-tag {
+    display: inline-block; margin: 1px; padding: 2px 5px;
+    border-radius: 10px; font-size: 9px; font-weight: 600; color: white;
+    cursor: pointer; transition: opacity 0.15s; line-height: 1.3;
+  }
+  .tool-tag:hover { opacity: 0.75; }
+
+  .s1 { background: #94a3b8; }
+  .s2 { background: #f97316; }
+  .s3 { background: #ca8a04; }
+  .s4 { background: #22c55e; }
+  .s5 { background: #10b981; }
+  .s6 { background: #3b82f6; }
+  .s7 { background: #8b5cf6; }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: 10px; padding: 24px; max-width: 560px; width: 92%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .modal h3 { font-size: 15px; color: #1e3a5f; margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+  .modal-tool { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; padding: 6px 8px; background: #f8fafc; border-radius: 6px; }
+  .status-badge { flex-shrink: 0; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 8px; color: white; margin-top: 1px; }
+  .modal-tool .name { font-size: 12px; color: #1e293b; }
+  .modal-tool .ai-tag { font-size: 10px; color: #6366f1; margin-top: 2px; }
+  .modal-close { float: right; background: none; border: none; font-size: 20px; cursor: pointer; color: #94a3b8; margin-top: -4px; }
+
+  @media print {
+    .filter-bar, .modal-overlay { display: none !important; }
+    .matrix-wrap { overflow: visible; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>NPI AI Tools — Process Overview</h1>
+  <p>Advantech NPI Process with AI Automation &nbsp;·&nbsp; 大分類 × 流程分類 Matrix &nbsp;·&nbsp; Click any cell to see tool details &nbsp;·&nbsp; Generated 2026-04-23</p>
+</div>
+
+<div class="phase-flow" id="phaseFlow"></div>
+
+<div class="legend">
+  <strong style="font-size:11px;color:#475569;align-self:center;">Tool Status:</strong>
+  <div class="legend-item"><div class="dot s1"></div>計劃中</div>
+  <div class="legend-item"><div class="dot s2"></div>開發中</div>
+  <div class="legend-item"><div class="dot s3"></div>測試中</div>
+  <div class="legend-item"><div class="dot s4"></div>使用中(個人)</div>
+  <div class="legend-item"><div class="dot s6"></div>使用中(部門)</div>
+  <div class="legend-item"><div class="dot s7"></div>使用中(公司)</div>
+</div>
+
+<div class="filter-bar">
+  <label>Filter by Status:</label>
+  <button class="filter-btn fall active" data-f="all">All</button>
+  <button class="filter-btn f1" data-f="1">計劃中</button>
+  <button class="filter-btn f2" data-f="2">開發中</button>
+  <button class="filter-btn f3" data-f="3">測試中</button>
+  <button class="filter-btn f4" data-f="4">使用中(個人)</button>
+  <button class="filter-btn f6" data-f="6">使用中(部門)</button>
+  <button class="filter-btn f7" data-f="7">使用中(公司)</button>
+</div>
+
+<div class="summary-row" id="summaryRow"></div>
+
+<div class="matrix-wrap">
+  <table class="matrix" id="mainMatrix"></table>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modalTitle"></h3>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+const STATUS = {
+  '1':['計劃中','s1'],'2':['開發中','s2'],'3':['測試中','s3'],
+  '4':['使用中(個人)','s4'],'5':['使用中(他人)','s4'],
+  '6':['使用中(部門)','s6'],'7':['使用中(公司)','s7'],
+};
+
+const PHASES = [
+  {id:'0',label:'0. Concept',en:'Concept',color:'#6366f1'},
+  {id:'1',label:'1. Plan',en:'Plan',color:'#8b5cf6'},
+  {id:'2',label:'2. EVT',en:'Eng. Validation',color:'#2563eb'},
+  {id:'3',label:'3. DVT',en:'Design Validation',color:'#0891b2'},
+  {id:'4',label:'4. PVT',en:'Prod. Validation',color:'#059669'},
+  {id:'5',label:'5. MP',en:'Mass Production',color:'#d97706'},
+  {id:'6',label:'6. EOL',en:'End of Life',color:'#dc2626'},
+  {id:'8',label:'★ Glue',en:'Cross-cutting',color:'#475569'},
+];
+
+const DOMAINS = [
+  {id:'電子設計',en:'Electronic Design',color:'#dbeafe'},
+  {id:'零件管理',en:'Component Mgmt',color:'#dcfce7'},
+  {id:'機構設計',en:'Mechanical Design',color:'#fef3c7'},
+  {id:'散熱設計',en:'Thermal Design',color:'#ffe4e6'},
+  {id:'系統設計',en:'System Design',color:'#f3e8ff'},
+  {id:'測試驗證',en:'Test & Verify',color:'#ecfdf5'},
+  {id:'流程管理',en:'Process Mgmt',color:'#fff7ed'},
+  {id:'工廠生產',en:'Factory Prod.',color:'#fdf4ff'},
+  {id:'客服售後',en:'After-Sales',color:'#f0f9ff'},
+  {id:'複製除錯',en:'Debug',color:'#fafaf9'},
+  {id:'代理自動',en:'Agent Auto.',color:'#f0fdf4'},
+];
+
+const TOOLS = [
+  // 0.Concept
+  {ph:'0',dm:'電子設計',sub:'需求評估',name:'NotebookLM於RFQ技術文件讀取應用',st:'5',ai:''},
+  {ph:'0',dm:'電子設計',sub:'需求評估',name:'Copilotstudio Nova Lake S RAG Agent',st:'1',ai:'Copilot'},
+  // 1.Plan
+  {ph:'1',dm:'電子設計',sub:'需求評估',name:'Project spec sync Tool',st:'1',ai:''},
+  {ph:'1',dm:'電子設計',sub:'線路規劃',name:'OrCAD block diagram 自動繪製',st:'4',ai:''},
+  {ph:'1',dm:'電子設計',sub:'線路規劃',name:'OrCAD Block diagram from Project sync',st:'1',ai:''},
+  {ph:'1',dm:'電子設計',sub:'線路規劃',name:'Tom_Tool-拖曳IP線路',st:'2',ai:'VS Code'},
+  {ph:'1',dm:'電子設計',sub:'線路規劃',name:'Tom_Tool-OrCAD來源線路source',st:'2',ai:'VS Code'},
+  {ph:'1',dm:'電子設計',sub:'電源設計',name:'利用AI將PowerBudget自動化',st:'3',ai:''},
+  {ph:'1',dm:'電子設計',sub:'電源設計',name:'MarkA_Plot_Power Budget',st:'3',ai:''},
+  {ph:'1',dm:'電子設計',sub:'電源設計',name:'Power Budget tool from Project Sync',st:'1',ai:''},
+  {ph:'1',dm:'電子設計',sub:'電源設計',name:'Power Solution Selection',st:'1',ai:''},
+  {ph:'1',dm:'電子設計',sub:'電源設計',name:'Power Consumption tool',st:'1',ai:''},
+  {ph:'1',dm:'電子設計',sub:'需求評估',name:'System powerbudget excel工具化',st:'1',ai:''},
+  {ph:'1',dm:'電子設計',sub:'Cost Review',name:'ISG COST DOWN TOOL程式化',st:'6',ai:''},
+  {ph:'1',dm:'電子設計',sub:'Cost Review',name:'OrCAD BOM cost 計算工具',st:'4',ai:''},
+  {ph:'1',dm:'電子設計',sub:'Layout設計',name:'MarkA_Allegro_Auto_Placement',st:'1',ai:''},
+  {ph:'1',dm:'機構設計',sub:'ME設計自動化',name:'提案圖快速生成',st:'2',ai:''},
+  {ph:'1',dm:'散熱設計',sub:'熱解決方案',name:'AI驅動無風扇系統熱解決方案快速預測',st:'1',ai:''},
+  {ph:'1',dm:'散熱設計',sub:'散熱模擬',name:'AI工具提升Simulation效率',st:'1',ai:''},
+  {ph:'1',dm:'散熱設計',sub:'散熱模擬',name:'Fan P-Q 計算小程式',st:'3',ai:''},
+  {ph:'1',dm:'散熱設計',sub:'散熱模擬',name:'零件 TDP 評估工具',st:'1',ai:''},
+  {ph:'1',dm:'零件管理',sub:'需求評估',name:'IC零件電流規格Specbook導入規範',st:'1',ai:''},
+  {ph:'1',dm:'零件管理',sub:'CE RPA',name:'CE Portal KCC Power BI Dashboard',st:'4',ai:''},
+  {ph:'1',dm:'零件管理',sub:'CE RPA',name:'AI自動化分類專案(RFQ)',st:'4',ai:''},
+  {ph:'1',dm:'流程管理',sub:'專案流程',name:'PMO 主題待訂',st:'1',ai:''},
+  // 2.EVT
+  {ph:'2',dm:'零件管理',sub:'Symbol自動化',name:'OrCAD Symbol 自動繪製',st:'1',ai:''},
+  {ph:'2',dm:'零件管理',sub:'Symbol自動化',name:'OrCAD Symbol 2.0 Datasheet辨識',st:'1',ai:''},
+  {ph:'2',dm:'零件管理',sub:'零件替代料',name:'CE_機構件共用功能查詢系統',st:'2',ai:''},
+  {ph:'2',dm:'系統設計',sub:'系統設計自動化',name:'利用AI提升系統開發評估品質',st:'1',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路規劃',name:'OrCAD Power Sequence 自動繪製',st:'4',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路規劃',name:'MarkA_Plot_Power Sequence',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'GPIO設計',name:'AI Agent for PCH GPIO setting',st:'1',ai:''},
+  {ph:'2',dm:'電子設計',sub:'GPIO設計',name:'利用AI設計GPIO自動偵測功能',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路繪製',name:'OrCAD 零件排序',st:'2',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路繪製',name:'Tom_Tool-OrCAD Page Rename',st:'2',ai:'VS Code'},
+  {ph:'2',dm:'電子設計',sub:'線路繪製',name:'AI一鍵整合OrCAD DSN自動設定NL',st:'2',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路繪製',name:'OrCAD part property replacement',st:'2',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路繪製',name:'Power design check',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路繪製',name:'Tom_Tool-OrCAD快速改Page文字',st:'2',ai:'VS Code'},
+  {ph:'2',dm:'電子設計',sub:'線路繪製',name:'MarkA_LCIS_DB',st:'3',ai:''},
+  {ph:'2',dm:'機構設計',sub:'ME設計自動化',name:'客戶Logo轉工程圖',st:'4',ai:''},
+  {ph:'2',dm:'機構設計',sub:'ME設計自動化',name:'PLACEMENT 零件自動帶入',st:'2',ai:''},
+  {ph:'2',dm:'機構設計',sub:'ME設計自動化',name:'工程圖自動化',st:'2',ai:''},
+  {ph:'2',dm:'機構設計',sub:'ME設計自動化',name:'AI動態時程提醒與智慧設計檢核',st:'2',ai:''},
+  {ph:'2',dm:'機構設計',sub:'ME設計自動化',name:'自動生成打樣申請單與承認書',st:'2',ai:''},
+  {ph:'2',dm:'機構設計',sub:'ME設計自動化',name:'SolidWorks檔案轉BOM',st:'2',ai:''},
+  {ph:'2',dm:'機構設計',sub:'ME設計自動化',name:'影像細緻化處理轉DXF',st:'2',ai:''},
+  {ph:'2',dm:'機構設計',sub:'ME設計自動化',name:'AI協助編寫SolidWorks巨集程式',st:'3',ai:'Gemini'},
+  {ph:'2',dm:'機構設計',sub:'ME設計自動化',name:'AI防水資料庫建置與IP Fail預測',st:'1',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路計算',name:'利用AI將CLKOUT自動化',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路計算',name:'MarkA_Calculator_Resistor Watt',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路計算',name:'MarkA_Calculator_BJT',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路計算',name:'MarkA_Calculator_RC Charge',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路計算',name:'MarkA_Calculator_Resistor Divider',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路Review',name:'利用AI設計線路pin快速比對',st:'2',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路Review',name:'AI一鍵整合pull high電壓檢測',st:'2',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路Review',name:'MarkA_OrCAD Netlist Check-GND',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路Review',name:'MarkA_OrCAD Netlist Check-Power Nets',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路Review',name:'MarkA_OrCAD Netlist Check-Pull high',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路Review',name:'MarkA_OrCAD Netlist Check-FB Divider',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路Review',name:'MarkA_OrCAD Netlist Check-Power Rail',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路Review',name:'MarkA_OrCAD Netlist Check-Cap Dielectric',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路Review',name:'OrCAD PDF 線路圖增強版',st:'4',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路Review',name:'Schematics Design Check Tool',st:'2',ai:''},
+  {ph:'2',dm:'電子設計',sub:'Layout設計',name:'Allegro高亮小工具_離線版',st:'2',ai:'Gemini'},
+  {ph:'2',dm:'電子設計',sub:'Layout設計',name:'利用AI製作Layout走線層面評估',st:'1',ai:''},
+  {ph:'2',dm:'電子設計',sub:'Layout設計',name:'MarkA_Allegro_Plane_Checker',st:'2',ai:''},
+  {ph:'2',dm:'電子設計',sub:'Layout設計',name:'利用AI將excel檢查填錫率功能化',st:'1',ai:''},
+  {ph:'2',dm:'電子設計',sub:'Layout Review',name:'CES SI AutoPDN',st:'4',ai:''},
+  {ph:'2',dm:'電子設計',sub:'Layout Review',name:'MarkA_Allegro CM_Setting_Excel',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'Layout Review',name:'MarkA_Allegro Trace Width Check',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'Layout Review',name:'MarkA_Allegro Same Layer Diff PN',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'Layout Review',name:'MarkA_Allegro Decoupling Caps Check',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'Layout Review',name:'MarkA_Allegro Around DIP DFM',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'BOM製作',name:'Check BOM轉TCL在線路內修正',st:'4',ai:''},
+  {ph:'2',dm:'電子設計',sub:'BOM製作',name:'MarkA_OrCAD BOM工具-瀏覽與檢查',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'BOM製作',name:'MarkA_Compare PLM BOM tool',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'BOM製作',name:'One click upload BOM',st:'7',ai:''},
+  {ph:'2',dm:'電子設計',sub:'BOM製作',name:'ACS BOM上傳導入自動分階',st:'1',ai:''},
+  {ph:'2',dm:'複製除錯',sub:'Debug自動化',name:'ScanSmbus',st:'1',ai:''},
+  {ph:'2',dm:'電子設計',sub:'研發管理',name:'MarkA_EE流程自動化',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'研發管理',name:'MarkA_Schedule_EE',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'研發管理',name:'MarkA_RD_Note',st:'3',ai:''},
+  {ph:'2',dm:'電子設計',sub:'工作流程',name:'整合Markdown daily report與redmine',st:'4',ai:''},
+  {ph:'2',dm:'電子設計',sub:'BringUp測試',name:'整合hardware test spec分工excel',st:'1',ai:''},
+  {ph:'2',dm:'系統設計',sub:'BringUp測試',name:'驅動及測試工具和IP的自動化',st:'2',ai:''},
+  {ph:'2',dm:'零件管理',sub:'CE RPA',name:'CPU Socket & BTB 配對表-查詢器',st:'4',ai:''},
+  {ph:'2',dm:'零件管理',sub:'零件替代料',name:'175_風扇與控制晶片選型建議自動化',st:'1',ai:''},
+  {ph:'2',dm:'電子設計',sub:'線路設計',name:'利用AI將設計TCL導入ISG IP Tool',st:'3',ai:''},
+  // 3.DVT
+  {ph:'3',dm:'測試驗證',sub:'DQA自動化',name:'測試點選自動化',st:'1',ai:''},
+  {ph:'3',dm:'測試驗證',sub:'DQA自動化',name:'DQA Test report自動產生',st:'1',ai:''},
+  {ph:'3',dm:'測試驗證',sub:'DQA自動化',name:'Chipsec_log分析報告 AI輔助',st:'1',ai:''},
+  {ph:'3',dm:'測試驗證',sub:'QA自動化',name:'QCS5430 CPU Temp Log Viewer',st:'3',ai:''},
+  {ph:'3',dm:'測試驗證',sub:'QA自動化',name:'QA溫度量測智能判定系統',st:'1',ai:''},
+  {ph:'3',dm:'測試驗證',sub:'QA自動化',name:'QA智能測試照片分類系統',st:'1',ai:''},
+  {ph:'3',dm:'測試驗證',sub:'QA自動化',name:'QA即時影像監測-Chamber攝影機',st:'1',ai:''},
+  {ph:'3',dm:'測試驗證',sub:'RF測試',name:'RF TX Power線性度量測自動化',st:'1',ai:''},
+  {ph:'3',dm:'測試驗證',sub:'EMC測試',name:'lily 規格書比對',st:'1',ai:''},
+  {ph:'3',dm:'機構設計',sub:'ME設計自動化',name:'AI輔助小程式-Converter Water Reminder',st:'2',ai:''},
+  // 4.PVT
+  {ph:'4',dm:'零件管理',sub:'零件承認',name:'零件承認AI Agent',st:'2',ai:''},
+  {ph:'4',dm:'零件管理',sub:'零件承認',name:'零件承認全流程 Dashboard',st:'4',ai:''},
+  {ph:'4',dm:'機構設計',sub:'ME設計自動化',name:'AI 協助生成 FAI 尺寸檢核程式',st:'3',ai:''},
+  // 5.MP
+  {ph:'5',dm:'工廠生產',sub:'工作流程',name:'CKB6 Sample Request表單自動生成',st:'4',ai:''},
+  {ph:'5',dm:'工廠生產',sub:'工作流程',name:'兩岸工作日計算工具',st:'4',ai:''},
+  {ph:'5',dm:'零件管理',sub:'CE RPA',name:'Component-Where used Search',st:'4',ai:''},
+  {ph:'5',dm:'零件管理',sub:'零件替代料',name:'B2B_P2P替代料搜尋工具',st:'7',ai:''},
+  {ph:'5',dm:'零件管理',sub:'零件替代料',name:'Pb Free 電阻料比對查詢工具',st:'4',ai:'Gemini'},
+  {ph:'5',dm:'零件管理',sub:'零件替代料',name:'查詢設計Module在PCB使用工具',st:'1',ai:''},
+  {ph:'5',dm:'零件管理',sub:'零件替代料',name:'非研華料號在iDesign做替代料比對',st:'1',ai:''},
+  {ph:'5',dm:'零件管理',sub:'PCN/EOL',name:'零件PCN查詢紀錄',st:'2',ai:''},
+  {ph:'5',dm:'零件管理',sub:'PCN/EOL',name:'PCNEOL精準通知自動化平台',st:'2',ai:'Claude'},
+  {ph:'5',dm:'零件管理',sub:'PCN/EOL',name:'PCN, EOL Accelerator Agent',st:'4',ai:'M365 Copilot'},
+  {ph:'5',dm:'零件管理',sub:'PCN/EOL',name:'ATJ-Material Category分類智動系統',st:'4',ai:'Claude'},
+  {ph:'5',dm:'零件管理',sub:'PCN/EOL',name:'PCN_Analyzer Tool',st:'2',ai:''},
+  {ph:'5',dm:'零件管理',sub:'PCN/EOL',name:'PCN檢核及通知內容生成',st:'2',ai:''},
+  {ph:'5',dm:'零件管理',sub:'高風險預測',name:'BOM 高風險用料預測系統',st:'2',ai:'Claude'},
+  {ph:'5',dm:'零件管理',sub:'高風險預測',name:'PLM電子零件Lifecycle自動分析查詢',st:'4',ai:'Claude'},
+  {ph:'5',dm:'流程管理',sub:'研發管理',name:'ISG Issue Share Process dashboard',st:'6',ai:''},
+  {ph:'5',dm:'客服售後',sub:'AE工具',name:'AE AI chatbot 助理',st:'4',ai:''},
+  {ph:'5',dm:'客服售後',sub:'AE工具',name:'AE自動化下載驅動軟體 ADV_GetDriver',st:'4',ai:''},
+  {ph:'5',dm:'客服售後',sub:'AE工具',name:'AI進行資料庫分析與Issue追蹤',st:'4',ai:''},
+  {ph:'5',dm:'零件管理',sub:'工作流程',name:'Y料號零件規格書讀取及分類判定',st:'4',ai:''},
+  // 6.EOL
+  {ph:'6',dm:'零件管理',sub:'LTB管理',name:'Redmine ECLB(LTB) 資訊查詢',st:'4',ai:''},
+  // 8.Glue
+  {ph:'8',dm:'零件管理',sub:'CE RPA',name:'電阻零件規格書自動查找生成',st:'4',ai:''},
+  {ph:'8',dm:'零件管理',sub:'CE RPA',name:'研華PVL審查標準強化供應鏈策略',st:'4',ai:''},
+  {ph:'8',dm:'零件管理',sub:'CE RPA',name:'CE超自動化高效能一站式工作平台',st:'4',ai:'RPA'},
+  {ph:'8',dm:'零件管理',sub:'CE RPA',name:'CIS Datasheet sync-up',st:'4',ai:'RPA'},
+  {ph:'8',dm:'零件管理',sub:'CE RPA',name:'KCC研華主要用料新增移除管理',st:'4',ai:'Power Automate'},
+  {ph:'8',dm:'零件管理',sub:'CE RPA',name:'Component Strategic Roadmap共享平台',st:'4',ai:'RPA'},
+  {ph:'8',dm:'零件管理',sub:'CE RPA',name:'CE Copilot Agent',st:'2',ai:'Copilot Studio'},
+  {ph:'8',dm:'零件管理',sub:'CE RPA',name:'DA Document Analyzer Tool',st:'4',ai:''},
+  {ph:'8',dm:'零件管理',sub:'CE RPA',name:'CE QA Agent',st:'2',ai:''},
+  {ph:'8',dm:'零件管理',sub:'零件替代料',name:'電子料階Specbook完整度比對工具',st:'4',ai:''},
+  {ph:'8',dm:'零件管理',sub:'工作流程',name:'AI與MCP Server串接PowerBI報表分析',st:'4',ai:''},
+  {ph:'8',dm:'零件管理',sub:'零件數據',name:'電子零件溫度規格Specbook與CIS對應',st:'2',ai:''},
+  {ph:'8',dm:'零件管理',sub:'零件數據',name:'利用DA優化Specbook建檔流程',st:'1',ai:''},
+  {ph:'8',dm:'零件管理',sub:'SiliconExpert',name:'SiliconExpert研華料號查詢',st:'4',ai:'Claude'},
+  {ph:'8',dm:'零件管理',sub:'Denodo MCP',name:'Denodo_MCP_Server',st:'6',ai:'Claude'},
+  {ph:'8',dm:'流程管理',sub:'研發儀表板',name:'ISG Project Schedule & Design Check',st:'6',ai:''},
+  {ph:'8',dm:'流程管理',sub:'研發儀表板',name:'RD Resource & Project List dashboard',st:'6',ai:''},
+  {ph:'8',dm:'代理自動',sub:'AI Agent',name:'AI NPI 落地小組 代理程式',st:'3',ai:''},
+  {ph:'8',dm:'代理自動',sub:'AI Agent',name:'OrCAD Symbol 2.0 代理程式',st:'3',ai:''},
+];
+
+let activeFilter = 'all';
+
+function getTools(phId, dmId) {
+  return TOOLS.filter(t => t.ph===phId && t.dm===dmId &&
+    (activeFilter==='all' || t.st===activeFilter));
+}
+
+function buildMatrix() {
+  const tbl = document.getElementById('mainMatrix');
+  let thead = '<thead><tr><th style="min-width:95px;text-align:left;padding:8px">大分類</th>';
+  PHASES.forEach(p => {
+    const cls = p.id==='8' ? ' class="glue-col"' : '';
+    thead += `<th${cls} style="min-width:88px">${p.label}<br><span style="font-size:9px;opacity:0.7">${p.en}</span></th>`;
+  });
+  thead += '</tr></thead>';
+
+  let tbody = '<tbody>';
+  DOMAINS.forEach(d => {
+    const hasAny = PHASES.some(p => getTools(p.id, d.id).length > 0);
+    if (!hasAny) return;
+    tbody += '<tr>';
+    tbody += `<td class="domain-cell" style="background:${d.color}">${d.id}<br><span class="domain-en">${d.en}</span></td>`;
+    PHASES.forEach(p => {
+      const tools = getTools(p.id, d.id);
+      if (!tools.length) { tbody += '<td class="tool-cell empty"></td>'; return; }
+      const subs = {};
+      tools.forEach(t => { if(!subs[t.sub]) subs[t.sub]=[]; subs[t.sub].push(t); });
+      let inner = '';
+      Object.entries(subs).forEach(([sub, ts]) => {
+        inner += `<div class="sub-group"><div class="sub-label">${sub}</div>`;
+        ts.forEach(t => {
+          const [,scls] = STATUS[t.st]||['?','s1'];
+          const esc = t.name.replace(/'/g,"\\'");
+          const phEsc = p.id;
+          const dmEsc = d.id.replace(/'/g,"\\'");
+          const subEsc = sub.replace(/'/g,"\\'");
+          inner += `<span class="tool-tag ${scls}" onclick="openModal('${phEsc}','${dmEsc}','${subEsc}')" title="${esc}">${t.name.length>20?t.name.substring(0,19)+'…':t.name}</span>`;
+        });
+        inner += '</div>';
+      });
+      tbody += `<td class="tool-cell" style="background:${d.color}99">${inner}</td>`;
+    });
+    tbody += '</tr>';
+  });
+  tbody += '</tbody>';
+  tbl.innerHTML = thead + tbody;
+}
+
+function buildPhaseFlow() {
+  const el = document.getElementById('phaseFlow');
+  PHASES.forEach((p, i) => {
+    const cnt = TOOLS.filter(t => t.ph===p.id).length;
+    const pill = document.createElement('div');
+    pill.className = 'phase-pill';
+    pill.style.cssText = `background:${p.color};color:white`;
+    pill.innerHTML = `<span class="phase-count">${cnt}</span>${p.label}<br><span class="phase-sub">${p.en}</span>`;
+    el.appendChild(pill);
+    if (i < PHASES.length-1) {
+      const arr = document.createElement('div');
+      arr.className = 'phase-arrow';
+      arr.textContent = i===6 ? '↩' : '→';
+      el.appendChild(arr);
+    }
+  });
+}
+
+function buildSummary() {
+  const total = TOOLS.length;
+  const deployed = TOOLS.filter(t=>['4','5','6','7'].includes(t.st)).length;
+  const inDev = TOOLS.filter(t=>['2','3'].includes(t.st)).length;
+  const withAI = TOOLS.filter(t=>t.ai&&t.ai.trim()).length;
+  const planned = TOOLS.filter(t=>t.st==='1').length;
+  document.getElementById('summaryRow').innerHTML = `
+    <div class="stat-card"><div class="n">${total}</div><div class="lbl">Total AI Tools</div></div>
+    <div class="stat-card"><div class="n" style="color:#22c55e">${deployed}</div><div class="lbl">Deployed / In Use</div></div>
+    <div class="stat-card"><div class="n" style="color:#f97316">${inDev}</div><div class="lbl">In Dev / Testing</div></div>
+    <div class="stat-card"><div class="n" style="color:#94a3b8">${planned}</div><div class="lbl">Planned</div></div>
+    <div class="stat-card"><div class="n" style="color:#6366f1">${withAI}</div><div class="lbl">Uses Named AI Engine</div></div>
+    <div class="stat-card"><div class="n" style="color:#2563eb">8</div><div class="lbl">NPI Phases Covered</div></div>
+  `;
+}
+
+function openModal(phId, dmId, sub) {
+  const phase = PHASES.find(p=>p.id===phId);
+  const tools = TOOLS.filter(t=>t.ph===phId && t.dm===dmId && (!sub||t.sub===sub));
+  if (!tools.length) return;
+  document.getElementById('modalTitle').textContent = `${phase?.label||phId} › ${dmId}${sub?' › '+sub:''}`;
+  const subs = {};
+  tools.forEach(t=>{ if(!subs[t.sub]) subs[t.sub]=[]; subs[t.sub].push(t); });
+  let html = '';
+  Object.entries(subs).forEach(([s,ts])=>{
+    html += `<div style="font-size:10px;font-weight:700;color:#64748b;margin:10px 0 4px;text-transform:uppercase">${s}</div>`;
+    ts.forEach(t=>{
+      const [slabel,scls] = STATUS[t.st]||['?','s1'];
+      html += `<div class="modal-tool"><span class="status-badge ${scls}">${slabel}</span><div><div class="name">${t.name}</div>${t.ai?`<div class="ai-tag">🤖 ${t.ai}</div>`:''}</div></div>`;
+    });
+  });
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.f;
+    buildMatrix();
+  });
+});
+
+document.getElementById('modalOverlay').addEventListener('click', e=>{
+  if (e.target===document.getElementById('modalOverlay')) closeModal();
+});
+
+buildPhaseFlow();
+buildSummary();
+buildMatrix();
+</script>
+</body>
+</html>
