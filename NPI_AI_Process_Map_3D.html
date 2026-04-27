@@ -1,0 +1,594 @@
+<!DOCTYPE html><html lang="zh-TW"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NPI AI Tools — 3D Process Pyramid</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:#05070d;color:#e2e8f0;font-size:13px}
+#stage{position:fixed;inset:0;background:radial-gradient(ellipse at center,#0a1224 0%,#02040a 70%)}
+canvas{display:block;outline:none}
+.ui{position:fixed;pointer-events:none;z-index:10}
+.ui>*{pointer-events:auto}
+/* Header */
+.hdr{top:0;left:0;right:0;padding:14px 22px;
+  background:linear-gradient(180deg,rgba(15,23,42,.85),rgba(15,23,42,0));
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(99,102,241,.15)}
+.hdr h1{font-size:18px;font-weight:700;letter-spacing:.4px;
+  background:linear-gradient(90deg,#a5b4fc,#67e8f9);-webkit-background-clip:text;
+  background-clip:text;color:transparent}
+.hdr p{font-size:11px;color:#94a3b8;margin-top:2px}
+/* Summary cards (top right) */
+.sumr{position:fixed;top:14px;right:22px;display:flex;gap:8px;z-index:11;pointer-events:none}
+.sc{background:rgba(15,23,42,.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(99,102,241,.2);border-radius:8px;padding:8px 12px;min-width:80px;text-align:center}
+.sc .n{font-size:18px;font-weight:800;color:#a5b4fc;line-height:1}
+.sc .l{font-size:9px;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.sc.ok .n{color:#34d399}.sc.dev .n{color:#fb923c}.sc.pl .n{color:#94a3b8}.sc.ai .n{color:#67e8f9}
+.sc.alt{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.45)}
+.sc.alt .l{color:#fbbf24}
+/* Left panel */
+.panel{position:fixed;left:18px;top:90px;bottom:140px;width:230px;
+  background:rgba(15,23,42,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(99,102,241,.18);border-radius:10px;padding:14px;
+  overflow-y:auto;z-index:11}
+.panel h4{font-size:10px;color:#67e8f9;text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:8px;border-bottom:1px solid rgba(103,232,249,.2);padding-bottom:4px}
+.panel h4:not(:first-child){margin-top:14px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:4px 8px;border-radius:12px;
+  background:rgba(30,41,59,.6);border:1px solid rgba(148,163,184,.2);color:#cbd5e1;
+  cursor:pointer;margin:2px;transition:all .15s;user-select:none}
+.chip:hover{background:rgba(99,102,241,.18);border-color:rgba(99,102,241,.5)}
+.chip.on{background:rgba(99,102,241,.3);border-color:#818cf8;color:#fff;box-shadow:0 0 8px rgba(129,140,248,.4)}
+.chip .swatch{width:9px;height:9px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 6px currentColor}
+/* Bottom phase legend (vertical strip on the right of pyramid) */
+.phaseleg{position:fixed;right:18px;bottom:18px;display:flex;flex-direction:column;gap:5px;z-index:11}
+.phaseleg .row{display:flex;align-items:center;gap:8px;font-size:10px;color:#cbd5e1;
+  background:rgba(15,23,42,.55);border:1px solid rgba(148,163,184,.15);border-radius:6px;padding:4px 8px}
+.phaseleg .swatch{width:10px;height:10px;border-radius:2px;box-shadow:0 0 6px currentColor}
+/* View buttons (bottom center) */
+.viewbar{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:6px;z-index:11}
+.vb{font-size:10px;padding:6px 12px;border-radius:14px;
+  background:rgba(15,23,42,.7);border:1px solid rgba(99,102,241,.3);color:#cbd5e1;
+  cursor:pointer;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+  backdrop-filter:blur(8px);transition:all .15s}
+.vb:hover{background:rgba(99,102,241,.25);color:#fff;border-color:#818cf8}
+.vb.on{background:rgba(99,102,241,.4);color:#fff;border-color:#a5b4fc;box-shadow:0 0 12px rgba(129,140,248,.4)}
+/* Tooltip */
+.tip{position:fixed;pointer-events:none;background:rgba(2,6,23,.95);border:1px solid rgba(129,140,248,.5);
+  border-radius:8px;padding:10px 12px;max-width:300px;font-size:11px;color:#e2e8f0;
+  box-shadow:0 8px 24px rgba(0,0,0,.6),0 0 16px rgba(129,140,248,.15);z-index:50;
+  display:none;backdrop-filter:blur(10px);transition:opacity .12s}
+.tip.show{display:block}
+.tip .tname{font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.3}
+.tip .row2{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px}
+.tip .badge{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;color:#fff;letter-spacing:.3px}
+.tip .meta{font-size:10px;color:#94a3b8;margin-top:6px;padding-top:6px;border-top:1px solid rgba(148,163,184,.15)}
+.tip .meta b{color:#cbd5e1}
+.tip .ai{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#a5b4fc;margin-top:4px}
+/* Phase floating labels */
+.lbl3d{position:absolute;pointer-events:none;font-weight:700;color:#fff;text-shadow:0 0 8px rgba(0,0,0,.9);
+  white-space:nowrap;font-size:11px;letter-spacing:.5px}
+.lbl3d .en{font-size:9px;color:#94a3b8;font-weight:400;display:block}
+/* Hint footer */
+.hint{position:fixed;left:18px;bottom:18px;font-size:10px;color:#64748b;z-index:11;
+  background:rgba(15,23,42,.55);padding:5px 10px;border-radius:6px;
+  border:1px solid rgba(148,163,184,.12)}
+.hint kbd{background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.4);
+  border-radius:3px;padding:1px 5px;font-size:9px;color:#a5b4fc;font-family:inherit}
+/* Loading overlay */
+.load{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:99;
+  background:#02040a;color:#67e8f9;font-size:14px;letter-spacing:1px;text-transform:uppercase}
+.load .spin{width:32px;height:32px;border:2px solid rgba(103,232,249,.2);border-top-color:#67e8f9;
+  border-radius:50%;animation:spin 1s linear infinite;margin-right:14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load.done{display:none}
+/* Scrollbar */
+.panel::-webkit-scrollbar{width:6px}
+.panel::-webkit-scrollbar-thumb{background:rgba(99,102,241,.3);border-radius:3px}
+</style>
+</head><body>
+<div id="stage"></div>
+<div id="labels" style="position:fixed;inset:0;pointer-events:none;z-index:5"></div>
+<div class="load" id="loader"><div class="spin"></div>Initializing 3D viewer…</div>
+<div class="ui hdr"><h1>NPI AI Tools — 3D Process Pyramid</h1>
+<p>Advantech NPI · Apex = Concept · Base = EOL · Glue rings encircle every phase · Generated 2026-04-27 11:19</p></div>
+<div class="sumr">
+<div class="sc"><div class="n" id="vct">159</div><div class="l">Visible</div></div>
+<div class="sc ok"><div class="n" id="cdep">50</div><div class="l">In Use</div></div>
+<div class="sc dev"><div class="n" id="cdev">68</div><div class="l">In Dev</div></div>
+<div class="sc pl"><div class="n" id="cpl">41</div><div class="l">Planned</div></div>
+<div class="sc ai alt"><div class="n" id="cai">34</div><div class="l">AI Engine</div></div>
+</div>
+<div class="ui panel">
+<h4>Domain (大分類)</h4>
+<div><span class="chip chip-dm on" data-dm="電子設計"><span class="swatch" style="background:#60a5fa;color:#60a5fa"></span>電子設計 <span style="opacity:.55">Electronic Design</span></span><span class="chip chip-dm on" data-dm="零件管理"><span class="swatch" style="background:#34d399;color:#34d399"></span>零件管理 <span style="opacity:.55">Component Mgmt</span></span><span class="chip chip-dm on" data-dm="機構設計"><span class="swatch" style="background:#fbbf24;color:#fbbf24"></span>機構設計 <span style="opacity:.55">Mechanical Design</span></span><span class="chip chip-dm on" data-dm="散熱設計"><span class="swatch" style="background:#fb7185;color:#fb7185"></span>散熱設計 <span style="opacity:.55">Thermal Design</span></span><span class="chip chip-dm on" data-dm="系統設計"><span class="swatch" style="background:#c084fc;color:#c084fc"></span>系統設計 <span style="opacity:.55">System Design</span></span><span class="chip chip-dm on" data-dm="測試驗證"><span class="swatch" style="background:#22d3ee;color:#22d3ee"></span>測試驗證 <span style="opacity:.55">Test & Verify</span></span><span class="chip chip-dm on" data-dm="流程管理"><span class="swatch" style="background:#fb923c;color:#fb923c"></span>流程管理 <span style="opacity:.55">Process Mgmt</span></span><span class="chip chip-dm on" data-dm="工廠生產"><span class="swatch" style="background:#f472b6;color:#f472b6"></span>工廠生產 <span style="opacity:.55">Factory Prod.</span></span><span class="chip chip-dm on" data-dm="客服售後"><span class="swatch" style="background:#38bdf8;color:#38bdf8"></span>客服售後 <span style="opacity:.55">After-Sales</span></span><span class="chip chip-dm on" data-dm="複製除錯"><span class="swatch" style="background:#94a3b8;color:#94a3b8"></span>複製除錯 <span style="opacity:.55">Debug</span></span><span class="chip chip-dm on" data-dm="代理自動"><span class="swatch" style="background:#a3e635;color:#a3e635"></span>代理自動 <span style="opacity:.55">Agent Auto.</span></span></div>
+<h4>Status</h4>
+<div><span class="chip chip-st on" data-f="all">All</span><span class="chip chip-st" data-f="1"><span class="swatch" style="background:#94a3b8;color:#94a3b8"></span>計劃中</span><span class="chip chip-st" data-f="2"><span class="swatch" style="background:#f97316;color:#f97316"></span>開發中</span><span class="chip chip-st" data-f="3"><span class="swatch" style="background:#ca8a04;color:#ca8a04"></span>測試中</span><span class="chip chip-st" data-f="4"><span class="swatch" style="background:#22c55e;color:#22c55e"></span>使用中(個人)</span><span class="chip chip-st" data-f="5"><span class="swatch" style="background:#10b981;color:#10b981"></span>使用中(他人)</span><span class="chip chip-st" data-f="6"><span class="swatch" style="background:#3b82f6;color:#3b82f6"></span>使用中(部門)</span><span class="chip chip-st" data-f="7"><span class="swatch" style="background:#8b5cf6;color:#8b5cf6"></span>使用中(公司)</span></div>
+<h4>Legend</h4>
+<div style="font-size:10px;color:#94a3b8;line-height:1.6">• <b>Color</b> = Domain<br>• <b>Y position</b> = Phase<br>• <b>Glow</b> = Status (in-use brightest)<br>• <b>Halo</b> = Uses AI engine<br>• <b>Gold rings</b> = Cross-cutting (Glue)</div>
+</div>
+<div class="phaseleg"><div class="row"><span class="swatch" style="background:#6366f1;color:#6366f1"></span><b>0. Concept</b><span style="opacity:.55">&nbsp;Concept</span></div><div class="row"><span class="swatch" style="background:#8b5cf6;color:#8b5cf6"></span><b>1. Plan</b><span style="opacity:.55">&nbsp;Plan</span></div><div class="row"><span class="swatch" style="background:#2563eb;color:#2563eb"></span><b>2. EVT</b><span style="opacity:.55">&nbsp;Eng. Validation</span></div><div class="row"><span class="swatch" style="background:#0891b2;color:#0891b2"></span><b>3. DVT</b><span style="opacity:.55">&nbsp;Design Validation</span></div><div class="row"><span class="swatch" style="background:#059669;color:#059669"></span><b>4. PVT</b><span style="opacity:.55">&nbsp;Prod. Validation</span></div><div class="row"><span class="swatch" style="background:#d97706;color:#d97706"></span><b>5. MP</b><span style="opacity:.55">&nbsp;Mass Production</span></div><div class="row"><span class="swatch" style="background:#dc2626;color:#dc2626"></span><b>6. EOL</b><span style="opacity:.55">&nbsp;End of Life</span></div><div class="row"><span class="swatch" style="background:#64748b;color:#64748b"></span><b>7. Other</b><span style="opacity:.55">&nbsp;Other</span></div><div class="row" style="border-color:rgba(245,158,11,.4)"><span class="swatch" style="background:#f59e0b;color:#f59e0b"></span><b>★ Glue</b><span style="opacity:.55">&nbsp;Cross-cutting (rings)</span></div></div>
+<div class="viewbar">
+<button class="vb on" data-v="iso">Iso</button>
+<button class="vb" data-v="top">Top</button>
+<button class="vb" data-v="side">Side</button>
+<button class="vb" data-v="rot">Auto-rotate</button>
+</div>
+<div class="hint">Drag to rotate · <kbd>Scroll</kbd> zoom · <kbd>Right-drag</kbd> pan · Hover a node for details</div>
+<div class="tip" id="tip"></div>
+<script type="importmap">
+{"imports":{
+  "three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+
+const PH=[{"id": "0", "label": "0. Concept", "en": "Concept", "color": "#6366f1"}, {"id": "1", "label": "1. Plan", "en": "Plan", "color": "#8b5cf6"}, {"id": "2", "label": "2. EVT", "en": "Eng. Validation", "color": "#2563eb"}, {"id": "3", "label": "3. DVT", "en": "Design Validation", "color": "#0891b2"}, {"id": "4", "label": "4. PVT", "en": "Prod. Validation", "color": "#059669"}, {"id": "5", "label": "5. MP", "en": "Mass Production", "color": "#d97706"}, {"id": "6", "label": "6. EOL", "en": "End of Life", "color": "#dc2626"}, {"id": "7", "label": "7. Other", "en": "Other", "color": "#64748b"}, {"id": "8", "label": "★ Glue", "en": "Cross-cutting", "color": "#f59e0b"}];
+const DM=[{"id": "電子設計", "en": "Electronic Design", "color": "#60a5fa"}, {"id": "零件管理", "en": "Component Mgmt", "color": "#34d399"}, {"id": "機構設計", "en": "Mechanical Design", "color": "#fbbf24"}, {"id": "散熱設計", "en": "Thermal Design", "color": "#fb7185"}, {"id": "系統設計", "en": "System Design", "color": "#c084fc"}, {"id": "測試驗證", "en": "Test & Verify", "color": "#22d3ee"}, {"id": "流程管理", "en": "Process Mgmt", "color": "#fb923c"}, {"id": "工廠生產", "en": "Factory Prod.", "color": "#f472b6"}, {"id": "客服售後", "en": "After-Sales", "color": "#38bdf8"}, {"id": "複製除錯", "en": "Debug", "color": "#94a3b8"}, {"id": "代理自動", "en": "Agent Auto.", "color": "#a3e635"}];
+const TL=[{"ph": "7", "dm": "零件管理", "sub": "零件數據", "name": "利用自動化分析工具DA優化Specbook建檔流程(141 Power & 125 Converter)", "st": "1", "ow": "Betsy.Tsai", "ai": "Gemini"}, {"ph": "2", "dm": "零件管理", "sub": "工作流程", "name": "應用 RPA 加速PLM料號申請與零件承認週期(141 Power & 125 Converter)", "st": "2", "ow": "Betsy.Tsai", "ai": "Gemini"}, {"ph": "8", "dm": "零件管理", "sub": "零件替代料自動化", "name": "SiliconExpert研華料號查詢", "st": "7", "ow": "CS.Lee", "ai": "Claude"}, {"ph": "7", "dm": "電子設計", "sub": "線路設計自動化", "name": "PCW_Report_translator", "st": "4", "ow": "QX.Wu", "ai": "Gemini"}, {"ph": "7", "dm": "電子設計", "sub": "Layout Review", "name": "Allegro_Trace_Width_Reviewer", "st": "4", "ow": "QX.Wu", "ai": ""}, {"ph": "7", "dm": "電子設計", "sub": "線路Review", "name": "Schematic_Comparing_Tool", "st": "4", "ow": "QX.Wu", "ai": "Gemini"}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "SCM Design Revision Diff Tool", "st": "2", "ow": "Max.Wu", "ai": "Claude"}, {"ph": "1", "dm": "零件管理", "sub": "零件替代料自動化", "name": "CE_130 Diode替代料查詢系統", "st": "1", "ow": "Otto.Hou", "ai": ""}, {"ph": "7", "dm": "零件管理", "sub": "零件數據", "name": "利用自動化分析工具DA優化Specbook建檔流程(141 Power & 125 Converter)1", "st": "1", "ow": "Betsy.Tsai", "ai": "Gemini"}, {"ph": "7", "dm": "機構設計", "sub": "技術分享", "name": "AI輔助APP開發", "st": "1", "ow": "Brian10.Chen", "ai": ""}, {"ph": "8", "dm": "零件管理", "sub": "零件數據", "name": "Denodo_MCP_Server", "st": "6", "ow": "CS.Lee", "ai": "Claude"}, {"ph": "8", "dm": "零件管理", "sub": "零件數據", "name": "SiliconExpert_MCP_Server", "st": "6", "ow": "CS.Lee", "ai": "Claude"}, {"ph": "8", "dm": "零件管理", "sub": "工作流程", "name": "where-used-report-skill", "st": "3", "ow": "Misia.Chen", "ai": ""}, {"ph": "0", "dm": "電子設計", "sub": "需求評估", "name": "NotebookLM 於 RFQ,技術文件讀取,零件比對應用分享", "st": "5", "ow": "Elton.Wang(王俊傑)", "ai": ""}, {"ph": "0", "dm": "電子設計", "sub": "需求評估", "name": "Copilotstudio -Nova Lake S RAG Agent", "st": "1", "ow": "Greg.Chou", "ai": "Copilot"}, {"ph": "1", "dm": "電子設計", "sub": "需求評估", "name": "Project spec sync Tool", "st": "1", "ow": "Shushi.Lin", "ai": ""}, {"ph": "1", "dm": "機構設計", "sub": "ME設計自動化", "name": "提案圖快速生成", "st": "2", "ow": "Chengyang.Hsu", "ai": ""}, {"ph": "1", "dm": "電子設計", "sub": "線路規劃", "name": "OrCAD block diagram 自動繪製", "st": "4", "ow": "Sam.Shih(石世诚)", "ai": ""}, {"ph": "1", "dm": "電子設計", "sub": "線路規劃", "name": "OrCAD Block diagram繪製 from Project sync", "st": "1", "ow": "Shushi.Lin", "ai": ""}, {"ph": "1", "dm": "散熱設計", "sub": "ME設計自動化", "name": "AI驅動無風扇系統熱解決方案快速預測引擎", "st": "1", "ow": "Amico.Shih", "ai": ""}, {"ph": "1", "dm": "散熱設計", "sub": "散熱模擬資源最佳化", "name": "AI工具如何提升Simulation使用效率", "st": "1", "ow": "Yc.Su", "ai": ""}, {"ph": "1", "dm": "散熱設計", "sub": "散熱模擬資源最佳化", "name": "AI工具如何提升Simulation使用效率1", "st": "1", "ow": "Yc.Su", "ai": ""}, {"ph": "1", "dm": "散熱設計", "sub": "散熱模擬資源最佳化", "name": "Fan P-Q 計算小程式", "st": "3", "ow": "Yc.Su", "ai": ""}, {"ph": "1", "dm": "散熱設計", "sub": "散熱模擬資源最佳化", "name": "零件 TDP 評估工具", "st": "1", "ow": "Kenny.Hung", "ai": ""}, {"ph": "1", "dm": "零件管理", "sub": "需求評估", "name": "電子 IC 零件電流規格（Specbook）導入與 CIS 串接之定義與設定規範", "st": "1", "ow": "Gentian.Sun", "ai": "Gemini"}, {"ph": "1", "dm": "電子設計", "sub": "電源設計", "name": "利用AI將PowerBudget自動化", "st": "3", "ow": "William.Chou", "ai": ""}, {"ph": "1", "dm": "電子設計", "sub": "電源設計", "name": "MarkA_Plot_Power Budget", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "1", "dm": "電子設計", "sub": "電源設計", "name": "Power Buget tool from Project Sync", "st": "1", "ow": "Shushi.Lin", "ai": ""}, {"ph": "1", "dm": "電子設計", "sub": "需求評估", "name": "利用AI將原本System powerbudget excel工具化", "st": "1", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路設計自動化", "name": "利用AI將設計TCL導入ISG IP Tool", "st": "3", "ow": "William.Chou", "ai": ""}, {"ph": "1", "dm": "電子設計", "sub": "電源設計", "name": "Power Solution Selection", "st": "1", "ow": "StevenYS.Su", "ai": ""}, {"ph": "1", "dm": "電子設計", "sub": "電源設計", "name": "Power Consumption tool for Power supply selection", "st": "1", "ow": "Shushi.Lin", "ai": ""}, {"ph": "1", "dm": "電子設計", "sub": "電源設計", "name": "multi node system power consumption evaluate tool", "st": "6", "ow": "Max.Wu", "ai": "ChatGPT"}, {"ph": "1", "dm": "電子設計", "sub": "線路規劃", "name": "Tom_Tool-拖曳IP線路", "st": "2", "ow": "Tom24.Du", "ai": "VS Code"}, {"ph": "1", "dm": "電子設計", "sub": "線路規劃", "name": "Tom_Tool-OrCAD 來源線路source資訊", "st": "2", "ow": "Tom24.Du", "ai": "VS Code"}, {"ph": "1", "dm": "零件管理", "sub": "工作流程", "name": "CE Portal、KCC Project_Power BI Dashboard_List", "st": "4", "ow": "Jessica.Chin", "ai": ""}, {"ph": "1", "dm": "零件管理", "sub": "CE RPA", "name": "AI自動化分類專案(RFQ)", "st": "4", "ow": "Albee.Chang", "ai": "Gemini"}, {"ph": "1", "dm": "電子設計", "sub": "Cost Review", "name": "利用AI將ISG COST DOWN TOOL 製作為程式", "st": "6", "ow": "William.Chou", "ai": ""}, {"ph": "1", "dm": "電子設計", "sub": "Cost Review", "name": "OrCAD BOM cost 計算工具", "st": "4", "ow": "Sam.Shih(石世诚)", "ai": ""}, {"ph": "1", "dm": "流程管理", "sub": "專案流程", "name": "PMO - 主題待訂", "st": "1", "ow": "Ariel77.Chen", "ai": ""}, {"ph": "1", "dm": "電子設計", "sub": "Placement Review", "name": "MarkA_Allegro_Auto_Placement", "st": "1", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "零件管理", "sub": "CE Symbol 2.0進化專案", "name": "OrCAD Symbol 自動繪製", "st": "1", "ow": "Sam.Shih(石世诚)", "ai": ""}, {"ph": "2", "dm": "零件管理", "sub": "CE Symbol 2.0進化專案", "name": "OrCAD Symbol 2.0(Datasheet辨識+Symbol建立流程自動化)", "st": "1", "ow": "Jessica.Chin", "ai": ""}, {"ph": "2", "dm": "零件管理", "sub": "零件替代料自動化", "name": "CE_機構件共用功能查詢系統", "st": "2", "ow": "Sunny22.Yang", "ai": ""}, {"ph": "2", "dm": "系統設計", "sub": "系統設計自動化", "name": "利用AI提升系統開發評估品質", "st": "1", "ow": "Hammer.Lin", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路規劃", "name": "OrCAD Power Sequence 自動繪製", "st": "4", "ow": "Sam.Shih(石世诚)", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路規劃", "name": "MarkA_Plot_Power Sequence", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "GPIO設計", "name": "AI Agent for PCH GPIO setting", "st": "1", "ow": "Frank.Feng", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "GPIO設計", "name": "利用AI設計GPIO自動偵測功能匯出差異", "st": "3", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路繪製", "name": "OrCAD 零件排序", "st": "2", "ow": "Sam.Shih(石世诚)", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路繪製", "name": "Tom_Tool-OrCAD Page Rename_All", "st": "2", "ow": "Tom24.Du", "ai": "VS Code"}, {"ph": "2", "dm": "電子設計", "sub": "線路繪製", "name": "AI 一鍵整合  OrCAD DSN 自動設定NL 元件-料號與顏色", "st": "2", "ow": "Shushi.Lin", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路繪製", "name": "OrCAD part property replacement", "st": "2", "ow": "Sam.Shih(石世诚)", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路繪製", "name": "Power design check", "st": "3", "ow": "StevenYS.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路繪製", "name": "Tom_Tool-OrCAD 快速改Page文字", "st": "2", "ow": "Tom24.Du", "ai": "VS Code"}, {"ph": "2", "dm": "電子設計", "sub": "線路繪製", "name": "MarkA_LCIS_DB", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "機構設計", "sub": "ME設計自動化", "name": "客戶Logo轉工程圖", "st": "4", "ow": "Chengyang.Hsu", "ai": ""}, {"ph": "2", "dm": "機構設計", "sub": "ME設計自動化", "name": "PLACEMENT 零件自動帶入", "st": "2", "ow": "Amico.Shih", "ai": ""}, {"ph": "2", "dm": "機構設計", "sub": "ME設計自動化", "name": "工程圖自動化", "st": "2", "ow": "Jerry.Cheng", "ai": ""}, {"ph": "2", "dm": "機構設計", "sub": "ME設計自動化", "name": "AI 動態時程提醒與智慧設計檢核雷達表(機構戰情儀表板)", "st": "2", "ow": "Steven.Wu", "ai": ""}, {"ph": "2", "dm": "機構設計", "sub": "ME設計自動化", "name": "自動生成打樣申請單與承認書申請單", "st": "2", "ow": "Junshin.Chen", "ai": ""}, {"ph": "2", "dm": "機構設計", "sub": "ME設計自動化", "name": "SolidWorks檔案轉BOM檔名&料號自動調整", "st": "2", "ow": "Junshin.Chen", "ai": ""}, {"ph": "2", "dm": "機構設計", "sub": "ME設計自動化", "name": "影像細緻化處理轉DXF", "st": "2", "ow": "Alan.Chen", "ai": ""}, {"ph": "2", "dm": "機構設計", "sub": "技術分享", "name": "AI工具提升ME工作效率做法分享", "st": "4", "ow": "Chengyang.Hsu", "ai": ""}, {"ph": "2", "dm": "機構設計", "sub": "ME設計自動化", "name": "AI協助編寫SolidWorks巨集程式範例", "st": "3", "ow": "James.Chen", "ai": "Gemini"}, {"ph": "3", "dm": "機構設計", "sub": "ME設計自動化", "name": "AI輔助小程式開發-Converter_Water_Reminder", "st": "2", "ow": "Brian10.Chen", "ai": ""}, {"ph": "2", "dm": "機構設計", "sub": "ME設計自動化", "name": "AI防水資料庫建置與IP Fail預測系統", "st": "1", "ow": "Samson.Wang", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "流程管理", "name": "利用AI將excel的個人設備管理自動化工具改為線上", "st": "1", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路計算", "name": "利用AI將CLKOUT自動化", "st": "3", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路計算", "name": "MarkA_Calculator_Resistor Watt Calculator", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路計算", "name": "MarkA_Calculator_BJT Calculator", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路計算", "name": "MarkA_Calculator_RC Charge Simulator", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路計算", "name": "MarkA_Calculator_Resistor Divider Calculator", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "利用AI設計線路pin快速比對功能", "st": "2", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "AI 一鍵整合 文字layout guide轉自動執行-- pull high 電壓檢測", "st": "2", "ow": "Shushi.Lin", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "MarkA_OrCAD Netlist Check-Check GND", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "MarkA_OrCAD Netlist Check-Check Power Nets Without Source", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "MarkA_OrCAD Netlist Check-Check Pull high Resistor Plane", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "MarkA_OrCAD Netlist Check-Check LDO or Buck IC FB Divider", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "MarkA_OrCAD Netlist Check-Power Rail Caps Qty. Calculation", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "MarkA_OrCAD Netlist Check-Cap Dielectric Summary", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "OrCAD PDF 線路圖 增強版", "st": "4", "ow": "Jason16.Chen", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "Schematics Design Check Tool", "st": "2", "ow": "Beam.Lan", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "Placement Review", "name": "線路比對後_Allegro 高亮小工具_離線版", "st": "2", "ow": "Vic.Huang", "ai": "Gemini"}, {"ph": "2", "dm": "電子設計", "sub": "BOM製作", "name": "利用AI將Check BOM轉TCL直接在線路內修正", "st": "4", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "零件管理", "sub": "流程管理", "name": "Intel ES 樣品申請自動化工具", "st": "1", "ow": "Lynn.Liu", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "BOM製作", "name": "MarkA_OrCAD BOM工具-瀏覽與檢查", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "BOM製作", "name": "MarkA_Compare PLM BOM tool", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "BOM製作", "name": "One click upload BOM", "st": "7", "ow": "Emery.Chiu", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "BOM製作", "name": "利用AI將ACS BOM上傳導入自動分階,資料庫替代料自動導入功能", "st": "1", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "線路Review", "name": "利用AI設計Placement與線路設計確認工具", "st": "2", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "訊號模擬", "name": "CES SI AutoPDN", "st": "4", "ow": "ChrisHY.Yang", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "Layout Review", "name": "MarkA_Allegro CM_Setting_Excel Impedance Check", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "Layout Review", "name": "MarkA_Allegro Trace Width Check", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "Layout Review", "name": "MarkA_Allegro Same Layer Diff PN tolerance check", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "Layout Review", "name": "MarkA_Allegro Decoupling Caps Placement Check", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "Layout Review", "name": "MarkA_Allegro Around DIP Component Check_DFM", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "Layout Review", "name": "利用AI製作Layout走線層面評估工具", "st": "1", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "Layout Review", "name": "MarkA_Allegro_Plane_Checker", "st": "2", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "Layout Review", "name": "利用AI將excel檢查填錫率功能化", "st": "1", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "複製除錯", "sub": "Debug自動化", "name": "ScanSmbus", "st": "1", "ow": "Alawn.Lee", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "研發管理", "name": "MarkA_EE流程自動化", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "研發管理", "name": "MarkA_Schedule_EE", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "研發管理", "name": "MarkA_RD_Note", "st": "3", "ow": "Wesley.Su", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "工作流程", "name": "利用AI整合Markdown,daily report與redmine自動上傳", "st": "4", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "電子設計", "sub": "RD測試", "name": "利用AI整合hardware test spec分工excel與線上化", "st": "1", "ow": "William.Chou", "ai": ""}, {"ph": "2", "dm": "系統設計", "sub": "RD測試", "name": "驅動及測試工具和IP的自動化", "st": "2", "ow": "John18.Wang", "ai": ""}, {"ph": "3", "dm": "測試驗證", "sub": "DQA測試自動化", "name": "測試點選自動化", "st": "1", "ow": "Sam.Shih(石世诚)", "ai": ""}, {"ph": "3", "dm": "測試驗證", "sub": "DQA測試自動化", "name": "DQA Test report自動產生", "st": "1", "ow": "Andy.Kao", "ai": ""}, {"ph": "3", "dm": "測試驗證", "sub": "DQA測試自動化", "name": "Chipsec_log分析報告_AI_輔助程式開發", "st": "1", "ow": "Sam.Wang", "ai": ""}, {"ph": "3", "dm": "測試驗證", "sub": "QA測試自動化", "name": "Qualcomm QCS5430 CPU temperture Log Viewer Tool", "st": "3", "ow": "Carlos.Pan", "ai": ""}, {"ph": "3", "dm": "測試驗證", "sub": "QA測試自動化", "name": "QA溫度量測智能判定系統", "st": "1", "ow": "Pierce.Chang", "ai": ""}, {"ph": "3", "dm": "測試驗證", "sub": "QA測試自動化", "name": "QA智能測試照片分類系統", "st": "1", "ow": "Pierce.Chang", "ai": ""}, {"ph": "3", "dm": "測試驗證", "sub": "QA測試自動化", "name": "QA即時影像監測-Chamber網路攝影機建置", "st": "1", "ow": "Pierce.Chang", "ai": ""}, {"ph": "3", "dm": "測試驗證", "sub": "RF測試", "name": "利用AI實現RF TX Power線性度量測自動化", "st": "1", "ow": "Justin.Wang", "ai": ""}, {"ph": "3", "dm": "測試驗證", "sub": "EMC專案測試報告比對搜尋系統", "name": "lily 規格書比對", "st": "1", "ow": "Lily.Huang", "ai": ""}, {"ph": "4", "dm": "零件管理", "sub": "CE RPA", "name": "零件承認AI Agent", "st": "2", "ow": "Alan.Yang", "ai": ""}, {"ph": "4", "dm": "零件管理", "sub": "CE RPA", "name": "零件承認全流程 Dashboard", "st": "4", "ow": "Being.Wu", "ai": ""}, {"ph": "4", "dm": "機構設計", "sub": "ME設計自動化", "name": "AI 協助生成 FAI 尺寸檢核程式", "st": "3", "ow": "Chengyang.Hsu", "ai": ""}, {"ph": "2", "dm": "零件管理", "sub": "零件替代料自動化", "name": "CPU Socket & BTB 配對表-查詢器", "st": "4", "ow": "James.Liao", "ai": ""}, {"ph": "2", "dm": "零件管理", "sub": "零件替代料自動化", "name": "175_風扇與控制晶片選型建議自動化", "st": "1", "ow": "Lynn.Liu", "ai": ""}, {"ph": "5", "dm": "工廠生產", "sub": "工作流程", "name": "CKB6 Sample Request excel表單自動生成", "st": "4", "ow": "Carlos.Pan", "ai": ""}, {"ph": "5", "dm": "工廠生產", "sub": "工作流程", "name": "兩岸工作日計算工具", "st": "4", "ow": "Carlos.Pan", "ai": ""}, {"ph": "5", "dm": "零件管理", "sub": "零件替代料自動化", "name": "Component-Where used Search (CIS 1.0 Component Data Search)", "st": "4", "ow": "Jessica.Chin", "ai": "RPA"}, {"ph": "5", "dm": "零件管理", "sub": "零件替代料自動化", "name": "B2B_P2P替代料搜尋工具", "st": "7", "ow": "Shiny.Lin", "ai": ""}, {"ph": "5", "dm": "零件管理", "sub": "零件替代料自動化", "name": "Pb Free 電阻料比對查詢工具", "st": "4", "ow": "Chiahua.Lin", "ai": "Gemini"}, {"ph": "5", "dm": "零件管理", "sub": "零件替代料自動化", "name": "查詢設計Module 在PCB 使用工具", "st": "1", "ow": "Shiny.Lin", "ai": ""}, {"ph": "5", "dm": "零件管理", "sub": "零件替代料自動化", "name": "非研華料號可在iDesign做替代料比對", "st": "1", "ow": "Otto.Hou", "ai": ""}, {"ph": "5", "dm": "零件管理", "sub": "CE RPA", "name": "零件PCN查詢紀錄", "st": "2", "ow": "Misia.Chen", "ai": ""}, {"ph": "5", "dm": "零件管理", "sub": "產品高風險零件管理自動化", "name": "PCNEOL精準通知自動化平台", "st": "3", "ow": "CS.Lee", "ai": "Claude"}, {"ph": "5", "dm": "零件管理", "sub": "CE RPA", "name": "PCN, EOL Accelerator Agent", "st": "4", "ow": "Being.Wu", "ai": "M365 Copilot Agent"}, {"ph": "5", "dm": "零件管理", "sub": "產品零件PCN管理自動化", "name": "ATJ-component Material Category 分類智動系統", "st": "4", "ow": "Misia.Chen", "ai": "Claude"}, {"ph": "5", "dm": "零件管理", "sub": "產品零件PCN管理自動化", "name": "PCN_Analyzer Tool", "st": "2", "ow": "Albee.Chang", "ai": "Gemini"}, {"ph": "5", "dm": "零件管理", "sub": "產品零件PCN管理自動化", "name": "PCN檢核及通知內容生成", "st": "2", "ow": "Winnie.Hsiung", "ai": ""}, {"ph": "5", "dm": "零件管理", "sub": "產品高風險零件管理自動化", "name": "BOM 高風險用料預測系統", "st": "4", "ow": "CS.Lee", "ai": "Claude"}, {"ph": "5", "dm": "零件管理", "sub": "流程管理", "name": "PLM電子零件Lifecyle 自動分析與查詢工具", "st": "4", "ow": "CS.Lee", "ai": "Claude"}, {"ph": "5", "dm": "流程管理", "sub": "研發管理", "name": "ISG Issue Share Process dashboard", "st": "6", "ow": "Wayne.Chang (ACL RD)", "ai": ""}, {"ph": "5", "dm": "客服售後", "sub": "Debug自動化", "name": "AE AI chatbot 助理", "st": "4", "ow": "Mojo.Huang", "ai": ""}, {"ph": "5", "dm": "客服售後", "sub": "軟體下載", "name": "AE自動化下載驅動軟體 ADV_GetDriver", "st": "4", "ow": "Dennis89.Huang", "ai": ""}, {"ph": "5", "dm": "客服售後", "sub": "知識管理", "name": "利用AI進行資料庫分析與Issue追蹤回饋_AE", "st": "4", "ow": "Edison.Hsiung", "ai": ""}, {"ph": "6", "dm": "零件管理", "sub": "CE RPA", "name": "Redmine ECLB(LTB) 資訊查詢", "st": "4", "ow": "Alan.Yang", "ai": ""}, {"ph": "8", "dm": "零件管理", "sub": "工作流程", "name": "電阻零件規格書自動查找生成固定格式AI Agent", "st": "4", "ow": "Chiahua.Lin", "ai": ""}, {"ph": "8", "dm": "零件管理", "sub": "供應商管理", "name": "研華PVL審查標準，強化少量多樣化供應鏈與零件策略", "st": "4", "ow": "Being.Wu", "ai": ""}, {"ph": "8", "dm": "零件管理", "sub": "CE RPA", "name": "CE超自動化高效能一站式工作平台", "st": "4", "ow": "Being.Wu", "ai": "RPA"}, {"ph": "8", "dm": "零件管理", "sub": "CE RPA", "name": "CIS Datasheet sync-up", "st": "4", "ow": "Being.Wu", "ai": "RPA"}, {"ph": "8", "dm": "零件管理", "sub": "CE RPA", "name": "KCC研華主要用料新增移除的高效智能管理流程", "st": "4", "ow": "Being.Wu", "ai": "Power Automate"}, {"ph": "8", "dm": "零件管理", "sub": "知識管理", "name": "Component Strategic Roadmap 共享平台與自動推播", "st": "4", "ow": "Being.Wu", "ai": "RPA"}, {"ph": "8", "dm": "零件管理", "sub": "CE RPA", "name": "CE Copilot Agent", "st": "2", "ow": "Being.Wu", "ai": "Copilot Studio"}, {"ph": "8", "dm": "零件管理", "sub": "知識管理", "name": "DA (Document Analyzer Tool)", "st": "4", "ow": "Otto.Hou", "ai": ""}, {"ph": "8", "dm": "零件管理", "sub": "知識管理", "name": "CE QA Agent", "st": "2", "ow": "Otto.Hou", "ai": ""}, {"ph": "8", "dm": "零件管理", "sub": "零件替代料自動化", "name": "電子料階Specbook 完整度比對工具", "st": "4", "ow": "Gentian.Sun", "ai": "Gemini"}, {"ph": "8", "dm": "零件管理", "sub": "工作流程", "name": "運用 AI 與 MCP Server 串接 PowerBI _Doendo 資料自動化連結與報表分析", "st": "4", "ow": "Chiahua.Lin", "ai": ""}, {"ph": "8", "dm": "零件管理", "sub": "零件數據", "name": "電子零件溫度規格（TA, TJ , TC）於 Specbook 與 CIS 之資料對應與管控原則", "st": "2", "ow": "Gentian.Sun", "ai": "Gemini"}, {"ph": "5", "dm": "零件管理", "sub": "工作流程", "name": "Y料號零件規格書讀取及中細分類判定", "st": "4", "ow": "Winnie.Hsiung", "ai": ""}, {"ph": "8", "dm": "流程管理", "sub": "研發管理", "name": "ISG Project Schedule & Design Check dashboard", "st": "6", "ow": "Wayne.Chang (ACL RD)", "ai": ""}, {"ph": "8", "dm": "流程管理", "sub": "研發管理", "name": "RD Resource & Project List dashboard", "st": "6", "ow": "Wayne.Chang (ACL RD)", "ai": ""}, {"ph": "7", "dm": "流程管理", "sub": "研發管理", "name": "ISG PM 週會文件更新狀態&檔案搜尋工具", "st": "6", "ow": "Wayne.Chang (ACL RD)", "ai": ""}, {"ph": "8", "dm": "代理自動", "sub": "工作流程", "name": "AI NPI 落地小組 代理程式.agent", "st": "3", "ow": "Wayne.Chang (ACL RD)", "ai": ""}, {"ph": "8", "dm": "代理自動", "sub": "工作流程", "name": "OrCAD Symbol 2.0(Datasheet辨識+Symbol建立流程自動.agent", "st": "3", "ow": "Jessica.Chin", "ai": ""}];
+const ST={"1": {"label": "計劃中", "en": "Planned", "color": "#94a3b8"}, "2": {"label": "開發中", "en": "In Dev", "color": "#f97316"}, "3": {"label": "測試中", "en": "Testing", "color": "#ca8a04"}, "4": {"label": "使用中(個人)", "en": "In Use (Personal)", "color": "#22c55e"}, "5": {"label": "使用中(他人)", "en": "In Use (Other)", "color": "#10b981"}, "6": {"label": "使用中(部門)", "en": "In Use (Dept.)", "color": "#3b82f6"}, "7": {"label": "使用中(公司)", "en": "In Use (Co.)", "color": "#8b5cf6"}};
+const PYR=[{"id": "0", "label": "0. Concept", "en": "Concept", "color": "#6366f1"}, {"id": "1", "label": "1. Plan", "en": "Plan", "color": "#8b5cf6"}, {"id": "2", "label": "2. EVT", "en": "Eng. Validation", "color": "#2563eb"}, {"id": "3", "label": "3. DVT", "en": "Design Validation", "color": "#0891b2"}, {"id": "4", "label": "4. PVT", "en": "Prod. Validation", "color": "#059669"}, {"id": "5", "label": "5. MP", "en": "Mass Production", "color": "#d97706"}, {"id": "6", "label": "6. EOL", "en": "End of Life", "color": "#dc2626"}, {"id": "7", "label": "7. Other", "en": "Other", "color": "#64748b"}];
+
+
+const dmColor = Object.fromEntries(DM.map(d => [d.id, d.color]));
+const stMeta  = ST;
+
+// ── Scene / camera / renderer ───────────────────────────────────────────────
+const stage = document.getElementById('stage');
+const scene = new THREE.Scene();
+scene.fog   = new THREE.Fog(0x02040a, 30, 90);
+
+const camera = new THREE.PerspectiveCamera(48, window.innerWidth/window.innerHeight, 0.1, 500);
+camera.position.set(16, 12, 18);
+
+const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+stage.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 8;
+controls.maxDistance = 60;
+controls.target.set(0, 4, 0);
+
+// ── Lighting ────────────────────────────────────────────────────────────────
+scene.add(new THREE.AmbientLight(0xb8c5e0, 0.55));
+const key = new THREE.DirectionalLight(0xffffff, 1.0);
+key.position.set(10, 18, 8);
+scene.add(key);
+const rim = new THREE.PointLight(0x6366f1, 1.2, 50);
+rim.position.set(-12, 8, -10);
+scene.add(rim);
+const fill = new THREE.PointLight(0x06b6d4, 0.8, 40);
+fill.position.set(8, 4, -12);
+scene.add(fill);
+
+// Subtle ground glow plate
+const groundGeo = new THREE.CircleGeometry(14, 64);
+const groundMat = new THREE.MeshBasicMaterial({color:0x1e293b, transparent:true, opacity:0.35});
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI/2;
+ground.position.y = -0.05;
+scene.add(ground);
+// Concentric grid rings
+for (let k=1;k<=5;k++){
+  const g = new THREE.RingGeometry(k*2.5-0.02, k*2.5+0.02, 96);
+  const m = new THREE.MeshBasicMaterial({color:0x334155, transparent:true, opacity:0.25, side:THREE.DoubleSide});
+  const r = new THREE.Mesh(g,m); r.rotation.x = -Math.PI/2; r.position.y = -0.04;
+  scene.add(r);
+}
+
+// ── Pyramid layers (stacked frustums, apex on top) ──────────────────────────
+const APEX_R = 0.6, BASE_R = 7.4, LAYER_H = 1.55;
+const N = PYR.length;          // 7 phase layers
+const TOTAL_H = N * LAYER_H;
+
+const phaseMeshes = [];   // {ph, mesh, yCenter, rTop, rBot}
+const labelData   = [];   // {el, x, y, z}
+
+function hexToInt(h){return parseInt(h.replace('#',''),16)}
+
+PYR.forEach((ph, i) => {
+  // i=0 -> apex, i=N-1 -> base
+  const yBot    = TOTAL_H - (i+1) * LAYER_H;
+  const yTop    = TOTAL_H -  i    * LAYER_H;
+  const yCenter = (yBot + yTop) / 2;
+  const rTop    = APEX_R + (BASE_R - APEX_R) * (i)     / N;
+  const rBot    = APEX_R + (BASE_R - APEX_R) * (i + 1) / N;
+
+  // Faceted hex frustum
+  const geo = new THREE.CylinderGeometry(rTop, rBot, LAYER_H * 0.95, 6, 1, false);
+  const phColor = hexToInt(ph.color);
+  const mat = new THREE.MeshPhysicalMaterial({
+    color: phColor, transparent: true, opacity: 0.18,
+    roughness: 0.25, metalness: 0.15,
+    transmission: 0.5, thickness: 0.4,
+    emissive: phColor, emissiveIntensity: 0.18,
+    side: THREE.DoubleSide
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.y = yCenter;
+  scene.add(mesh);
+
+  // Edge wireframe
+  const edges = new THREE.EdgesGeometry(geo);
+  const eMat  = new THREE.LineBasicMaterial({color: phColor, transparent:true, opacity:0.85});
+  const lines = new THREE.LineSegments(edges, eMat);
+  lines.position.y = yCenter;
+  scene.add(lines);
+
+  // Top-rim glow ring
+  const topRing = new THREE.Mesh(
+    new THREE.TorusGeometry(rTop, 0.025, 6, 64),
+    new THREE.MeshBasicMaterial({color: phColor, transparent:true, opacity:0.85})
+  );
+  topRing.rotation.x = Math.PI/2;
+  topRing.position.y = yTop;
+  scene.add(topRing);
+
+  phaseMeshes.push({ph, mesh, yCenter, yTop, yBot, rTop, rBot});
+
+  // 3D label anchor
+  labelData.push({ph, x: rBot + 1.4, y: yCenter, z: 0});
+});
+
+// ── Tool nodes (one sphere per tool, color = domain) ────────────────────────
+const SPHERE_GEO = new THREE.SphereGeometry(0.13, 18, 18);
+const toolMeshes = [];   // raycast targets
+
+function statusEmissive(stCode){
+  // brighter glow for "in use" statuses
+  return ({'1':0.18,'2':0.40,'3':0.50,'4':0.85,'5':0.85,'6':1.00,'7':1.20})[stCode] || 0.4;
+}
+
+function makeToolNode(t, x, y, z){
+  const dc = dmColor[t.dm] || '#94a3b8';
+  const c  = hexToInt(dc);
+  const mat = new THREE.MeshStandardMaterial({
+    color: c, emissive: c, emissiveIntensity: statusEmissive(t.st),
+    metalness: 0.35, roughness: 0.35
+  });
+  const m = new THREE.Mesh(SPHERE_GEO, mat);
+  m.position.set(x, y, z);
+  m.userData = t;
+
+  // AI engine? add halo billboard
+  if (t.ai) {
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: makeHaloTexture(),
+      color: 0xa5b4fc, transparent: true, opacity: 0.55, depthWrite: false
+    }));
+    halo.scale.set(0.6, 0.6, 1);
+    m.add(halo);
+  }
+  return m;
+}
+
+let __haloTex = null;
+function makeHaloTexture(){
+  if (__haloTex) return __haloTex;
+  const c = document.createElement('canvas'); c.width=c.height=64;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(32,32,4,32,32,32);
+  g.addColorStop(0,'rgba(165,180,252,0.0)');
+  g.addColorStop(0.45,'rgba(165,180,252,0.6)');
+  g.addColorStop(0.55,'rgba(165,180,252,0.6)');
+  g.addColorStop(1.0,'rgba(165,180,252,0.0)');
+  ctx.fillStyle = g; ctx.fillRect(0,0,64,64);
+  __haloTex = new THREE.CanvasTexture(c);
+  return __haloTex;
+}
+
+// Place phase tools around their phase rim (between rTop and rBot)
+PYR.forEach((ph, i) => {
+  const tools = TL.filter(t => t.ph === ph.id);
+  const layer = phaseMeshes[i];
+  if (!tools.length) return;
+  const ringR  = (layer.rTop + layer.rBot) / 2 + 0.18;
+  // Slight slope angle so spheres "cling" to the slanted face
+  tools.forEach((t, j) => {
+    const a = (j / tools.length) * Math.PI * 2 + (i * 0.13);
+    // spread vertically inside the layer band: small jitter
+    const yOff = ((j % 3) - 1) * 0.22;
+    const x = Math.cos(a) * ringR;
+    const z = Math.sin(a) * ringR;
+    const m = makeToolNode(t, x, layer.yCenter + yOff, z);
+    scene.add(m);
+    toolMeshes.push(m);
+  });
+});
+
+// ── Glue rings (cross-cutting) at every phase elevation ─────────────────────
+const glueTools = TL.filter(t => t.ph === '8');
+const glueRings = [];   // for animation
+
+PYR.forEach((ph, i) => {
+  const layer = phaseMeshes[i];
+  const ringR = layer.rBot + 1.4;
+
+  // Translucent gold ring at this elevation
+  const tor = new THREE.Mesh(
+    new THREE.TorusGeometry(ringR, 0.04, 8, 96),
+    new THREE.MeshBasicMaterial({color: 0xf59e0b, transparent: true, opacity: 0.45})
+  );
+  tor.rotation.x = Math.PI/2;
+  tor.position.y = layer.yCenter;
+  scene.add(tor);
+  glueRings.push({mesh: tor, baseY: layer.yCenter, baseOp: 0.45, phase: i});
+
+  // Faint inner halo torus
+  const tor2 = new THREE.Mesh(
+    new THREE.TorusGeometry(ringR, 0.18, 8, 96),
+    new THREE.MeshBasicMaterial({color: 0xfbbf24, transparent: true, opacity: 0.06})
+  );
+  tor2.rotation.x = Math.PI/2;
+  tor2.position.y = layer.yCenter;
+  scene.add(tor2);
+});
+
+// Distribute glue tools across the rings (each tool on exactly one ring)
+if (glueTools.length){
+  const perRing = Math.ceil(glueTools.length / N);
+  for (let i=0;i<N;i++){
+    const layer = phaseMeshes[i];
+    const ringR = layer.rBot + 1.4;
+    const slice = glueTools.slice(i*perRing, (i+1)*perRing);
+    slice.forEach((t, j) => {
+      const a = (j / Math.max(slice.length,1)) * Math.PI * 2 + (i * 0.5);
+      const x = Math.cos(a) * ringR;
+      const z = Math.sin(a) * ringR;
+      const m = makeToolNode(t, x, layer.yCenter, z);
+      // Glue nodes get a subtle gold accent ring
+      const accent = new THREE.Mesh(
+        new THREE.TorusGeometry(0.22, 0.018, 6, 24),
+        new THREE.MeshBasicMaterial({color: 0xfbbf24, transparent:true, opacity:0.7})
+      );
+      accent.userData.isAccent = true;
+      m.add(accent);
+      scene.add(m);
+      toolMeshes.push(m);
+    });
+  }
+}
+
+// ── 3D HTML labels (phase names) ────────────────────────────────────────────
+const labelLayer = document.getElementById('labels');
+PYR.forEach((ph, i) => {
+  const el = document.createElement('div');
+  el.className = 'lbl3d';
+  el.innerHTML = ph.label + '<span class="en">' + ph.en + '</span>';
+  el.style.color = ph.color;
+  labelLayer.appendChild(el);
+  labelData[i].el = el;
+});
+
+// ── Raycaster (hover) ───────────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+raycaster.params.Points = {threshold: 0.1};
+const pointer   = new THREE.Vector2(-2,-2);
+const tip       = document.getElementById('tip');
+let hoveredObj  = null;
+let mouseClient = {x:0, y:0};
+
+renderer.domElement.addEventListener('pointermove', (e) => {
+  const rect = renderer.domElement.getBoundingClientRect();
+  pointer.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
+  pointer.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+  mouseClient.x = e.clientX; mouseClient.y = e.clientY;
+});
+renderer.domElement.addEventListener('pointerleave', () => {
+  pointer.x = -2; pointer.y = -2;
+  hideTip();
+});
+
+function showTip(t){
+  const ph    = PH.find(p => p.id === t.ph) || {label: t.ph, color:'#888'};
+  const stm   = stMeta[t.st] || {label:'?', color:'#888', en:'?'};
+  const dmC   = dmColor[t.dm] || '#94a3b8';
+  tip.innerHTML =
+    '<div class="tname">' + escapeHtml(t.name) + '</div>' +
+    '<div class="row2">' +
+      '<span class="badge" style="background:'+dmC+';color:#0b1220">'+escapeHtml(t.dm)+'</span>' +
+      '<span class="badge" style="background:'+ph.color+'">'+escapeHtml(ph.label)+'</span>' +
+      '<span class="badge" style="background:'+stm.color+'">'+escapeHtml(stm.label)+'</span>' +
+    '</div>' +
+    '<div class="meta"><b>中分類:</b> '+escapeHtml(t.sub)+'</div>' +
+    (t.ow ? '<div class="meta"><b>👤 Owner:</b> '+escapeHtml(t.ow)+'</div>' : '') +
+    (t.ai ? '<div class="ai">🤖 '+escapeHtml(t.ai)+'</div>' : '');
+  positionTip();
+  tip.classList.add('show');
+}
+function hideTip(){ tip.classList.remove('show'); hoveredObj = null; }
+function positionTip(){
+  const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = mouseClient.x + pad, y = mouseClient.y + pad;
+  if (x + w > window.innerWidth - 8)  x = mouseClient.x - w - pad;
+  if (y + h > window.innerHeight - 8) y = mouseClient.y - h - pad;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── Filter state ────────────────────────────────────────────────────────────
+let activeStatus = 'all';
+let activeDomains = new Set(DM.map(d => d.id));   // all on by default
+
+function fmtCard(s, a){
+  if (s === a) return String(a);
+  return s + '<span style="opacity:.3;margin:0 5px;font-weight:400">|</span>' +
+             '<span style="opacity:.45">' + a + '</span>';
+}
+function updateSummaryCards(){
+  const inA = t => activeDomains.has(t.dm);
+  const depA = TL.filter(t => '4567'.indexOf(t.st) >= 0).length;
+  const depS = TL.filter(t => inA(t) && '4567'.indexOf(t.st) >= 0).length;
+  const devA = TL.filter(t => '23'.indexOf(t.st) >= 0).length;
+  const devS = TL.filter(t => inA(t) && '23'.indexOf(t.st) >= 0).length;
+  const plA  = TL.filter(t => t.st === '1').length;
+  const plS  = TL.filter(t => inA(t) && t.st === '1').length;
+  const aiA  = TL.filter(t => t.ai && t.ai.trim()).length;
+  const aiS  = TL.filter(t => inA(t) && t.ai && t.ai.trim()).length;
+  document.getElementById('cdep').innerHTML = fmtCard(depS, depA);
+  document.getElementById('cdev').innerHTML = fmtCard(devS, devA);
+  document.getElementById('cpl').innerHTML  = fmtCard(plS, plA);
+  document.getElementById('cai').innerHTML  = fmtCard(aiS, aiA);
+}
+function applyFilters(){
+  toolMeshes.forEach(m => {
+    const t = m.userData;
+    const show = (activeStatus === 'all' || t.st === activeStatus) && activeDomains.has(t.dm);
+    m.visible = show;
+    // Children (halo, accent ring) follow parent
+  });
+  // Update count badges
+  const visible = toolMeshes.filter(m => m.visible).length;
+  document.getElementById('vct').textContent = visible;
+  updateSummaryCards();
+}
+updateSummaryCards();
+
+// Status chips
+document.querySelectorAll('.chip-st').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.chip-st').forEach(x => x.classList.remove('on'));
+    c.classList.add('on');
+    activeStatus = c.dataset.f;
+    applyFilters();
+  });
+});
+// Domain chips
+document.querySelectorAll('.chip-dm').forEach(c => {
+  c.addEventListener('click', () => {
+    const id = c.dataset.dm;
+    if (activeDomains.has(id)) { activeDomains.delete(id); c.classList.remove('on'); }
+    else { activeDomains.add(id); c.classList.add('on'); }
+    applyFilters();
+  });
+});
+
+// View buttons
+const VIEWS = {
+  iso:  {p:[16,12,18], t:[0,4,0], rot:false},
+  top:  {p:[0.01,28,0.01], t:[0,4,0], rot:false},
+  side: {p:[24, 4, 0.01], t:[0,4,0], rot:false},
+  rot:  {p:[16,12,18], t:[0,4,0], rot:true}
+};
+let autoRotate = false;
+let currentView = null;
+function setView(name, animateCam){
+  if (currentView === name) return;
+  currentView = name;
+  const v = VIEWS[name];
+  document.querySelectorAll('.vb').forEach(x => x.classList.remove('on'));
+  const btn = document.querySelector('[data-v="'+name+'"]');
+  if (btn) btn.classList.add('on');
+  const endP = new THREE.Vector3(...v.p);
+  const endT = new THREE.Vector3(...v.t);
+  if (animateCam === false){
+    camera.position.copy(endP);
+    controls.target.copy(endT);
+  } else {
+    const startP = camera.position.clone();
+    const startT = controls.target.clone();
+    const t0 = performance.now(), dur = 700;
+    (function step(){
+      const p = Math.min((performance.now() - t0)/dur, 1);
+      const e = p<0.5 ? 2*p*p : 1 - Math.pow(-2*p+2,2)/2;
+      camera.position.lerpVectors(startP, endP, e);
+      controls.target.lerpVectors(startT, endT, e);
+      controls.update();
+      if (p < 1) requestAnimationFrame(step);
+    })();
+  }
+  autoRotate = v.rot;
+  controls.autoRotate = v.rot;
+  controls.autoRotateSpeed = 0.6;
+}
+
+// ── Resize ──────────────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ── Animate ─────────────────────────────────────────────────────────────────
+const clock = new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const dt = clock.getDelta(), t = clock.getElapsedTime();
+
+  // Pulse glue rings
+  glueRings.forEach((g, i) => {
+    const k = 0.5 + 0.5 * Math.sin(t*1.5 + i*0.5);
+    g.mesh.material.opacity = g.baseOp * (0.55 + 0.45 * k);
+    g.mesh.scale.setScalar(1 + 0.012 * Math.sin(t*1.2 + i*0.6));
+  });
+
+  // Tool node subtle bobbing for "in-use" statuses (status >= 4)
+  toolMeshes.forEach((m, i) => {
+    if (!m.visible) return;
+    const stc = m.userData.st;
+    if (stc === '6' || stc === '7') {
+      m.material.emissiveIntensity = statusEmissive(stc) + 0.18 * Math.sin(t*2 + i*0.3);
+    }
+  });
+
+  // Hover detection
+  if (pointer.x > -1.5){
+    raycaster.setFromCamera(pointer, camera);
+    const hits = raycaster.intersectObjects(toolMeshes, false);
+    if (hits.length){
+      const obj = hits[0].object;
+      if (hoveredObj !== obj){
+        hoveredObj = obj;
+        showTip(obj.userData);
+      } else {
+        positionTip();
+      }
+    } else if (hoveredObj){
+      hideTip();
+    }
+  }
+
+  // Update HTML 3D labels
+  const v = new THREE.Vector3();
+  labelData.forEach(ld => {
+    if (!ld.el) return;
+    v.set(ld.x, ld.y, ld.z).project(camera);
+    const x = (v.x *  0.5 + 0.5) * window.innerWidth;
+    const y = (v.y * -0.5 + 0.5) * window.innerHeight;
+    if (v.z > 1){ ld.el.style.display = 'none'; return; }
+    ld.el.style.display = 'block';
+    ld.el.style.left = x + 'px';
+    ld.el.style.top  = (y - 8) + 'px';
+  });
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+// Set initial camera & UI state, then attach click handlers (so any stray
+// click event during init can't override the initial 'iso' state).
+setView('iso', false);
+document.querySelectorAll('.vb').forEach(b => b.addEventListener('click', () => setView(b.dataset.v)));
+animate();
+
+// hide loader
+document.getElementById('loader').classList.add('done');
+</script>
+
+</body></html>
