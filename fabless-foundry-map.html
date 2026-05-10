@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fabless IC Vendor → Foundry Map (Top-10 Foundries used by Fabless Vendors)</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --panel: #1a2332;
+    --panel2: #232f42;
+    --text: #e6e9ef;
+    --muted: #8b95a8;
+    --accent: #5fb3f5;
+    --primary: #ff5e5e;
+    --secondary: #ffb84d;
+    --historical: #6b7989;
+    --grid: #2a3548;
+  }
+  * { box-sizing: border-box; }
+  body, html {
+    margin: 0; padding: 0; height: 100%;
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+    font-size: 14px;
+  }
+  header {
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #1a2332 0%, #2a3548 100%);
+    border-bottom: 1px solid var(--grid);
+  }
+  h1 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
+  .subtitle { color: var(--muted); font-size: 12px; }
+  .stats { display: flex; gap: 24px; margin-top: 8px; font-size: 11px; }
+  .stat { color: var(--muted); }
+  .stat b { color: var(--accent); font-size: 14px; margin-right: 4px; }
+  #app { display: grid; grid-template-columns: 220px 1fr 320px; height: calc(100vh - 90px); }
+  aside { padding: 14px; background: var(--panel); overflow-y: auto; border-right: 1px solid var(--grid); }
+  aside.right { border-left: 1px solid var(--grid); border-right: none; background: var(--panel2); }
+  h2 { font-size: 11px; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; letter-spacing: 0.05em; font-weight: 600; }
+  .control { margin-bottom: 16px; }
+  .legend { display: flex; flex-direction: column; gap: 4px; font-size: 11px; }
+  .legend-row { display: flex; align-items: center; gap: 6px; }
+  .legend-line { width: 24px; height: 3px; border-radius: 2px; }
+  .filter-btn {
+    display: block; width: 100%; padding: 6px 8px; margin: 2px 0;
+    background: transparent; border: 1px solid var(--grid); color: var(--text);
+    cursor: pointer; text-align: left; font-size: 12px; border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { background: var(--panel2); border-color: var(--accent); }
+  .filter-btn.active { background: var(--accent); color: #0a1019; border-color: var(--accent); font-weight: 600; }
+  #canvas { background: #0a1019; position: relative; }
+  svg { width: 100%; height: 100%; display: block; }
+  .vendor-label, .foundry-label { font-size: 12px; font-weight: 500; pointer-events: none; }
+  .foundry-circle, .vendor-rect { cursor: pointer; transition: opacity 0.15s; }
+  .dimmed { opacity: 0.12; }
+  .edge { fill: none; transition: opacity 0.15s; }
+  .edge.dimmed { opacity: 0.06; }
+  .info-card {
+    background: var(--panel); padding: 12px; border-radius: 6px;
+    border-left: 3px solid var(--accent); margin-bottom: 12px;
+  }
+  .info-card h3 { margin: 0 0 6px; font-size: 14px; }
+  .info-card .meta { font-size: 11px; color: var(--muted); }
+  .info-card ul { margin: 6px 0 0; padding-left: 18px; font-size: 12px; }
+  .info-card li { margin: 2px 0; }
+  .badge {
+    display: inline-block; padding: 1px 6px; border-radius: 3px;
+    font-size: 10px; font-weight: 600; margin-left: 4px;
+  }
+  .badge.primary { background: var(--primary); color: white; }
+  .badge.secondary { background: var(--secondary); color: #0a1019; }
+  .badge.historical { background: var(--historical); color: white; }
+  .empty { color: var(--muted); font-style: italic; font-size: 12px; padding: 20px 0; text-align: center; }
+  footer { padding: 8px 20px; background: var(--panel); border-top: 1px solid var(--grid); font-size: 10px; color: var(--muted); }
+  .tooltip {
+    position: absolute; padding: 6px 10px; background: rgba(0,0,0,0.95);
+    border: 1px solid var(--accent); border-radius: 4px; color: var(--text);
+    font-size: 11px; pointer-events: none; white-space: nowrap; z-index: 10;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Fabless IC Vendor → Foundry Map</h1>
+  <div class="subtitle">Top-10 foundries used by branded fabless IC vendors — sourced from TSMC 2025 AR, our PCN/EOL database, and <code>wiki/global-ic-vendor-fab-guide.md</code>.</div>
+  <div class="stats">
+    <span class="stat"><b>14</b>fabless vendors</span>
+    <span class="stat"><b>10</b>foundries</span>
+    <span class="stat"><b id="edge-count">0</b>relationships</span>
+    <span class="stat"><b id="primary-count">0</b>primary</span>
+    <span class="stat"><b id="secondary-count">0</b>secondary</span>
+    <span class="stat"><b id="historical-count">0</b>historical</span>
+  </div>
+</header>
+
+<div id="app">
+  <aside>
+    <div class="control">
+      <h2>Show only</h2>
+      <button class="filter-btn active" data-rel="all">All relationships</button>
+      <button class="filter-btn" data-rel="primary">Primary only</button>
+      <button class="filter-btn" data-rel="secondary">Secondary only</button>
+      <button class="filter-btn" data-rel="historical">Historical only</button>
+    </div>
+
+    <div class="control">
+      <h2>Legend — Relationship</h2>
+      <div class="legend">
+        <div class="legend-row"><div class="legend-line" style="background:#ff5e5e"></div>Primary partner</div>
+        <div class="legend-row"><div class="legend-line" style="background:#ffb84d"></div>Secondary / dual-source</div>
+        <div class="legend-row"><div class="legend-line" style="background:#6b7989"></div>Historical / legacy</div>
+      </div>
+    </div>
+
+    <div class="control">
+      <h2>Legend — Node</h2>
+      <div class="legend">
+        <div class="legend-row"><span style="display:inline-block;width:12px;height:12px;background:#5fb3f5;border-radius:2px"></span>Fabless IC vendor</div>
+        <div class="legend-row"><span style="display:inline-block;width:14px;height:14px;background:#7030a0;border-radius:50%;border:2px solid #fff"></span>Foundry</div>
+      </div>
+    </div>
+
+    <div class="control">
+      <h2>Tip</h2>
+      <div style="font-size: 11px; color: var(--muted); line-height: 1.5;">
+        Click any vendor or foundry to filter. Hover for details. Click empty area to reset.
+      </div>
+    </div>
+
+    <div class="control">
+      <h2>Sources</h2>
+      <div style="font-size: 10px; color: var(--muted); line-height: 1.5;">
+        TSMC 2025 Annual Report (E)<br>
+        TSMC 2024 Sustainability Report (E)<br>
+        wiki/global-ic-vendor-fab-guide.md<br>
+        wiki/by-manufacturer/* (PCN/EOL DB)<br>
+        Generated: 2026-05-10
+      </div>
+    </div>
+  </aside>
+
+  <div id="canvas">
+    <svg id="map"></svg>
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+
+  <aside class="right">
+    <h2>Selection details</h2>
+    <div id="details">
+      <div class="empty">Click a vendor or foundry node for details, or hover an edge.</div>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  Source data: TSMC 2025 Annual Report (E) + 2024 Sustainability Report (E) + EOLPCN_KW wiki PCN/EOL database (3,722 PDFs). Auto-generated 2026-05-10.
+</footer>
+
+<script>
+// ============ DATA ============
+
+const VENDORS = [
+  // Fully fabless leading-edge logic
+  { id: 'apple',     name: 'Apple',                 cat: 'logic',  desc: 'A-series + M-series SoCs, custom ASICs', revenue_tier: 'mega' },
+  { id: 'nvidia',    name: 'NVIDIA',                cat: 'logic',  desc: 'GPUs (Blackwell, Hopper, Ada), Jetson, AI accelerators', revenue_tier: 'mega' },
+  { id: 'amd',       name: 'AMD',                   cat: 'logic',  desc: 'Ryzen, EPYC, Radeon, Xilinx FPGAs (post-2022)', revenue_tier: 'mega' },
+  { id: 'qualcomm',  name: 'Qualcomm',              cat: 'logic',  desc: 'Snapdragon mobile SoCs, modems, automotive', revenue_tier: 'mega' },
+  { id: 'broadcom',  name: 'Broadcom',              cat: 'logic',  desc: 'Switches (Trident/Tomahawk), Wi-Fi/BT, custom ASICs (Apple/Google)', revenue_tier: 'mega' },
+  { id: 'mediatek',  name: 'MediaTek',              cat: 'logic',  desc: 'Dimensity SoCs, Wi-Fi (Filogic), TV SoCs', revenue_tier: 'large' },
+  { id: 'marvell',   name: 'Marvell',               cat: 'logic',  desc: 'Alaska PHYs, OCTEON DPU, Inphi optical', revenue_tier: 'large' },
+  // Specialty / mid-tier fabless
+  { id: 'realtek',   name: 'Realtek',               cat: 'specialty', desc: 'Audio codecs (ALC), Ethernet PHYs (RTL), display controllers', revenue_tier: 'mid' },
+  { id: 'maxlinear', name: 'MaxLinear',             cat: 'specialty', desc: 'RF/connectivity, UART/serial (Exar legacy), ST16C/XR16C series', revenue_tier: 'mid' },
+  { id: 'mps',       name: 'MPS (Monolithic Power)',cat: 'specialty', desc: 'PMICs, DC/DC converters, gate drivers', revenue_tier: 'mid' },
+  { id: 'nuvoton',   name: 'Nuvoton',               cat: 'specialty', desc: '8051 MCUs, Cortex-M MCUs, Super I/O, hardware monitors', revenue_tier: 'mid' },
+  { id: 'cirrus',    name: 'Cirrus Logic',          cat: 'specialty', desc: 'Audio DSPs/codecs (Apple suppliers)', revenue_tier: 'mid' },
+  { id: 'asix',      name: 'ASIX',                  cat: 'specialty', desc: 'Ethernet PHYs (AX88x), USB-Ethernet bridges', revenue_tier: 'small' },
+  { id: 'holtek',    name: 'Holtek',                cat: 'specialty', desc: '8-bit MCU specialist', revenue_tier: 'small' },
+];
+
+const FOUNDRIES = [
+  { id: 'tsmc',     name: 'TSMC',          location: 'Taiwan', notes: 'World #1 pure-play; 17M+ 12" eq./yr. Every leading-edge fabless uses TSMC. Fab2/Fab5 closing 2027 → cascading EOLs (RC 1).' },
+  { id: 'samsung',  name: 'Samsung Foundry', location: 'Korea + Texas USA', notes: '#2 leading-edge; serves both Samsung internal + external. Losing share — Qualcomm moved Snapdragon 8 Gen 2 back to TSMC.' },
+  { id: 'gf',       name: 'GlobalFoundries',location: 'USA + Germany + Singapore', notes: 'Mature/specialty focus; exited <14nm in 2018. AMD legacy IO dies + Qualcomm + IBM Z. 28HPP closing per RC 55.' },
+  { id: 'umc',      name: 'UMC',           location: 'Taiwan + Singapore + China + Japan', notes: 'Mature 28-65nm + 8" specialty. Optical sensor exit 2021 → Renesas cascade (RC 24); filter line exit → ams cascade (RC 30).' },
+  { id: 'smic',     name: 'SMIC',          location: 'China', notes: 'Largest Chinese foundry; 14nm operational, ~7nm in development. Restricted by US sanctions on EUV.' },
+  { id: 'vis',      name: 'VIS (Vanguard)',location: 'Taiwan', notes: 'TSMC + Philips JV; 8" specialist. Receiving onsemi Tower Fab 1 logic transfer 2023+ (FPCN25572X).' },
+  { id: 'tower',    name: 'Tower Semi',    location: 'Israel + USA', notes: 'Specialty mixed-signal/RF/SiGe/BCD. Israel Fab 1 exiting (RC 2 → onsemi+Vishay cascade); Fab 2 reactivated 2025 for Vishay.' },
+  { id: 'psmc',     name: 'Powerchip (PSMC)', location: 'Taiwan', notes: '12" mature/specialty. NEW for MPS 2025 (PCN 2025679 — TW 12" + PTI bumping).' },
+  { id: 'hhgrace',  name: 'HHGrace (HuaHong)', location: 'Shanghai, China', notes: '8" + 12" mature analog. Wuxi added to ST STM32H5 line (PCN 16131 Mar 2026); historical 0.18μm closure 2014 → ASIX cascade.' },
+  { id: 'dbhitek',  name: 'DB HiTek',      location: 'South Korea', notes: '8" specialty foundry (analog/mixed-signal); Dongbu Group spinoff. Korean fabless analog vendors.' },
+];
+
+// Relationships: vendor → foundry. weight ∈ {primary, secondary, historical}
+// Sourced from wiki/global-ic-vendor-fab-guide.md + TSMC 2025 AR
+const EDGES = [
+  // Apple
+  { v: 'apple', f: 'tsmc', rel: 'primary', notes: 'A-series + M-series SoCs (N3/N4); flagship customer for TSMC leading-edge.' },
+  // NVIDIA
+  { v: 'nvidia', f: 'tsmc', rel: 'primary', notes: 'Blackwell B100/B200 (N4P), Hopper H100 (N4), Ada RTX 4000 (N4). CoWoS packaging is critical bottleneck (Adv Backend Fab 1).' },
+  { v: 'nvidia', f: 'samsung', rel: 'historical', notes: 'Ampere RTX 30-series on Samsung 8nm. Moved back to TSMC for Ada/Hopper/Blackwell.' },
+  // AMD
+  { v: 'amd', f: 'tsmc', rel: 'primary', notes: 'Ryzen 9000, EPYC Turin (N3), MI300X. EPYC 9005 + SEMCO Vietnam substrate added Apr 2025 (PCN 4780B).' },
+  { v: 'amd', f: 'gf', rel: 'historical', notes: 'IO dies on 12LPP; ongoing supply agreement until 2025 (since 2009 GF spinoff).' },
+  // Qualcomm
+  { v: 'qualcomm', f: 'tsmc', rel: 'primary', notes: 'Snapdragon 8 Gen 2/3 + automotive at TSMC N4/N3.' },
+  { v: 'qualcomm', f: 'samsung', rel: 'secondary', notes: 'Snapdragon 8 Gen 1 was at Samsung 4LPE — but moved Gen 2 back to TSMC.' },
+  { v: 'qualcomm', f: 'gf', rel: 'historical', notes: 'Mid-tier modems on 14LPP/12LP.' },
+  // Broadcom
+  { v: 'broadcom', f: 'tsmc', rel: 'primary', notes: 'Tomahawk switches, Wi-Fi/BT, custom ASICs (Apple/Google). PCI bridges (PCI9056/9656) hit by Kyocera Sendai substrate cascade Apr 2026 (RC 6).' },
+  { v: 'broadcom', f: 'gf', rel: 'secondary', notes: 'Some legacy products on mature nodes.' },
+  { v: 'broadcom', f: 'samsung', rel: 'secondary', notes: 'Some products on Samsung Foundry historically.' },
+  // MediaTek
+  { v: 'mediatek', f: 'tsmc', rel: 'primary', notes: 'Dimensity smartphone SoCs (N6/N4/N3), Wi-Fi 7 Filogic.' },
+  // Marvell
+  { v: 'marvell', f: 'tsmc', rel: 'primary', notes: 'Alaska PHYs, OCTEON DPU, Rhea SoCs. Kyocera Sendai substrate cascade hit Marvell K2/Rhea Jan 2026 (EOL-01528).' },
+  { v: 'marvell', f: 'samsung', rel: 'historical', notes: 'Some legacy products at Samsung Foundry.' },
+  // Realtek
+  { v: 'realtek', f: 'tsmc', rel: 'primary', notes: 'Audio codecs (ALC), display controllers (RTD), Ethernet PHYs (RTL series).' },
+  { v: 'realtek', f: 'umc', rel: 'secondary', notes: 'Older RTL81xx Ethernet PHYs (RTL8169SC EOL 2021, RTL8100C/8139D EOL 2023).' },
+  // MaxLinear
+  { v: 'maxlinear', f: 'tsmc', rel: 'primary', notes: 'RF/connectivity ICs. PDN-25001A ST16C654 + XR16C2850/2852 UART discontinuance (2025). PDN-25008D SP208/331/332/334 transceivers.' },
+  // MPS
+  { v: 'mps', f: 'psmc', rel: 'primary', notes: 'PCN 2025679: + PSMC TW 12" + PTI bumping. Multi-bumping-site additions 2026 (PCN2026142/152/161/166 — SCS/HTJS/GREATEK).' },
+  { v: 'mps', f: 'tsmc', rel: 'secondary', notes: 'Some MPS products use TSMC.' },
+  // Nuvoton
+  { v: 'nuvoton', f: 'tsmc', rel: 'primary', notes: '⚠ Pre-PCN QA00-202601-001: 33 parts impacted by TSMC Fab5 transition (closing 2027). Includes NCT3933U, KB9012, W83627x Super I/O at TSMC F12.' },
+  { v: 'nuvoton', f: 'umc', rel: 'secondary', notes: 'W83627x Super I/O legacy at UMC F8 (per supply-chain-risk-map-ic-relayout).' },
+  // Cirrus Logic
+  { v: 'cirrus', f: 'tsmc', rel: 'primary', notes: 'Audio DSPs/codecs (Apple iPhone). Country of Diffusion (COD) added to inner label Apr 2026 (PCN-000034).' },
+  // ASIX
+  { v: 'asix', f: 'tsmc', rel: 'primary', notes: 'Modern AX88x USB-Ethernet bridges.' },
+  { v: 'asix', f: 'umc', rel: 'secondary', notes: 'AX88179/178A on UMC 8" copper (2022) — process closure cascade caused EOL.' },
+  { v: 'asix', f: 'hhgrace', rel: 'historical', notes: 'MCS78xx on HHNEC 0.18μm — 2014 process closure caused early EOL cascade (mirror of TSMC Fab5 pattern).' },
+  // Holtek
+  { v: 'holtek', f: 'tsmc', rel: 'primary', notes: '8-bit MCU specialist; uses TSMC mature nodes.' },
+];
+
+// ============ LAYOUT ============
+const W = window.innerWidth - 220 - 320;
+const H = window.innerHeight - 90 - 24;
+const PAD = 60;
+
+const svg = document.getElementById('map');
+svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+// Vendor positions (left column)
+const vH = (H - PAD * 2) / (VENDORS.length - 1);
+VENDORS.forEach((v, i) => {
+  v.x = PAD + 80;
+  v.y = PAD + i * vH;
+});
+
+// Foundry positions (right column)
+const fH = (H - PAD * 2) / (FOUNDRIES.length - 1);
+FOUNDRIES.forEach((f, i) => {
+  f.x = W - PAD - 80;
+  f.y = PAD + i * fH;
+});
+
+const REL_COLOR = { primary: '#ff5e5e', secondary: '#ffb84d', historical: '#6b7989' };
+const REL_WIDTH = { primary: 2.5, secondary: 1.6, historical: 0.9 };
+
+// ============ RENDER ============
+function vById(id) { return VENDORS.find(x => x.id === id); }
+function fById(id) { return FOUNDRIES.find(x => x.id === id); }
+
+// Edges first (so they render under nodes)
+EDGES.forEach((e, i) => {
+  const v = vById(e.v), f = fById(e.f);
+  const cx = (v.x + f.x) / 2;
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', `M ${v.x} ${v.y} C ${cx} ${v.y}, ${cx} ${f.y}, ${f.x} ${f.y}`);
+  path.setAttribute('class', `edge edge-${e.rel}`);
+  path.setAttribute('stroke', REL_COLOR[e.rel]);
+  path.setAttribute('stroke-width', REL_WIDTH[e.rel]);
+  path.setAttribute('opacity', '0.7');
+  path.dataset.v = e.v;
+  path.dataset.f = e.f;
+  path.dataset.rel = e.rel;
+  path.dataset.idx = i;
+  path.style.cursor = 'pointer';
+  svg.appendChild(path);
+});
+
+// Vendor nodes (left)
+VENDORS.forEach(v => {
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.dataset.vendorId = v.id;
+  g.setAttribute('transform', `translate(${v.x}, ${v.y})`);
+
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  const sz = v.revenue_tier === 'mega' ? 14 : v.revenue_tier === 'large' ? 11 : v.revenue_tier === 'mid' ? 9 : 7;
+  rect.setAttribute('x', -sz);
+  rect.setAttribute('y', -sz);
+  rect.setAttribute('width', sz * 2);
+  rect.setAttribute('height', sz * 2);
+  rect.setAttribute('rx', 2);
+  rect.setAttribute('fill', '#5fb3f5');
+  rect.setAttribute('stroke', '#fff');
+  rect.setAttribute('stroke-width', '1.5');
+  rect.setAttribute('class', 'vendor-rect');
+  g.appendChild(rect);
+
+  const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  txt.setAttribute('x', -sz - 8);
+  txt.setAttribute('y', 4);
+  txt.setAttribute('text-anchor', 'end');
+  txt.setAttribute('class', 'vendor-label');
+  txt.setAttribute('fill', '#e6e9ef');
+  txt.textContent = v.name;
+  g.appendChild(txt);
+
+  g.style.cursor = 'pointer';
+  svg.appendChild(g);
+});
+
+// Foundry nodes (right) — circles with size by # vendors served
+FOUNDRIES.forEach(f => {
+  const customerCount = EDGES.filter(e => e.f === f.id).length;
+  f.customers = customerCount;
+  const r = 8 + customerCount * 2.5;
+
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.dataset.foundryId = f.id;
+  g.setAttribute('transform', `translate(${f.x}, ${f.y})`);
+
+  const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  c.setAttribute('r', r);
+  c.setAttribute('fill', '#7030a0');
+  c.setAttribute('stroke', '#fff');
+  c.setAttribute('stroke-width', '2');
+  c.setAttribute('class', 'foundry-circle');
+  g.appendChild(c);
+
+  const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  txt.setAttribute('x', r + 8);
+  txt.setAttribute('y', 4);
+  txt.setAttribute('class', 'foundry-label');
+  txt.setAttribute('fill', '#e6e9ef');
+  txt.textContent = `${f.name} (${customerCount})`;
+  g.appendChild(txt);
+
+  g.style.cursor = 'pointer';
+  svg.appendChild(g);
+});
+
+// ============ INTERACTION ============
+const tooltip = document.getElementById('tooltip');
+const details = document.getElementById('details');
+
+function showDetails(html) { details.innerHTML = html; }
+function clearSelection() {
+  document.querySelectorAll('.dimmed').forEach(el => el.classList.remove('dimmed'));
+  showDetails('<div class="empty">Click a vendor or foundry node for details, or hover an edge.</div>');
+}
+function dimAllExcept(matchFn) {
+  document.querySelectorAll('.edge').forEach(el => {
+    if (matchFn(el)) el.classList.remove('dimmed');
+    else el.classList.add('dimmed');
+  });
+  document.querySelectorAll('[data-vendor-id]').forEach(g => {
+    const v = g.dataset.vendorId;
+    const isConnected = EDGES.some(e => e.v === v && matchFn({ dataset: { v: e.v, f: e.f } }));
+    g.classList.toggle('dimmed', !isConnected);
+  });
+  document.querySelectorAll('[data-foundry-id]').forEach(g => {
+    const f = g.dataset.foundryId;
+    const isConnected = EDGES.some(e => e.f === f && matchFn({ dataset: { v: e.v, f: e.f } }));
+    g.classList.toggle('dimmed', !isConnected);
+  });
+}
+
+// Click vendor
+document.querySelectorAll('[data-vendor-id]').forEach(g => {
+  g.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const vid = g.dataset.vendorId;
+    const v = vById(vid);
+    dimAllExcept(el => el.dataset.v === vid);
+    const myEdges = EDGES.filter(e => e.v === vid);
+    showDetails(`
+      <div class="info-card">
+        <h3>${v.name}</h3>
+        <div class="meta">${v.cat === 'logic' ? 'Leading-edge logic fabless' : 'Specialty fabless'} · ${v.revenue_tier} tier</div>
+        <p style="font-size:12px;margin:8px 0;color:var(--text)">${v.desc}</p>
+      </div>
+      <div class="info-card">
+        <h3>Foundry partners (${myEdges.length})</h3>
+        <ul>
+          ${myEdges.map(e => {
+            const f = fById(e.f);
+            return `<li><b>${f.name}</b><span class="badge ${e.rel}">${e.rel}</span><br><span style="font-size:11px;color:var(--muted)">${e.notes}</span></li>`;
+          }).join('')}
+        </ul>
+      </div>
+    `);
+  });
+});
+
+// Click foundry
+document.querySelectorAll('[data-foundry-id]').forEach(g => {
+  g.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const fid = g.dataset.foundryId;
+    const f = fById(fid);
+    dimAllExcept(el => el.dataset.f === fid);
+    const myEdges = EDGES.filter(e => e.f === fid);
+    showDetails(`
+      <div class="info-card">
+        <h3>${f.name}</h3>
+        <div class="meta">${f.location} · ${f.customers} fabless customers</div>
+        <p style="font-size:12px;margin:8px 0;color:var(--text)">${f.notes}</p>
+      </div>
+      <div class="info-card">
+        <h3>Fabless customers (${myEdges.length})</h3>
+        <ul>
+          ${myEdges.map(e => {
+            const v = vById(e.v);
+            return `<li><b>${v.name}</b><span class="badge ${e.rel}">${e.rel}</span><br><span style="font-size:11px;color:var(--muted)">${e.notes}</span></li>`;
+          }).join('')}
+        </ul>
+      </div>
+    `);
+  });
+});
+
+// Hover edges
+document.querySelectorAll('.edge').forEach(el => {
+  el.addEventListener('mouseover', (ev) => {
+    const v = vById(el.dataset.v), f = fById(el.dataset.f);
+    const e = EDGES[parseInt(el.dataset.idx)];
+    tooltip.innerHTML = `<b>${v.name}</b> → <b>${f.name}</b><br><i>${e.rel}</i>`;
+    tooltip.style.display = 'block';
+    tooltip.style.left = (ev.clientX + 12) + 'px';
+    tooltip.style.top = (ev.clientY - 8) + 'px';
+  });
+  el.addEventListener('mousemove', (ev) => {
+    tooltip.style.left = (ev.clientX + 12) + 'px';
+    tooltip.style.top = (ev.clientY - 8) + 'px';
+  });
+  el.addEventListener('mouseout', () => { tooltip.style.display = 'none'; });
+  el.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    const v = vById(el.dataset.v), f = fById(el.dataset.f);
+    const e = EDGES[parseInt(el.dataset.idx)];
+    showDetails(`
+      <div class="info-card">
+        <h3>${v.name} → ${f.name}<span class="badge ${e.rel}">${e.rel}</span></h3>
+        <p style="font-size:12px;margin:8px 0;color:var(--text)">${e.notes}</p>
+      </div>
+    `);
+  });
+});
+
+// Background click resets
+document.getElementById('canvas').addEventListener('click', clearSelection);
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const rel = btn.dataset.rel;
+    document.querySelectorAll('.edge').forEach(el => {
+      if (rel === 'all') el.classList.remove('dimmed');
+      else el.classList.toggle('dimmed', el.dataset.rel !== rel);
+    });
+  });
+});
+
+// Stats
+document.getElementById('edge-count').textContent = EDGES.length;
+document.getElementById('primary-count').textContent = EDGES.filter(e => e.rel === 'primary').length;
+document.getElementById('secondary-count').textContent = EDGES.filter(e => e.rel === 'secondary').length;
+document.getElementById('historical-count').textContent = EDGES.filter(e => e.rel === 'historical').length;
+
+// Resize handling
+window.addEventListener('resize', () => {
+  const newW = window.innerWidth - 220 - 320;
+  const newH = window.innerHeight - 90 - 24;
+  svg.setAttribute('viewBox', `0 0 ${newW} ${newH}`);
+});
+</script>
+
+</body>
+</html>
