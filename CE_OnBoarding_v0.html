@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CE 部門 新人 On-Boarding 課程目錄</title>
+<!-- 使用系統字體，不依賴外部載入 -->
+<style>
+/* 完全獨立運作，不依賴任何外部 CSS 變數 */
+:root{
+  --navy:#1F4E79;--blue:#2E75B6;--blue-lt:#D6E4F0;--blue-mid:#5BA3D9;
+  --text:#1a2332;--text-2:#4a5568;--text-3:#718096;
+  --bg:#F7F9FC;--bg-2:#EEF3F9;--white:#fff;--border:#D1DCE8;
+  --radius:10px;--shadow:0 2px 8px rgba(31,78,121,.08);
+  --green:#16A34A;--orange:#D97706;--red:#DC2626;
+  /* Fallback for any framework CSS vars */
+  --font-sans:'Microsoft JhengHei','微軟正黑體','PingFang TC',sans-serif;
+  --font-mono:'Courier New',Consolas,monospace;
+  --color-text-primary:#1a2332;
+  --color-text-secondary:#4a5568;
+  --color-text-tertiary:#718096;
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#F7F9FC;
+  --color-border-primary:#D1DCE8;
+  --color-border-secondary:#D1DCE8;
+  --color-border-tertiary:#E2EAF2;
+  --border-radius-md:8px;
+  --border-radius-lg:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Microsoft JhengHei','微軟正黑體','PingFang TC','Heiti TC',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.7;}
+a{color:var(--blue);text-decoration:none;}
+a:hover{text-decoration:underline;}
+.layout{display:flex;min-height:100vh;}
+.sidebar{width:240px;background:var(--navy);flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.main{flex:1;overflow:auto;}
+.sb-logo{padding:22px 20px 14px;border-bottom:1px solid rgba(255,255,255,.1);}
+.sb-logo h1{font-size:13px;font-weight:700;color:#fff;letter-spacing:.5px;line-height:1.4;}
+.sb-logo p{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px;}
+.sb-sec{padding:10px 0;}
+.sb-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;padding:0 16px 5px;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:7px 16px;cursor:pointer;transition:background .15s;color:rgba(255,255,255,.65);font-size:13px;}
+.sb-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+.sb-item.active{background:rgba(255,255,255,.14);color:#fff;border-left:3px solid var(--blue-mid);}
+.sb-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.sb-count{margin-left:auto;font-size:10px;font-family:'Courier New',Consolas,monospace;color:rgba(255,255,255,.35);}
+.sb-bottom{margin-top:auto;border-top:1px solid rgba(255,255,255,.08);padding:10px 0;}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);color:#fff;padding:32px 40px 24px;}
+.hero h2{font-size:22px;font-weight:700;margin-bottom:5px;}
+.hero p{font-size:13px;opacity:.72;margin-bottom:16px;}
+.hero-badges{display:flex;gap:8px;flex-wrap:wrap;}
+.hb{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:3px 12px;font-size:12px;}
+.tabs{background:var(--white);border-bottom:1px solid var(--border);display:flex;padding:0 40px;}
+.tab{padding:11px 18px;font-size:13px;font-weight:500;color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+.tab:hover{color:var(--blue);}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy);}
+.tab.admin-tab{color:#7C3AED;}
+.tab.admin-tab.active{color:#7C3AED;border-bottom-color:#7C3AED;}
+.content{padding:28px 40px;}
+.section{display:none;}
+.section.active{display:block;}
+/* Progress */
+.prog-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:22px;display:flex;align-items:center;gap:18px;}
+.prog-info{flex:1;}
+.prog-info h3{font-size:13px;font-weight:500;margin-bottom:6px;}
+.prog-bar{background:var(--bg-2);border-radius:4px;height:6px;}
+.prog-fill{background:var(--blue);border-radius:4px;height:6px;transition:width .4s;}
+.prog-sub{font-size:11px;color:var(--text-3);margin-top:4px;}
+.prog-pct{font-size:26px;font-weight:700;color:var(--navy);font-family:'Courier New',Consolas,monospace;text-align:center;}
+.prog-pct small{display:block;font-size:11px;color:var(--text-3);font-weight:400;}
+/* Course cards */
+.mod-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--bg-2);}
+.mod-dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.mod-title{font-size:17px;font-weight:700;}
+.mod-week{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:12px;white-space:nowrap;font-weight:500;}
+.mod-span{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:#FEF3C7;color:#92400E;margin-left:6px;}
+.mod-desc{font-size:13px;color:var(--text-2);margin-bottom:16px;padding-left:46px;}
+.course-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:7px;overflow:hidden;}
+.course-card.inactive{opacity:.5;}
+.cc-top{display:flex;align-items:center;gap:11px;padding:13px 16px;cursor:pointer;transition:background .15s;}
+.cc-top:hover{background:var(--bg);}
+.cc-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.cc-title{flex:1;font-size:13px;font-weight:500;}
+.cc-title.done{text-decoration:line-through;color:var(--text-3);}
+.req-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap;flex-shrink:0;}
+.req-必修{background:#DBEAFE;color:#1D4ED8;}
+.req-參考{background:#F3F4F6;color:#6B7280;}
+.status-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap;flex-shrink:0;}
+.status-上架{background:#D1FAE5;color:#065F46;}
+.status-下架{background:#FEE2E2;color:#991B1B;}
+.cc-dur{font-size:12px;color:var(--text-3);white-space:nowrap;margin-right:4px;}
+.cc-chev{font-size:11px;color:var(--text-3);transition:transform .2s;}
+.cc-body{display:none;padding:0 16px 14px 53px;border-top:1px solid var(--bg-2);}
+.cc-body.open{display:block;}
+.cc-obj{font-size:13px;color:var(--text-2);margin:10px 0 8px;line-height:1.7;}
+.cc-topics{list-style:none;margin-bottom:12px;}
+.cc-topics li{font-size:12px;color:var(--text-2);padding:2px 0 2px 14px;position:relative;}
+.cc-topics li::before{content:"▸";position:absolute;left:0;color:var(--blue);top:3px;font-size:10px;}
+.cc-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.btn-video{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;background:var(--navy);color:#fff;border-radius:20px;font-size:12px;font-weight:500;transition:background .15s;}
+.btn-video:hover{background:var(--blue);text-decoration:none;color:#fff;}
+.btn-done{padding:5px 14px;border:1px solid var(--border);border-radius:20px;font-size:12px;background:var(--white);color:var(--text-2);cursor:pointer;transition:all .15s;}
+.btn-done:hover{border-color:var(--blue);color:var(--blue);}
+.btn-done.is-done{background:var(--bg-2);color:var(--text-3);}
+/* Feedback styles */
+.feedback-wrap{margin:12px 0 4px;padding:12px 14px;background:#F8FAFC;border:1px solid #E2EAF2;border-radius:8px;}
+.feedback-label{display:block;font-size:12px;font-weight:500;color:var(--navy);margin-bottom:7px;}
+.feedback-textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Microsoft JhengHei','微軟正黑體',sans-serif;background:#fff;color:var(--text);resize:vertical;min-height:72px;transition:border-color .15s;}
+.feedback-textarea:focus{outline:none;border-color:var(--blue);}
+.feedback-actions{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;}
+.btn-submit{padding:6px 16px;background:var(--blue);color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;transition:background .15s;}
+.btn-submit:hover{background:var(--navy);}
+.feedback-hint{font-size:11px;color:var(--text-3);}
+.feedback-done-box{display:flex;flex-direction:column;gap:6px;}
+.feedback-done-label{font-size:12px;font-weight:500;color:#16A34A;}
+.feedback-done-text{font-size:13px;color:var(--text-2);background:#F0FDF4;border:1px solid #BBF7D0;border-radius:6px;padding:8px 10px;line-height:1.6;}
+.btn-redo{align-self:flex-start;padding:4px 12px;border:1px solid var(--border);border-radius:14px;font-size:11px;background:#fff;color:var(--text-3);cursor:pointer;}
+.btn-redo:hover{border-color:var(--blue);color:var(--blue);}
+/* Progress import/export bar */
+.data-bar{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.data-bar-label{font-size:12px;font-weight:500;color:var(--navy);margin-right:4px;}
+.btn-data{padding:5px 14px;border-radius:16px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;}
+.btn-export{background:var(--navy);color:#fff;border:none;}
+.btn-export:hover{background:var(--blue);}
+.btn-import{background:#fff;color:var(--text-2);border:1px solid var(--border);}
+.btn-import:hover{border-color:var(--blue);color:var(--blue);}
+.btn-ms-login{background:#9CA3AF;color:#fff;border:none;font-weight:500;}
+.btn-ms-login:hover{background:#6B7280;}
+.btn-ms-login.signed-in{background:#16A34A;}
+.data-bar-status{font-size:11px;color:var(--text-3);margin-left:auto;}
+/* All list table */
+.list-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.list-wrap table{width:100%;border-collapse:collapse;font-size:13px;}
+.list-wrap thead th{background:var(--navy);color:#fff;padding:9px 12px;font-weight:500;text-align:left;}
+.list-wrap tbody tr:nth-child(even):not(.mod-row){background:var(--bg);}
+.list-wrap tbody td{padding:7px 12px;border-top:1px solid var(--bg-2);vertical-align:middle;}
+.mod-row td{font-weight:700;font-size:12px;}
+.tbl-id{font-family:'Courier New',Consolas,monospace;font-weight:500;color:var(--blue);font-size:12px;}
+.tbl-link{color:var(--blue);font-size:12px;}
+/* Timeline */
+.tl-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.tl-head{background:var(--navy);color:#fff;padding:13px 20px;display:flex;align-items:center;justify-content:space-between;font-size:13px;}
+.tl-table{width:100%;border-collapse:collapse;font-size:13px;}
+.tl-table th{background:var(--bg-2);padding:8px 12px;font-weight:500;text-align:left;border-bottom:1px solid var(--border);font-size:12px;}
+.tl-table td{padding:7px 12px;border-top:1px solid var(--bg-2);vertical-align:middle;}
+.tl-week-row td{background:#EEF3F9;font-weight:700;font-size:11px;color:var(--text-3);letter-spacing:1px;text-transform:uppercase;padding:5px 12px;}
+/* Admin panel */
+.admin-banner{background:#F5F3FF;border:1px solid #DDD6FE;border-left:4px solid #7C3AED;border-radius:var(--radius);padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;font-size:13px;color:#4C1D95;}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.admin-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.admin-card-head{padding:11px 16px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.admin-card-body{padding:14px 16px;}
+/* Edit form */
+.edit-form{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;}
+.edit-form h3{font-size:15px;font-weight:600;margin-bottom:14px;color:var(--navy);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-group label{display:block;font-size:12px;font-weight:500;color:var(--text-2);margin-bottom:4px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Microsoft JhengHei','微軟正黑體','PingFang TC',sans-serif;background:var(--bg);color:var(--text);transition:border-color .15s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--blue);}
+.form-group textarea{resize:vertical;min-height:60px;}
+.btn-primary{padding:7px 18px;background:var(--navy);color:#fff;border:none;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s;}
+.btn-primary:hover{background:var(--blue);}
+.btn-secondary{padding:7px 18px;background:var(--white);color:var(--text-2);border:1px solid var(--border);border-radius:20px;font-size:13px;cursor:pointer;}
+.btn-danger{padding:5px 12px;background:var(--white);color:var(--red);border:1px solid #FCA5A5;border-radius:16px;font-size:12px;cursor:pointer;}
+.btn-danger:hover{background:#FEF2F2;}
+/* Course manage table */
+.manage-table{width:100%;border-collapse:collapse;font-size:13px;}
+.manage-table th{background:var(--bg-2);padding:8px 10px;font-weight:500;text-align:left;border-bottom:1px solid var(--border);font-size:12px;}
+.manage-table td{padding:7px 10px;border-top:1px solid var(--bg-2);vertical-align:middle;}
+.manage-table .mod-sep td{background:#EEF3F9;font-weight:700;font-size:11px;color:var(--text-3);letter-spacing:.5px;}
+.icon-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:3px 6px;border-radius:4px;transition:background .15s;}
+.icon-btn:hover{background:var(--bg-2);}
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:12px;padding:24px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--navy);}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--bg-2);}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;z-index:200;pointer-events:none;}
+.toast.show{opacity:1;}
+@media(max-width:768px){.sidebar{display:none;}.content{padding:16px 20px;}.admin-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-logo">
+    <h1>CE 部門<br>On-Boarding 課程</h1>
+    <p>Advantech Component Engineering</p>
+  </div>
+
+  <!-- 課程模組 -->
+  <div class="sb-sec">
+    <div class="sb-item" onclick="switchTab('home')" id="sb-home" style="margin-bottom:4px;border-radius:6px;background:rgba(255,255,255,.08);">
+      <div class="sb-dot" style="background:rgba(255,255,255,.15);color:#fff;font-size:13px;">🏠</div>
+      <span style="font-weight:500;">首頁</span>
+    </div>
+    <hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:4px 0 6px;">
+    <div class="sb-label">課程模組</div>
+    <div id="sbNav"></div>
+  </div>
+
+  <!-- 員工課程回報 -->
+  <div class="sb-sec" style="padding:4px 0;">
+    <hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:0 16px 8px;">
+    <div class="sb-item" onclick="switchSideSection('submit')" id="sb-submit">
+      <div class="sb-dot" style="background:#16A34A;color:#fff;font-size:12px;">📨</div>
+      <span>員工新課程回報</span>
+    </div>
+  </div>
+
+  <!-- 附錄參考 -->
+  <div class="sb-sec" style="padding:4px 0;">
+    <hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:0 16px 8px;">
+    <div class="sb-label">附錄參考</div>
+    <div class="sb-item" onclick="switchMod(-2)" id="sb-appendix-admin">
+      <div class="sb-dot" style="background:#78716C;color:#fff">Z附</div>
+      <span>日常行政指引</span>
+    </div>
+    <div class="sb-item" onclick="switchMod(-1)" id="sb-appendix">
+      <div class="sb-dot" style="background:#616161;color:#fff">Y附</div>
+      <span>Symbol 管理（特定）</span>
+    </div>
+  </div>
+
+  <!-- 版本號 -->
+  <div style="margin-top:auto;padding:10px 16px 12px;border-top:1px solid rgba(255,255,255,.08);">
+    <div style="font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.5px;">版本</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.45);font-family:'Courier New',monospace;margin-top:2px;">CE_OnBoarding_v0</div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="hero">
+    <h2>CE 部門　新人 On-Boarding 課程目錄</h2>
+    <p>Advantech Component Engineering Team　適用對象：所有 CE 部門新進員工</p>
+    <div class="hero-badges">
+      <span class="hb">📚 8 大必修模組</span>
+      <span class="hb">🎬 36 門課程</span>
+      <span class="hb">📅 彈性 4 週完成</span>
+      <span class="hb">🔗 影片連結已嵌入</span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('home')" id="tab-home">🏠 首頁</div>
+    <div class="tab" onclick="switchTab('modules')" id="tab-modules">課程模組</div>
+    <div class="tab" onclick="switchTab('alllist')" id="tab-alllist">課程清單</div>
+    <div class="tab" onclick="switchTab('timeline')" id="tab-timeline">週次總覽</div>
+    <div class="tab admin-tab" onclick="switchTab('admin')" id="tab-admin">⚙ 課程維護</div>
+  </div>
+
+  <div class="content">
+
+    <!-- ===== 首頁 ===== -->
+    <div class="section active" id="sec-home">
+
+      <!-- DATA BAR -->
+      <div class="data-bar">
+        <span class="data-bar-label">📂 學習記錄</span>
+        <button class="btn-data btn-ms-login" id="btn-login" onclick="msLogin()" disabled title="Azure AD 設定完成後啟用" style="opacity:.4;cursor:not-allowed;">🔑 登入公司帳號</button>
+        <button class="btn-data btn-import" onclick="importRecord()">⬆ 匯入學習記錄</button>
+        <button class="btn-data btn-export" onclick="exportRecord()">⬇ 匯出學習記錄</button>
+        <input type="file" id="import-file" accept=".json" style="display:none" onchange="loadImportFile(event)">
+        <span class="data-bar-status" id="data-status">未登入 — 進度暫存於本機</span>
+      </div>
+      <!-- LOGIN INFO BAR -->
+      <div id="login-info-bar" style="display:none;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:9px 14px;margin-bottom:14px;font-size:12px;color:#1E40AF;align-items:center;gap:10px;">
+        <span id="login-user-name"></span>
+        <span style="color:#93C5FD;">|</span>
+        <span id="login-sync-status">正在連線...</span>
+        <button onclick="msLogout()" style="margin-left:auto;padding:3px 10px;border:1px solid #BFDBFE;border-radius:12px;background:#fff;color:#1E40AF;font-size:11px;cursor:pointer;">登出</button>
+      </div>
+
+      <!-- SOP 說明 -->
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;border-radius:8px;padding:16px 18px;margin-bottom:16px;font-size:12px;color:#78350F;line-height:2;">
+        <strong style="font-size:13px;display:block;margin-bottom:10px;">📖 學習記錄操作說明</strong>
+        <strong>1. 第一次使用：</strong>直接點選左側模組開始觀看課程進行學習。<br>
+        <strong>2. 課程學習記錄：</strong><br>
+        　<span style="display:inline-block;margin-left:8px;">⑴ 每個課程看完影片後，請務必填寫學習心得後按下「傳送並完成課程」，代表完成該項目。</span><br>
+        　<span style="display:inline-block;margin-left:8px;">⑵ 每次退出學習課程模組前：務必回到首頁按下「⬇ 匯出學習記錄」，下載 <strong>CE_進度記錄.json</strong> 後請妥善保存於新人個人的學習記錄資料夾中。</span><br>
+        <strong>3. 第二次之後每次開啟本課程模組時：</strong>請點「⬆ 匯入學習記錄」→ 選擇之前的 <strong>CE_進度記錄.json</strong>，系統自動還原進度與心得，繼續學習。<br>
+        <strong>4. 額外學習記錄：</strong>未預設在本課程模組所進行的學習課程、專業訓練，可透過左側「📨 員工新課程回報」，上傳課程名稱、學習分享、課程教材，以及課程錄影影片，納入個人學習記錄。<br>
+        <span style="color:#92400E;display:block;margin-top:4px;">⚠ 請養成每次結束都匯出的習慣，避免進度遺失。主管可另開「學習進度查閱」頁面，上傳各新人 JSON 查閱整體進度。</span>
+      </div>
+
+      <!-- PROGRESS -->
+      <div class="prog-card">
+        <div class="prog-info">
+          <h3>必修課程完成進度 <span style="font-size:11px;font-weight:400;color:var(--text-3)">（參考課程不計入）</span></h3>
+          <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+          <div class="prog-sub" id="progLabel">點選左側模組開始學習</div>
+        </div>
+        <div class="prog-pct" id="progPct">0%<small>必修完成率</small></div>
+      </div>
+
+      <!-- 課程模組快速入口 -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px;">📚 課程模組快速入口</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;" id="home-mod-grid"></div>
+      </div>
+
+      <!-- 我的回報記錄 -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+        <div style="background:#F0FDF4;padding:11px 16px;font-size:13px;font-weight:600;color:#166534;display:flex;align-items:center;justify-content:space-between;">
+          <span>📨 我的課程回報記錄</span>
+          <button onclick="switchSideSection('submit')" style="font-size:11px;padding:3px 10px;border:1px solid #BBF7D0;border-radius:12px;background:#fff;color:#16A34A;cursor:pointer;">+ 新增回報</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="manage-table">
+            <thead><tr>
+              <th>課程名稱</th><th style="width:90px">授課人員</th><th style="width:80px">類別</th>
+              <th>教材</th><th>影片</th><th style="width:80px">提交時間</th>
+            </tr></thead>
+            <tbody id="homeSubmittedBody">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-3);padding:16px;font-size:12px;">尚無回報記錄</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 課程模組 ===== -->
+    <div class="section" id="sec-modules">
+      <div id="modDetail"></div>
+    </div>
+
+    <!-- 員工新課程回報 -->
+    <div class="section" id="sec-submit">
+      <div style="background:var(--white);border:1px solid #D1FAE5;border-left:4px solid #16A34A;border-radius:var(--radius);overflow:hidden;margin-bottom:20px;">
+        <div style="background:#F0FDF4;padding:14px 18px;">
+          <div style="font-size:15px;font-weight:600;color:#166534;margin-bottom:4px;">📨 員工新課程回報</div>
+          <div style="font-size:12px;color:#4B5563;line-height:1.7;">若你在訓練期間接受了其他同仁的指導或參加了額外課程，請填寫以下資訊。主管會定期從匯出記錄中查閱，做為後續正式課程的參考素材。</div>
+        </div>
+        <div style="padding:18px 20px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div class="form-group"><label>課程名稱 *</label><input type="text" id="sub-title" placeholder="如：Redmine 系統操作教學"></div>
+            <div class="form-group"><label>授課/指導人員 *</label><input type="text" id="sub-instructor" placeholder="如：Alan.Yang"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div class="form-group"><label>課程類別</label>
+              <select id="sub-category">
+                <option>系統平台操作</option>
+                <option>IT 工具 / 權限申請</option>
+                <option>零件料階工作處理</option>
+                <option>AI 應用說明</option>
+                <option>零件專業介紹</option>
+                <option>其他</option>
+              </select>
+            </div>
+            <div class="form-group"><label>上課日期</label><input type="date" id="sub-date"></div>
+          </div>
+          <div class="form-group" style="margin-bottom:12px;"><label>教材檔案連結（OneDrive / SharePoint URL）</label><input type="text" id="sub-material" placeholder="https://advantecho365.sharepoint.com/..."></div>
+          <div class="form-group" style="margin-bottom:12px;"><label>錄影影片連結（OneDrive / SharePoint URL）</label><input type="text" id="sub-video" placeholder="https://advantecho365.sharepoint.com/..."></div>
+          <div class="form-group" style="margin-bottom:16px;"><label>補充說明（選填）</label><textarea id="sub-note" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Microsoft JhengHei',sans-serif;resize:vertical;min-height:60px;" placeholder="課程重點、學習收穫..."></textarea></div>
+          <button class="btn-primary" onclick="submitNewCourse()" style="background:#16A34A;">📨 提交課程回報</button>
+        </div>
+      </div>
+
+      <!-- 已提交的回報記錄 -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+        <div style="background:var(--bg-2);padding:11px 16px;font-size:13px;font-weight:600;color:var(--navy);display:flex;align-items:center;justify-content:space-between;">
+          <span>📋 我的回報記錄</span>
+          <span style="font-size:11px;font-weight:400;color:var(--text-3)">記錄會在匯出學習記錄時一併儲存</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="manage-table">
+            <thead><tr>
+              <th>課程名稱</th><th style="width:90px">授課人員</th><th style="width:80px">類別</th>
+              <th>教材連結</th><th>影片連結</th><th style="width:90px">提交時間</th><th style="width:50px">刪除</th>
+            </tr></thead>
+            <tbody id="submittedCoursesBody">
+              <tr><td colspan="7" style="text-align:center;color:var(--text-3);padding:20px;font-size:12px;">尚無回報記錄</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL LIST -->
+    <div class="section" id="sec-alllist">
+      <div class="list-wrap">
+        <table>
+          <thead><tr>
+            <th style="width:64px">編號</th>
+            <th>課程名稱</th>
+            <th style="width:70px">必/參考</th>
+            <th style="width:70px">狀態</th>
+            <th style="width:76px">時長</th>
+            <th style="width:64px">影片</th>
+          </tr></thead>
+          <tbody id="allListBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="section" id="sec-timeline">
+      <div class="tl-wrap">
+        <div class="tl-head">
+          <span>彈性學習週次對照表</span>
+          <span style="font-size:12px;opacity:.7;">週次為建議範圍，主管可依新人狀況彈性調整</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="tl-table">
+            <thead><tr>
+              <th style="width:90px">週次</th>
+              <th style="width:90px">模組</th>
+              <th>課程名稱</th>
+              <th style="width:70px">必/參考</th>
+              <th style="width:76px">時長</th>
+            </tr></thead>
+            <tbody id="timelineBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--text-3);margin-top:10px;padding:0 4px;">
+        ※ 模組 B 與 C 同屬第 1–2 週，可並行進行；模組 H（數位工具）貫穿第 1–4 週，隨學隨用。主管可根據新人背景彈性調整各模組順序與時程。
+      </p>
+    </div>
+
+    <!-- ADMIN -->
+    <!-- ADMIN-SECTION-START -->
+    <div class="section" id="sec-admin">
+      <div class="admin-banner">
+        <span style="font-size:18px;">⚙</span>
+        <div><strong>課程維護介面（主管專用）</strong>　設定好課程後，點「產出新人訓練檔案」，即可下載給新人使用的 HTML（已移除此維護介面）。</div>
+      </div>
+
+      <!-- 產出新人檔案區 -->
+      <div style="background:#fff;border:2px solid #2E75B6;border-radius:var(--radius);padding:18px 20px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <span style="font-size:20px;">🎓</span>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;color:var(--navy);margin-bottom:4px;">產出新人個人化訓練檔案</div>
+          <div style="font-size:12px;color:var(--text-2);">設定好必修/參考後，輸入新人姓名，按下按鈕即可下載該新人的專屬課程 HTML（不含課程維護介面）。</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="student-name" placeholder="新人姓名（如 James.Fan）" style="padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;width:200px;font-family:'Microsoft JhengHei',sans-serif;">
+          <button class="btn-primary" style="white-space:nowrap;" onclick="exportStudentHTML()">⬇ 產出新人訓練檔案</button>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+        <div class="admin-card">
+          <div class="admin-card-head" style="background:#EFF6FF;color:#1E40AF;">➕ 新增課程</div>
+          <div class="admin-card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label>課程編號</label>
+                <input type="text" id="new-id" placeholder="如 A-4、D-8">
+              </div>
+              <div class="form-group">
+                <label>所屬模組</label>
+                <select id="new-mod">
+                  <option value="A">A 入職基礎</option>
+                  <option value="B">B CE 職能總覽</option>
+                  <option value="C">C 核心系統</option>
+                  <option value="D">D 開單實務</option>
+                  <option value="E">E 生命週期管理</option>
+                  <option value="F">F 料階技術</option>
+                  <option value="G">G KCC 策略</option>
+                  <option value="H">H 數位工具</option>
+                  <option value="附Y">附Y Symbol 管理</option>
+                  <option value="附Z">附Z 日常行政指引</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row full">
+              <div class="form-group">
+                <label>課程名稱</label>
+                <input type="text" id="new-title" placeholder="課程名稱">
+              </div>
+            </div>
+            <div class="form-row full">
+              <div class="form-group">
+                <label>影片連結（SharePoint URL）</label>
+                <input type="text" id="new-url" placeholder="https://advantecho365.sharepoint.com/...">
+              </div>
+            </div>
+            <div class="form-row full">
+              <div class="form-group">
+                <label>學習目標</label>
+                <textarea id="new-obj" placeholder="完成本課程後，學員能夠..."></textarea>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>預估時長</label>
+                <input type="text" id="new-dur" placeholder="如 ~45 min">
+              </div>
+              <div class="form-group">
+                <label>必修 / 參考</label>
+                <select id="new-req">
+                  <option value="必修">必修</option>
+                  <option value="參考">參考</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>課程位置</label>
+                <select id="new-position">
+                  <option value="module">課程模組（主線必修）</option>
+                  <option value="appendix">附錄參考（依職責選修）</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-primary" onclick="addCourse()">新增課程</button>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-head" style="background:#F0FDF4;color:#166534;">📋 操作說明</div>
+          <div class="admin-card-body" style="font-size:13px;color:var(--text-2);line-height:1.9;">
+            <p style="margin-bottom:8px;"><strong>替換影片連結</strong></p>
+            <p style="margin-bottom:12px;font-size:12px;">在下方課程管理表找到課程 → 點 ✏ 編輯 → 更新「影片連結」欄位 → 儲存。</p>
+            <p style="margin-bottom:8px;"><strong>下架課程（不刪除）</strong></p>
+            <p style="margin-bottom:12px;font-size:12px;">點 ✏ 編輯 → 將「狀態」改為「下架」→ 儲存。<br><span style="color:var(--red);">⚠ 請勿直接刪除課程。</span></p>
+            <p style="margin-bottom:8px;"><strong>調整必修/參考</strong></p>
+            <p style="font-size:12px;">點 ✏ 編輯 → 修改「必修/參考」→ 儲存。進度條只計算必修課程。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course manage table -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+        <div style="background:var(--bg-2);padding:11px 16px;font-size:13px;font-weight:600;color:var(--navy);display:flex;align-items:center;justify-content:space-between;">
+          <span>📂 課程管理清單</span>
+          <span style="font-size:12px;font-weight:400;color:var(--text-3)">共 <span id="totalCount">0</span> 門課程</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="manage-table">
+            <thead><tr>
+              <th style="width:60px">編號</th>
+              <th>課程名稱</th>
+              <th style="width:70px">必/參考</th>
+              <th style="width:64px">狀態</th>
+              <th style="width:76px">時長</th>
+              <th style="width:70px">操作</th>
+            </tr></thead>
+            <tbody id="manageBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3>✏ 編輯課程</h3>
+    <input type="hidden" id="edit-orig-id">
+    <div class="form-row">
+      <div class="form-group"><label>課程編號</label><input type="text" id="edit-id"></div>
+      <div class="form-group"><label>所屬模組（課程位置為「課程模組」時適用）</label>
+        <select id="edit-mod">
+          <option value="A">A 入職基礎</option><option value="B">B CE 職能總覽</option>
+          <option value="C">C 核心系統</option><option value="D">D 開單實務</option>
+          <option value="E">E 生命週期管理</option><option value="F">F 料階技術</option>
+          <option value="G">G KCC 策略</option><option value="H">H 數位工具</option>
+          <option value="附Y">附Y Symbol 管理</option><option value="附Z">附Z 日常行政指引</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row full"><div class="form-group"><label>課程名稱</label><input type="text" id="edit-title"></div></div>
+    <div class="form-row full"><div class="form-group"><label>影片連結（SharePoint URL）</label><input type="text" id="edit-url"></div></div>
+    <div class="form-row full"><div class="form-group"><label>學習目標</label><textarea id="edit-obj"></textarea></div></div>
+    <div class="form-row">
+      <div class="form-group"><label>預估時長</label><input type="text" id="edit-dur"></div>
+      <div class="form-group"><label>必修 / 參考</label>
+        <select id="edit-req"><option value="必修">必修</option><option value="參考">參考</option></select>
+      </div>
+    </div>
+    <div class="form-row"><div class="form-group"><label>狀態</label>
+      <select id="edit-status"><option value="上架">上架</option><option value="下架">下架</option></select>
+    </div>
+    <div class="form-group"><label>課程位置</label>
+      <select id="edit-position">
+        <option value="module">課程模組（主線必修）</option>
+        <option value="appendix">附錄參考（依職責選修）</option>
+      </select>
+    </div></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn-primary" onclick="saveCourse()">儲存變更</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+<script>
+const COLORS=[
+  {bg:'#E8F4FD',fg:'#1F4E79'},{bg:'#E3F2FD',fg:'#1565C0'},
+  {bg:'#FFF3E0',fg:'#BF360C'},{bg:'#EDE7F6',fg:'#4527A0'},
+  {bg:'#FFEBEE',fg:'#B71C1C'},{bg:'#E8F5E9',fg:'#2E7D32'},
+  {bg:'#E3F2FD',fg:'#0D47A1'},{bg:'#FFF8E1',fg:'#E65100'},
+];
+
+// ---- CATALOG DATA (fixed week tags per image) ----
+const catalog=[
+  {id:'A',title:'入職基礎與職場工具',tag:'第 1 週',week:'第 1 週',desc:'Teams 會議操作、SharePoint 協作，讓新人第一週快速建立行政基礎。',
+   courses:[
+    
+    {id:'A-1',title:'Teams 會議操作 & 郵件溝通規範',dur:'~40 min',required:'必修',status:'上架',obj:'掌握 Teams 音訊設定、會議邀請、郵件全部回覆/轉寄等日常溝通要領。',topics:['麥克風、耳機、Teams 音訊空間設定','分享螢幕與會議通知發送','郵件全部回覆 vs 單人回覆差異','附件保存、任務交辦後回報方式'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20251016_092750UTC-Meeting%20Recording.mp4'},
+    {id:'A-2',title:'Teams 頻道 & SharePoint 協作操作',dur:'~50 min',required:'必修',status:'上架',obj:'熟悉 Teams 頻道結構與 SharePoint 檔案共享、權限管理，能獨立上傳與查找資料。',topics:['檔案分享與權限設定','SharePoint 資料夾操作','訊息通知與協同作業流程'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e7%b3%bb%e7%b5%b1%e6%93%8d%e4%bd%9c%20SOP%20-%20PLM%28ECPO%29%20%26%20CE%20Portal_Teams%20%e9%a0%bb%e9%81%93_Sharepoint%20%e6%93%8d%e4%bd%9c.mp4?web=1'},
+  ]},
+  {id:'B',title:'CE 角色定位與流程總覽',tag:'第 1–2 週',week:'第 1–2 週',desc:'建立對 CE 工作範疇的全局認識，包含料號生命週期、ISO 文件體系，以及工作優先順序框架。',
+   courses:[
+    {id:'B-1',title:'CE 職能總覽：料號生命週期與承認作業',dur:'~90 min',required:'必修',status:'上架',obj:'全盤理解 CE 核心工作，包含料號從申請→承認→NRND→EOL 的完整生命週期。',topics:['料號生命週期各階段定義（release / conditional approve / NRND / discard / face out / inactive）','標準料號、OEM/CM 料號差異','供應商類別（PVL、AFL）選用策略','4M 變更通知（PCN）與 EOL 流程概念'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250909_072827UTC-Meeting%20Recording.mp4?web=1'},
+    {id:'B-2',title:'ISO 文件閱讀與版本管理',dur:'~60 min',required:'必修',status:'上架',obj:'學會判讀 ISO 文件版本（紅字新增/黑字修改）、查找最新版本，了解各料件欄位定義。',topics:['文件版本標示方式','如何下載、審查、閱讀規格文件','跨部門協作資訊整合','常見新人疑問 Q&A'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/Training-%20ISO%20Documents.mp4'},
+    {id:'B-3',title:'標準料號申請與規格確認流程',dur:'~50 min',required:'必修',status:'上架',obj:'掌握申請標準料號時的規格書來源確認、MPN 驗證及系統字數限制處理。',topics:['規格書來源（正式代理商/官網/供應商）確認方式','料號描述字數限制（PLM / SAP）','代理商與供應商溝通技巧','特殊採購地區的資料來源原則'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5b%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5d/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20241224_082420-Meeting%20Recording.mp4?web=1'},
+    {id:'B-4',title:'工作優先順序 & 資源分配透明化管理',dur:'~60 min',required:'必修',status:'上架',obj:'建立「大石頭與沙子」優先順序思維，理解如何記錄進行中任務並與主管溝通工作負載。',topics:['大石頭/沙子比喻：任務優先排序概念','Ongoing 任務表格填寫（名稱、負責人、狀態）','主管資源協調機制','溝通不良的改善建議'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5b%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5d/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250926_090226UTC-Meeting%20Recording.mp4?web=1'},
+  ]},
+  {id:'C',title:'核心系統操作（必修）',tag:'第 1–2 週',week:'第 1–2 週',desc:'eFlow、PLM（PNR/PAR/ECPO）、SRM 操作。完成後應能獨立進行基本料號申請與審核作業。',
+   courses:[
+    {id:'C-1',title:'eFlow 系統簡介：申請表單與簽核流程',dur:'~60 min',required:'必修',status:'上架',obj:'理解 eFlow 的定位，能區分新舊表單差異，完成新料號申請。',topics:['eFlow 定位（RD申請新料號入口）','新舊表單差異（舊：多料一單；新：一料一單）','PVL / Special Part 不同簽核路徑','申請後回填 PLM 的注意事項'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/20241119_eflow%20%e7%b3%bb%e7%b5%b1%e7%b0%a1%e4%bb%8b%e5%8f%8a%e6%93%8d%e4%bd%9c%e8%aa%aa%e6%98%8e%20by%20Otto.mp4?web=1'},
+    {id:'C-2',title:'eFlow & GPM 系統操作指引',dur:'~50 min',required:'必修',status:'上架',obj:'熟悉 eFlow 與 GPM 的操作介面、帳號切換、流程設計與功能擴展方式。',topics:['帳號管理與頻道切換','系統流程設計彈性','組織協作與角色分工','系統異常處理方式'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e7%b3%bb%e7%b5%b1%e7%b0%a1%e4%bb%8b%e5%8f%8a%e6%93%8d%e4%bd%9c%e6%8c%87%e5%bc%95%20-%20eFlow%20%26%20GPM.mp4?web=1'},
+    {id:'C-3',title:'PLM 系統操作：PNR 與 PAR 表單',dur:'~60 min',required:'必修',status:'上架',obj:'掌握 PLM 中零件申請（PNR）、變更（PAR）的操作流程，能查詢、建立與追蹤料號。',topics:['PLM 基本操作介面','Part Number Requester（PNR）申請流程','變更管理（PAR / Change Orders）','系統異常處理與問題回報'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e7%b3%bb%e7%b5%b1%e7%b0%a1%e4%bb%8b%e5%8f%8a%e6%93%8d%e4%bd%9c%e6%8c%87%e5%bc%95%20-%20PLM%28%20PNR%e3%80%81PAR%29.mp4?web=1'},
+    {id:'C-4',title:'PLM(ECPO) 操作 SOP：PCN / ECO / CDP 處理',dur:'~50 min',required:'必修',status:'上架',obj:'熟悉 ECPO 系統的查詢、審核、寄送流程，以及 PCN、ECO、CDP 等異動追蹤方式。',topics:['ECPO 系統資料查詢與審核流程','PCN / ECO / CDP 處理與追蹤','資料查無/權限不足的處理方式'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e7%b3%bb%e7%b5%b1%e6%93%8d%e4%bd%9c%20SOP%20-%20PLM%28ECPO%29%20%26%20CE%20Portal_Teams%20%e9%a0%bb%e9%81%93_Sharepoint%20%e6%93%8d%e4%bd%9c.mp4?web=1'},
+    {id:'C-5',title:'SRM 系統操作指引',dur:'~40 min',required:'必修',status:'上架',obj:'了解 SRM（供應商關係管理）的核心功能，能進行基本操作與流程設定。',topics:['SRM 核心功能與操作細節','流程瓶頸處理方式','跨部門協作分工'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e7%b3%bb%e7%b5%b1%e7%b0%a1%e4%bb%8b%e5%8f%8a%e6%93%8d%e4%bd%9c%e6%8c%87%e5%bc%95%20-%20SRM.mp4?web=1'},
+  ]},
+  {id:'D',title:'料號申請實務（開單操作）',tag:'第 2–3 週',week:'第 2–3 週',desc:'從理論進入實際上機操作，涵蓋各類料階、表單填寫、承認作業，建立完整的開單能力。',
+   courses:[
+    {id:'D-1',title:'Specbook 填寫 & PLM 新料申請開單（141 料階）',dur:'~70 min',required:'必修',status:'上架',obj:'能正確填寫 Specbook 並在 PLM 完成新料申請開單，包含製造商資訊建立、規格書上傳。',topics:['Specbook 填寫步驟與欄位說明','PLM 新料申請開單流程','製造商資訊建立與規格書上傳','表單審核、簽核、release 流程'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/141%e6%96%99%e9%9a%8e-specbook%e5%a1%ab%e5%af%ab%e5%8f%8aPlm%e6%96%b0%e6%96%99%e7%94%b3%e8%ab%8b%e9%96%8b%e5%96%ae%e8%aa%aa%e6%98%8e.mp4'},
+    {id:'D-2',title:'1231 & 1233 料階教學',dur:'~60 min',required:'必修',status:'上架',obj:'掌握 1231 / 1233 料階的申請與操作，熟悉 CLA profile 確認、標籤審核等細節。',topics:['料階系統設定與操作步驟','PPE / PPN 相關流程','物料標籤標記與審核','API 格式調整與資料控管'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/1231%20%26%201233%e6%96%99%e9%9a%8e%e6%95%99%e5%ad%b8.mp4?web=1'},
+    {id:'D-3',title:'141 料階：NRND 料號作承認',dur:'~40 min',required:'必修',status:'上架',obj:'理解 NRND 料號的承認操作流程，包含下載設定、系統操作與分享功能。',topics:['NRND 料號狀態定義與適用時機','帳號切換與系統顯示設定','下載應用程式與後續設定步驟'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/141%e6%96%99%e9%9a%8e%e6%95%99%e5%ad%b8-NRND%e6%96%99%e4%bd%9c%e6%89%bf%e8%aa%8d.mp4'},
+    {id:'D-4',title:'141 料階：CM 料 PLM 開單申請料號',dur:'~50 min',required:'必修',status:'上架',obj:'能為代工代料（CM 料）完成 PLM 系統開單申請，掌握與標準料號的差異。',topics:['CM 料與標準料號差異','PLM 開單步驟','審核流程注意事項'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/141%e6%96%99%e9%9a%8e%e6%95%99%e5%ad%b8-CM%e6%96%99PLM%e9%96%8b%e5%96%ae%e7%94%b3%e8%ab%8b%e6%96%99%e8%99%9f.mp4'},
+    {id:'D-5',title:'SRM 2.0 申請料號實務',dur:'~40 min',required:'必修',status:'上架',obj:'能透過 SRM 2.0 介面完成料號申請，掌握操作流程與常見問題排除。',topics:['SRM 2.0 料號申請介面操作','常見問題排除'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e5%af%a6%e5%8b%99%e6%95%99%e5%ad%b8-SRM2.0%e7%94%b3%e8%ab%8b%e6%96%99%e8%99%9f.mp4?web=1'},
+    {id:'D-6',title:'Part Approve 開單 & ECPO 確認',dur:'~50 min',required:'必修',status:'上架',obj:'掌握 Part Approve 開單流程及後續 ECPO 確認步驟，確保審核流程完整閉環。',topics:['Part Approve 表單開立時機與欄位','ECPO 確認操作步驟','審核流程串接'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e5%af%a6%e5%8b%99%e6%95%99%e5%ad%b8-Part%20Approve%e9%96%8b%e5%96%ae%20%26%20ECPO%e7%a2%ba%e8%aa%8d.mp4?web=1'},
+    {id:'D-7',title:'實際申請料號開單練習',dur:'~60 min',required:'必修',status:'上架',obj:'透過實際上機練習，整合前面所學完成完整申請流程，鞏固操作熟練度。',topics:['完整申請流程實作練習','常見錯誤檢視與修正','Q&A 解惑'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e5%af%a6%e9%9a%9b%e7%94%b3%e8%ab%8b%e6%96%99%e8%99%9f%e9%96%8b%e5%96%ae%e7%b7%b4%e7%bf%92.mp4?web=1'},
+  ]},
+  {id:'E',title:'料號生命週期管理',tag:'第 2–3 週',week:'第 2–3 週',desc:'專注於料號變更事件的處理能力，是 CE 日常維護工作的核心。包含 PCN、EOL、NRND、ECNR。',
+   courses:[
+    {id:'E-1',title:'零件變更通知（PCN）概念介紹',dur:'~50 min',required:'必修',status:'上架',obj:'理解 PCN 的定義、觸發情境（4M 變更）、通知義務，以及 CE 的處理職責。',topics:['PCN 定義與 4M 變更類型','供應商通知義務（提前 6 個月書面通知）','CE 收到 PCN 後的處理流程概覽'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e9%9b%b6%e4%bb%b6%e8%ae%8a%e6%9b%b4%20%28PCN%29.mp4?web=1'},
+    {id:'E-2',title:'PCN 處理實務（上）',dur:'~60 min',required:'必修',status:'上架',obj:'能依 SOP 執行 PCN 資料整理與系統作業，掌握上半段流程操作。',topics:['PCN 資料整理步驟','系統操作流程（上半段）','常見問題處理'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e5%af%a6%e5%8b%99%e6%95%99%e5%ad%b8-PCN%20%28%e4%b8%8a%29.mp4'},
+    {id:'E-3',title:'PCN 處理實務（下）',dur:'~60 min',required:'必修',status:'上架',obj:'完成 PCN 流程後半段，包含料號更新、通知相關單位、結案確認。',topics:['PCN 後半段系統操作','料號更新與通知流程','結案確認與紀錄保存'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e5%af%a6%e5%8b%99%e6%95%99%e5%ad%b8-PCN%20%28%e4%b8%8b%29.mp4?web=1'},
+    {id:'E-4',title:'EOL（停產）處理實務',dur:'~50 min',required:'必修',status:'上架',obj:'掌握 EOL 料號的識別、最後購買日規劃、替代料確認與採購協作流程。',topics:['EOL 料號識別與狀態確認','最後購買日（LBD）規劃','替代料評估與確認流程','與採購部門協作備貨'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e5%af%a6%e5%8b%99%e6%95%99%e5%ad%b8-EOL.mp4?web=1'},
+    {id:'E-5',title:'料號收斂 ECNR - NRND 操作',dur:'~60 min',required:'必修',status:'上架',obj:'理解料號收斂策略，能判斷是否進入 ECNR/NRND 流程，並完成系統操作。',topics:['ECNR / NRND 判斷標準','Component Forum 操作','生命週期管理（LCM）SOP 落實'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/iDesign%20Sharing%2BPart%20_Component%20Forum%20%e6%93%8d%e4%bd%9c%20%26%20%e6%96%99%e8%99%9f%e6%94%b6%e6%96%82%20ECNR%20-%20NRND.mp4'},
+    {id:'E-6',title:'零件料號生命週期與狀態管理（進階）',dur:'~70 min',required:'必修',status:'上架',obj:'深入掌握各狀態定義及申請表單（ECNR / ECPO / ECDC 等）的正確開立時機。',topics:['各狀態定義與轉換條件（含 face out / inactive）','申請表單（PR / ECNR / ECPO / ECDC）開立時機','Workflow、affected item、revision、life cycle 欄位維護'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250923_064517UTC-Meeting%20Recording.mp4?web=1'},
+  ]},
+  {id:'F',title:'料階技術知識',tag:'第 2–4 週',week:'第 2–4 週',desc:'提升對被動/主動元件的技術認識，能協助 RD 進行選料、替代料評估與設計審查。',
+   courses:[
+    {id:'F-1',title:'Diode & Zener 料階說明',dur:'~60 min',required:'參考',status:'上架',obj:'理解二極體與齊納二極體的料階分類、應用場景，以及料階選擇對可靠性的影響。',topics:['Diode / Zener 基本原理與分類','SMPS / SMA 等技術應用','料階選型考量（tolerance / worst case）','品質控制挑戰與跨部門協作'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/Diode%20%26%20Zener%e6%96%99%e9%9a%8e%e8%aa%aa%e6%98%8e.mp4'},
+    {id:'F-2',title:'電壓保護零件進階說明（TVS / MOV / ESD）',dur:'~70 min',required:'參考',status:'上架',obj:'掌握 TVS、MOV、ESD 元件的選型設計考量、安規認證、測試與失效分析。',topics:['電壓保護零件設計考量','安規標準與市場合規（歐洲/印度/美國）','失效模式（breakdown / clamping / switching）','產品認證流程與客戶技術支援'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e9%9b%bb%e5%a3%93%e4%bf%9d%e8%ad%b7%e9%9b%b6%e4%bb%b6%e9%80%b2%e9%9a%8e%e8%aa%aa%e6%98%8e.mp4'},
+  ]},
+  {id:'G',title:'KCC 專案與用料收斂策略',tag:'第 3–4 週',week:'第 3–4 週',desc:'了解 CE 在 KCC（Key Component Consolidation）中的角色，能參與跨 BG 的收斂協作。',
+   courses:[
+    {id:'G-1',title:'KCC 專案推動與用料收斂策略',dur:'~80 min',required:'必修',status:'上架',obj:'理解 KCC 的目標（減少料號、提升共用性、降低庫存）、組成小組與協作流程。',topics:['KCC 專案背景（2022年啟動）與各階段進程','跨 BG 代表參與機制','主流用料調查與技術 roadmap','料號審查機制（approve / NRD / conditional approve）','替代方案評估與供應商策略'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250402_085232-Meeting%20Recording.mp4?web=1'},
+    {id:'G-2',title:'CAC 料號清單維護 & Specbook Template',dur:'~60 min',required:'必修',status:'上架',obj:'能正確維護 CAC 料號清單，並使用 Specbook Template 協助供應商進行替代料規格填寫。',topics:['CAC 料號登記原則（保留歷史紀錄、避免刪除）','料號來源控管（eFlow / 小組討論 / Power BI 補登）','Specbook Template 使用方式（精簡版，供應商填寫）','替代料（平替）評估流程'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%E6%96%B0%E4%BA%BA%E8%A8%93%E7%B7%B4%E8%A8%98%E9%8C%84/%5B%E4%B8%8A%E8%AA%B2%E9%8C%84%E5%BD%B1%5D/CAC%E6%96%99%E8%99%9F%E6%B8%85%E5%96%AE%E7%B6%AD%E8%AD%B7%20%26%20Specbook%20Templete.mp4?EntityRepresentationId=86b7df97-04c1-4c11-aab2-e1b04f9bb30f'},
+  ]},
+  {id:'H',title:'資料管理與數位工具應用',tag:'第 1–4 週',week:'第 1–4 週',desc:'涵蓋 Power BI、CE Portal、資料導入等數位工具的操作，提升資料分析與資訊管理能力。',
+   courses:[
+    {id:'H-1',title:'CE Portal 功能介紹與日常操作',dur:'~80 min',required:'必修',status:'上架',obj:'能熟練使用 CE Portal 的 Dashboard、零件查詢工具、SOP 下載，以及管理專題分享與新聞發布。',topics:['CE Portal Dashboard 架構','零件查詢與聯絡窗口維護','專題分享、SOP、Case Study 發布流程','新聞顯示順序調整'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/CE%20Portal%e3%80%81OrCAD%e3%80%81CIS%20Guardian%e3%80%81Power%20BI%20%e7%b3%bb%e7%b5%b1%e7%b0%a1%e4%bb%8b%e5%8f%8a%e6%93%8d%e4%bd%9c%e8%aa%aa%e6%98%8e.mp4'},
+    {id:'H-2',title:'Power BI Dashboard 查閱與應用',dur:'~60 min',required:'必修',status:'上架',obj:'能透過 CE Portal 使用 Power BI Dashboard 查閱 KCC、EOL、MP Day 等報表，並理解資料來源。',topics:['KCC / EOL / MP Day Dashboard 操作','料號申請流程追蹤（Stepbook / PR / PAR）','替代料與 EOL 料件查詢','SharePoint 公告平台訂閱機制'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/Power%20BI%20Dashboard%20%e6%9f%a5%e9%96%b1.mp4'},
+    {id:'H-3',title:'Power BI 報表維護與資料來源管理',dur:'~70 min',required:'必修',status:'上架',obj:'能維護 Power BI 報表，包含資料來源設定（Denodo / SharePoint）、欄位新增、雲端上傳協作。',topics:['Power BI Desktop 資料表設定','Denodo / Web / SharePoint 資料來源連接','雲端與本地端編輯差異','自動排程更新設定與權限分工'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250918_022645UTC-Meeting%20Recording.mp4'},
+    {id:'H-4',title:'Power BI 資料分析操作（Denodo & DAX）',dur:'~70 min',required:'必修',status:'上架',obj:'能連接 Denodo 資料庫、匯入資料表、精簡欄位、使用 DAX 函數，並完成基礎視覺化報表製作。',topics:['Denodo 資料庫連接與資料表匯入','欄位精簡與資料行分割','DAX 函數應用（減少檔案容量）','視覺化呈現與報表管理'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250919_092047UTC-Meeting%20Recording.mp4?web=1'},
+    {id:'H-5',title:'資料匯入流程：Configure 檔案格式設定',dur:'~50 min',required:'必修',status:'上架',obj:'能完成資料匯入前的 Configure 檔案整理，掌握表頭對應、Sheet 選擇與權限問題的處理。',topics:['Configure 檔案表頭格式設定','Excel 表頭與系統表頭對應','資料匯入流程與常見失敗原因','權限問題處理與 IT 協作'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250327_093901-Meeting%20Recording.mp4?web=1'},
+    {id:'H-6',title:'AI 工具應用：Copilot 介紹與使用規範',dur:'~40 min',required:'必修',status:'上架',obj:'了解 Copilot AI 工具的功能、使用授權，以及不同地區的合規注意事項。',topics:['Copilot 功能介紹與應用場景','使用授權與權限管理','各地區合規性注意事項','郵件溝通與資訊分享整合'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5b%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5d/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250709_082252-Meeting%20Recording.mp4?web=1'},
+    {id:'H-7',title:'資源分配數位化 & RPA / AI 自動化展望',dur:'~60 min',required:'必修',status:'上架',obj:'理解以表格管理工作負載的方法，以及 RPA / AI 在資料整理、Datasheet 辨識等場景的應用展望。',topics:['工作負載數位化（專案 / routine / 支援 × 權重）','月報 / 週報回報機制','RPA 應用（自動化資料整理、表單填寫）','AI 自動辨識 Datasheet 與糾錯機制'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250926_040139UTC-Meeting%20Recording.mp4?web=1'},
+  ]},
+];
+
+const appendixMod={id:'附Y',title:'CIS / OrCAD Symbol 管理（特定職責）',tag:'依職責安排',desc:'僅適用於負責 Symbol / Footprint 維護作業的特定 CE 人員，非所有新人必修。',
+  courses:[
+    {id:'附Y-1',title:'CIS Guardian & OrCAD & Symbol 作業總覽',dur:'~90 min',obj:'建立 CIS / OrCAD 操作體系的整體認識，了解 Symbol 管理、CE Portal 與 Power BI 的連動關係。',topics:['CIS 系統操作（Symbol 查詢、狀態、標註）','Discarded 元件判斷方式','CE Portal 快速連結與 SOP 下載'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/CIS%20Guardian%20%26%20ORCAD%20%26%20CIS%28Symbol%20%e4%bd%9c%e6%a5%ad%29%20%26%20CE%20Portal.mp4'},
+    {id:'附Y-2',title:'CIS 2.0 維護 & ADBM 操作',dur:'~80 min',obj:'能執行 CIS 2.0 日常維護，包含 ADBM 資料表建立、欄位設計、Schema 管理與自動化腳本。',topics:['CIS 2.0 伺服器設定與帳號權限管理','ADBM 資料表建立與欄位命名規則','SQL 語法應用與資料驗證'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/CIS%202.0%e7%b6%ad%e8%ad%b7%20%26%20ADBM%e6%93%8d%e4%bd%9c.mp4'},
+    {id:'附Y-3',title:'Symbol / Footprint 修改與版次控管',dur:'~70 min',obj:'掌握 Symbol / Footprint 修改申請、版次建立（dash 1 版）、備份與 Server 更新流程。',topics:['修改單類型（Symbol / Footprint）處理流程','版次控管（新建 dash 版 vs 直接修改）','ADBM 系統修改紀錄維護'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250915_073857UTC-Meeting%20Recording.mp4?web=1'},
+    {id:'附Y-4',title:'公版 Symbol 轉換為公司 OLB 檔案',dur:'~60 min',obj:'能將公版 Symbol 轉換為公司規格的 OLB 檔，包含外框、PIN name、PIN type 調整。',topics:['OLB 轉換流程（外框、PIN name / type 調整）','大量 PIN 批次處理技巧（如 1270 PIN）','字體與對齊方式確認'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250903_071743UTC-Meeting%20Recording.mp4'},
+    {id:'附Y-5',title:'Multi Symbol & Footprint 管理',dur:'~70 min',obj:'能新增 Multi Symbol / Footprint，掌握申請流程、PIN number 一致性確認與 Symbol Server 更新。',topics:['Multi Symbol 需求與申請條件','CS 表單填寫與維護資料庫記錄','Symbol Server 更新流程'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5b%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5d/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250910_034350UTC-Meeting%20Recording.mp4?web=1'},
+    {id:'附Y-6',title:'零件命名與資料整理實務',dur:'~60 min',obj:'能依命名規則整理零件資料，掌握 Excel 批次處理技巧與常見作業痛點解決方法。',topics:['命名規則一致性與舊資料參考原則','Excel 批次處理（複製、貼上、公式串接）','雙螢幕作業效率技巧'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e6%95%99%e5%ae%a4-20250910_091732UTC-Meeting%20Recording.mp4?web=1'},
+  ]
+};
+const appendixAdmin={id:'附Z',title:'日常行政指引（一般新人適用）',tag:'到職第 1 週',desc:'與特定 CE 專業技術無關的日常行政事項，所有新進員工皆可參考。',
+  courses:[
+    {id:'附Z-1',title:'名片申請流程',dur:'~20 min',required:'參考',status:'上架',obj:'了解名片申請規範、填寫職稱、送主管審核的完整流程。',topics:['職稱填寫規範','主管審核流程（BGS負責人）','常見問題與解決方法'],url:'https://advantecho365.sharepoint.com/sites/CETeam-0.0-M/Shared%20Documents/2.0%20CE-Affairs/%e6%96%b0%e4%ba%ba%e8%a8%93%e7%b7%b4%e8%a8%98%e9%8c%84/%5B%e4%b8%8a%e8%aa%b2%e9%8c%84%e5%bd%b1%5D/%e7%94%b3%e8%ab%8b%e5%90%8d%e7%89%87.mp4?web=1'},
+  ]
+};
+
+// ---- STATE ----
+let activeMod=0;
+let completed=new Set();
+let courseDB={}; // flat lookup
+
+function buildDB(){
+  courseDB={};
+  catalog.forEach(mod=>{mod.courses.forEach(c=>{courseDB[c.id]={...c,modId:mod.id};});});
+  // Also index appendix courses
+  [appendixMod, appendixAdmin].forEach(app=>{
+    app.courses.forEach(c=>{courseDB[c.id]={...c,modId:app.id};});
+  });
+}
+buildDB();
+
+function requiredCourses(){
+  let arr=[];
+  catalog.forEach(mod=>mod.courses.forEach(c=>{if(c.status==='上架'&&c.required==='必修') arr.push(c);}));
+  return arr;
+}
+
+// ---- SIDEBAR ----
+function buildSidebar(){
+  const nav=document.getElementById('sbNav');
+  nav.innerHTML=catalog.map((mod,i)=>{
+    const c=COLORS[i%COLORS.length];
+    const done=mod.courses.filter(c=>completed.has(c.id)).length;
+    const total=mod.courses.filter(c=>c.status==='上架').length;
+    const isSpan=mod.id==='H';
+    return `<div class="sb-item${i===activeMod?' active':''}" id="sb-${i}" onclick="switchMod(${i})">
+      <div class="sb-dot" style="background:${c.fg};color:#fff">${mod.id}</div>
+      <span>${mod.title.split('（')[0]}</span>
+      ${isSpan?'<span style="font-size:9px;background:rgba(255,200,0,.2);color:#FCD34D;padding:1px 5px;border-radius:8px;margin-left:2px">全程</span>':''} 
+      <span class="sb-count" id="sbcnt-${i}">${done}/${total}</span>
+    </div>`;
+  }).join('');
+}
+
+// ---- SWITCH MOD ----
+function switchMod(idx){
+  activeMod=idx;
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  // Keep sb-home deselected when in module view
+  if(idx===-2){
+    document.getElementById('sb-appendix-admin').classList.add('active');
+    renderModDetail(appendixAdmin,-2);
+  } else if(idx===-1){
+    document.getElementById('sb-appendix').classList.add('active');
+    renderModDetail(appendixMod,-1);
+  } else {
+    document.getElementById('sb-'+idx).classList.add('active');
+    renderModDetail(catalog[idx],idx);
+  }
+  // Show modules section and activate modules tab
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-modules').classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  const tabMod=document.getElementById('tab-modules');
+  if(tabMod) tabMod.classList.add('active');
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+tab).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  const tabEl=document.getElementById('tab-'+tab);
+  if(tabEl) tabEl.classList.add('active');
+  if(tab==='admin') buildManageTable();
+  if(tab==='home') buildHomeGrid();
+  // Always render current module when switching to modules tab
+  if(tab==='modules'){
+    const idx = (activeMod !== undefined && activeMod !== null) ? activeMod : 0;
+    const mod = idx>=0 ? catalog[Math.min(idx, catalog.length-1)] : idx===-1 ? appendixMod : appendixAdmin;
+    const safeIdx = idx>=0 ? Math.min(idx, catalog.length-1) : idx;
+    renderModDetail(mod, safeIdx);
+    // Highlight correct sidebar item
+    document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+    if(safeIdx>=0){ const el=document.getElementById('sb-'+safeIdx); if(el) el.classList.add('active'); }
+    else if(safeIdx===-1){ document.getElementById('sb-appendix').classList.add('active'); }
+    else if(safeIdx===-2){ document.getElementById('sb-appendix-admin').classList.add('active'); }
+  }
+  // Sidebar home button highlight
+  const sbHome=document.getElementById('sb-home');
+  if(sbHome) sbHome.classList.toggle('active', tab==='home');
+  // Deselect sidebar submit item when switching tabs (except submit)
+  if(tab!=='submit'){
+    const sb=document.getElementById('sb-submit');
+    if(sb) sb.classList.remove('active');
+  }
+}
+
+// Switch to submit section from sidebar
+function switchSideSection(sec){
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  const sbEl=document.getElementById('sb-'+sec);
+  if(sbEl) sbEl.classList.add('active');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+sec).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  buildSubmittedTable();
+}
+window.switchSideSection = switchSideSection;
+
+// ---- RENDER MOD DETAIL ----
+function renderModDetail(mod,idx){
+  const isAppendixG=idx===-1;
+  const isAppendixAdmin=idx===-2;
+  const c=idx>=0?COLORS[idx%COLORS.length]:isAppendixAdmin?{bg:'#F5F0EE',fg:'#78716C'}:{bg:'#F5F5F5',fg:'#616161'};
+  const isH=mod.id==='H';
+  const isAppendix=isAppendixG||isAppendixAdmin;
+  const appendixNote=isAppendixG
+    ?'<strong style="color:#D97706">⚠ 特定職責，非所有新人必修</strong>　'
+    :isAppendixAdmin
+    ?'<strong style="color:#78716C">📋 日常行政，所有新人皆可參考</strong>　'
+    :'';
+  let html=`<div class="mod-header">
+    <div class="mod-dot" style="background:${c.bg};color:${c.fg}">${mod.id}</div>
+    <span class="mod-title">${mod.title}</span>
+    ${isH?'<span class="mod-span">貫穿全程</span>':''} 
+    <span class="mod-week" style="background:${c.bg};color:${c.fg}">${mod.tag}</span>
+  </div>
+  <p class="mod-desc">${appendixNote}${mod.desc}</p>`;
+  mod.courses.forEach((course,ci)=>{
+    const done=completed.has(course.id);
+    const inactive=course.status==='下架';
+    html+=`<div class="course-card${inactive?' inactive':''}" id="card-${course.id}">
+      <div class="cc-top" onclick="toggleCourse('${course.id}')">
+        <div class="cc-num" id="num-${course.id}" style="background:${done?c.fg:c.bg};color:${done?'#fff':c.fg}">${done?'✓':course.id}</div>
+        <span class="cc-title${done?' done':''}" id="ttl-${course.id}">${course.title}</span>
+        ${inactive?'<span class="status-badge status-下架">下架</span>':''} 
+        <span class="req-badge req-${course.required||'必修'}">${course.required||'必修'}</span>
+        <span class="cc-dur">⏱ ${course.dur}</span>
+        <span class="cc-chev" id="chev-${course.id}">▼</span>
+      </div>
+      <div class="cc-body" id="body-${course.id}">
+        <p class="cc-obj">${course.obj||''}</p>
+        <ul class="cc-topics">${(course.topics||[]).map(t=>`<li>${t}</li>`).join('')}</ul>
+        <div class="cc-actions">
+          <a class="btn-video" href="${course.url}" target="_blank">▶ 開啟影片</a>
+        </div>
+        ${!inactive?`<div class="feedback-wrap" id="fb-wrap-${course.id}">
+          ${done
+            ? `<div class="feedback-done-box">
+                <div class="feedback-done-label">✅ 已完成　學習心得：</div>
+                <div class="feedback-done-text" id="fb-text-${course.id}">${feedbackStore[course.id]||'（未填寫心得）'}</div>
+                <button class="btn-redo" onclick="redoCourse('${course.id}',${idx})">重新填寫</button>
+               </div>`
+            : `<div class="feedback-input-box">
+                <label class="feedback-label">📝 學習心得（看完影片後填寫，按傳送即完成本課程）</label>
+                <textarea class="feedback-textarea" id="fb-input-${course.id}" placeholder="請簡述你從這門課學到的重點，或實際操作的心得..."></textarea>
+                <div class="feedback-actions">
+                  <button class="btn-submit" onclick="submitFeedback('${course.id}',${idx})">✉ 傳送並完成課程</button>
+                  <span class="feedback-hint">心得會儲存在本機，可匯出為 Excel</span>
+                </div>
+               </div>`
+          }
+        </div>`:''}
+      </div>
+    </div>`;
+  });
+  document.getElementById('modDetail').innerHTML=html;
+}
+
+function toggleCourse(id){
+  const body=document.getElementById('body-'+id);
+  const chev=document.getElementById('chev-'+id);
+  const open=body.classList.toggle('open');
+  chev.textContent=open?'▲':'▼';
+}
+
+function markDone(id,modIdx){
+  if(completed.has(id)) completed.delete(id); else completed.add(id);
+  updateProgress();
+  if(modIdx>=0){
+    const mod=catalog[modIdx];
+    const done=mod.courses.filter(c=>completed.has(c.id)).length;
+    const el=document.getElementById('sbcnt-'+modIdx);
+    if(el) el.textContent=done+'/'+mod.courses.filter(c=>c.status==='上架').length;
+  }
+  const done=completed.has(id);
+  const c=modIdx>=0?COLORS[modIdx%COLORS.length]:{bg:'#F5F5F5',fg:'#616161'};
+  const num=document.getElementById('num-'+id);
+  const ttl=document.getElementById('ttl-'+id);
+  const btn=document.getElementById('btn-'+id);
+  if(num){num.style.background=done?c.fg:c.bg;num.style.color=done?'#fff':c.fg;num.textContent=done?'✓':id;}
+  if(ttl) ttl.classList.toggle('done',done);
+  if(btn){btn.textContent=done?'取消完成':'✓ 標記完成';btn.classList.toggle('is-done',done);}
+  document.getElementById('body-'+id).classList.add('open');
+}
+
+function updateProgress(){
+  const req=requiredCourses();
+  const done=req.filter(c=>completed.has(c.id)).length;
+  const pct=req.length?Math.round(done/req.length*100):0;
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progPct').innerHTML=pct+'%<small>必修完成率</small>';
+  document.getElementById('progLabel').textContent=`必修已完成 ${done} / ${req.length} 門`;
+  buildHomeGrid(); // refresh module progress cards on home
+}
+
+// ---- ALL LIST ----
+function buildAllList(){
+  const tbody=document.getElementById('allListBody');
+  let html='';
+  catalog.forEach((mod,i)=>{
+    const c=COLORS[i%COLORS.length];
+    html+=`<tr class="mod-row"><td colspan="6" style="color:${c.fg};background:${c.bg}">${mod.id}　${mod.title}　·　${mod.tag}</td></tr>`;
+    mod.courses.forEach(cr=>{
+      const reqC=cr.required==='必修'?'#1D4ED8':'#6B7280';
+      const reqBg=cr.required==='必修'?'#DBEAFE':'#F3F4F6';
+      const stC=cr.status==='上架'?'#065F46':'#991B1B';
+      const stBg=cr.status==='上架'?'#D1FAE5':'#FEE2E2';
+      html+=`<tr style="${cr.status==='下架'?'opacity:.5':''}">
+        <td style="font-family:'Courier New',Consolas,monospace;font-size:12px;color:${c.fg}">${cr.id}</td>
+        <td>${cr.title}</td>
+        <td><span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:${reqBg};color:${reqC}">${cr.required||'必修'}</span></td>
+        <td><span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:${stBg};color:${stC}">${cr.status||'上架'}</span></td>
+        <td style="font-size:12px;color:var(--text-3)">${cr.dur}</td>
+        <td><a href="${cr.url}" target="_blank" style="font-size:12px;color:var(--blue)">▶ 開啟</a></td>
+      </tr>`;
+    });
+  });
+  // appendix Z - 日常行政
+  html+=`<tr class="mod-row"><td colspan="6" style="color:#78716C;background:#F5F0EE">附錄 Z　${appendixAdmin.title}　·　${appendixAdmin.tag}</td></tr>`;
+  appendixAdmin.courses.forEach(cr=>{
+    html+=`<tr>
+      <td style="font-family:'Courier New',Consolas,monospace;font-size:12px;color:#78716C">${cr.id}</td>
+      <td>${cr.title}</td>
+      <td><span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#F3F4F6;color:#6B7280">參考</span></td>
+      <td><span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#D1FAE5;color:#065F46">上架</span></td>
+      <td style="font-size:12px;color:var(--text-3)">${cr.dur}</td>
+      <td><a href="${cr.url}" target="_blank" style="font-size:12px;color:var(--blue)">▶ 開啟</a></td>
+    </tr>`;
+  });
+  // appendix G - Symbol
+  html+=`<tr class="mod-row"><td colspan="6" style="color:#616161;background:#F5F5F5">附錄 Y　CIS / Symbol 管理（特定職責）　·　依職責安排</td></tr>`;
+  appendixMod.courses.forEach(cr=>{
+    html+=`<tr style="opacity:.65">
+      <td style="font-family:'Courier New',Consolas,monospace;font-size:12px;color:#888">${cr.id}</td>
+      <td style="color:var(--text-3)">${cr.title}</td>
+      <td><span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#F3F4F6;color:#6B7280">特定</span></td>
+      <td><span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#D1FAE5;color:#065F46">上架</span></td>
+      <td style="font-size:12px;color:var(--text-3)">${cr.dur}</td>
+      <td><a href="${cr.url}" target="_blank" style="font-size:12px;color:var(--blue)">▶ 開啟</a></td>
+    </tr>`;
+  });
+  tbody.innerHTML=html;
+}
+
+// ---- TIMELINE ----
+function buildTimeline(){
+  // Build from catalog using week tags
+  const tbody=document.getElementById('timelineBody');
+  let html='';
+  // Group by week tag
+  const weekOrder=['第 1 週','第 1–2 週','第 2–3 週','第 2–4 週','第 3–4 週','第 1–4 週'];
+  const weekGroups={};
+  catalog.forEach((mod,mi)=>{
+    const w=mod.tag;
+    if(!weekGroups[w]) weekGroups[w]=[];
+    mod.courses.forEach(c=>{
+      if(c.status==='上架') weekGroups[w].push({...c,modId:mod.id,modTitle:mod.title,modIdx:mi});
+    });
+  });
+  // Render in correct order
+  const seenWeeks=new Set();
+  // Build proper ordered list
+  const rows=[];
+  weekOrder.forEach(w=>{
+    if(weekGroups[w]&&!seenWeeks.has(w)){
+      seenWeeks.add(w);
+      rows.push({week:w,courses:weekGroups[w]});
+    }
+  });
+  // Any remaining weeks
+  Object.keys(weekGroups).forEach(w=>{
+    if(!seenWeeks.has(w)) rows.push({week:w,courses:weekGroups[w]});
+  });
+
+  rows.forEach(({week,courses})=>{
+    html+=`<tr class="tl-week-row"><td colspan="5">📅 ${week}</td></tr>`;
+    courses.forEach(cr=>{
+      const c=COLORS[cr.modIdx%COLORS.length];
+      const reqC=cr.required==='必修'?'#1D4ED8':'#6B7280';
+      const reqBg=cr.required==='必修'?'#DBEAFE':'#F3F4F6';
+      html+=`<tr>
+        <td></td>
+        <td><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:${c.bg};color:${c.fg}">${cr.modId}</span></td>
+        <td style="font-size:13px">${cr.title}</td>
+        <td><span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:${reqBg};color:${reqC}">${cr.required||'必修'}</span></td>
+        <td style="font-size:12px;color:var(--text-3)">${cr.dur}</td>
+      </tr>`;
+    });
+  });
+  tbody.innerHTML=html;
+}
+
+// ---- ADMIN ----
+function buildManageTable(){
+  const tbody=document.getElementById('manageBody');
+  let html='';let total=0;
+
+  function courseRow(cr, c){
+    total++;
+    const reqC=cr.required==='必修'?'#1D4ED8':'#6B7280';
+    const reqBg=cr.required==='必修'?'#DBEAFE':'#F3F4F6';
+    const stC=cr.status==='上架'?'#065F46':'#991B1B';
+    const stBg=cr.status==='上架'?'#D1FAE5':'#FEE2E2';
+    const posBadge=cr.position==='appendix'
+      ?'<span style="font-size:9px;padding:1px 5px;border-radius:6px;background:#FEF3C7;color:#92400E;margin-left:4px;">附錄</span>':'';
+    return `<tr style="${cr.status==='下架'?'opacity:.55':''}">
+      <td style="font-family:'Courier New',Consolas,monospace;font-size:12px;color:${c.fg}">${cr.id}</td>
+      <td style="font-size:13px">${cr.title}${posBadge}</td>
+      <td><span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:${reqBg};color:${reqC}">${cr.required||'必修'}</span></td>
+      <td><span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:${stBg};color:${stC}">${cr.status||'上架'}</span></td>
+      <td style="font-size:12px;color:var(--text-3)">${cr.dur}</td>
+      <td style="white-space:nowrap">
+        <button class="icon-btn" onclick="openEdit('${cr.id}')" title="編輯">✏</button>
+        <button class="icon-btn" onclick="toggleStatus('${cr.id}')" title="${cr.status==='上架'?'下架':'上架'}" style="color:${cr.status==='上架'?'var(--red)':'var(--green)'}">${cr.status==='上架'?'⬇':'⬆'}</button>
+      </td>
+    </tr>`;
+  }
+
+  catalog.forEach((mod,mi)=>{
+    const c=COLORS[mi%COLORS.length];
+    html+=`<tr class="mod-sep"><td colspan="6" style="color:${c.fg}">📚 ${mod.id}　${mod.title}　<span style="font-size:10px;opacity:.7">課程模組</span></td></tr>`;
+    mod.courses.forEach(cr=>{ html+=courseRow(cr,c); });
+  });
+
+  // Appendix sections
+  [{mod:appendixAdmin,label:'附錄 Z　日常行政指引'},{mod:appendixMod,label:'附錄 Y　Symbol 管理（特定）'}].forEach(({mod,label})=>{
+    const c={fg:'#78716C',bg:'#F5F0EE'};
+    html+=`<tr class="mod-sep"><td colspan="6" style="color:${c.fg}">📎 ${label}　<span style="font-size:10px;opacity:.7">附錄參考</span></td></tr>`;
+    mod.courses.forEach(cr=>{ html+=courseRow(cr,c); });
+  });
+
+  document.getElementById('manageBody').innerHTML=html;
+  document.getElementById('totalCount').textContent=total;
+}
+
+function openEdit(id){
+  const cr=courseDB[id];
+  if(!cr) return;
+  document.getElementById('edit-orig-id').value=id;
+  document.getElementById('edit-id').value=cr.id;
+  document.getElementById('edit-title').value=cr.title;
+  document.getElementById('edit-url').value=cr.url;
+  document.getElementById('edit-obj').value=cr.obj||'';
+  document.getElementById('edit-dur').value=cr.dur;
+  document.getElementById('edit-req').value=cr.required||'必修';
+  document.getElementById('edit-status').value=cr.status||'上架';
+  // For appendix courses (附Y / 附Z), default modId and position correctly
+  const isAppendix = cr.modId==='附Y' || cr.modId==='附Z' || cr.position==='appendix';
+  document.getElementById('edit-mod').value=cr.modId||'A';
+  document.getElementById('edit-position').value=isAppendix?'appendix':(cr.position||'module');
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal(){
+  document.getElementById('editModal').classList.remove('open');
+}
+
+function saveCourse(){
+  const origId=document.getElementById('edit-orig-id').value;
+  const newModId=document.getElementById('edit-mod').value;
+  const newPosition=document.getElementById('edit-position').value;
+
+  // Resolve target container based on position and modId
+  let targetContainer;
+  if(newPosition==='appendix'){
+    // When position is appendix, place in the correct appendix based on modId
+    if(newModId==='附Y') targetContainer=appendixMod;
+    else targetContainer=appendixAdmin; // 附Z or default
+  } else {
+    // Course module position — find in catalog
+    targetContainer=catalog.find(m=>m.id===newModId);
+    if(!targetContainer){ showToast('⚠ 請選擇所屬模組'); return; }
+  }
+
+  // Find course in any source and remove it
+  let found=false;
+  const allSources=[...catalog, appendixMod, appendixAdmin];
+  for(const mod of allSources){
+    const idx=mod.courses.findIndex(c=>c.id===origId);
+    if(idx>=0){
+      const updated={
+        ...mod.courses[idx],
+        id:document.getElementById('edit-id').value,
+        title:document.getElementById('edit-title').value,
+        url:document.getElementById('edit-url').value,
+        obj:document.getElementById('edit-obj').value,
+        dur:document.getElementById('edit-dur').value,
+        required:document.getElementById('edit-req').value,
+        status:document.getElementById('edit-status').value,
+        position:newPosition,
+        modId:newModId,
+      };
+      mod.courses.splice(idx,1);
+      targetContainer.courses.push(updated);
+      found=true;
+      break;
+    }
+  }
+  if(!found){ showToast('⚠ 找不到該課程'); return; }
+  buildDB();
+  closeModal();
+  buildManageTable();
+  buildAllList();
+  buildTimeline();
+  buildSidebar();
+  if(activeMod>=0) renderModDetail(catalog[activeMod],activeMod);
+  updateProgress();
+  showToast('✅ 課程已更新');
+}
+
+function toggleStatus(id){
+  for(const mod of catalog){
+    const cr=mod.courses.find(c=>c.id===id);
+    if(cr){cr.status=cr.status==='上架'?'下架':'上架';break;}
+  }
+  buildDB();buildManageTable();buildAllList();buildTimeline();buildSidebar();
+  renderModDetail(catalog[activeMod],activeMod);updateProgress();
+  showToast('✅ 狀態已更新');
+}
+
+function addCourse(){
+  const id=document.getElementById('new-id').value.trim();
+  const modId=document.getElementById('new-mod').value;
+  const title=document.getElementById('new-title').value.trim();
+  const url=document.getElementById('new-url').value.trim();
+  const obj=document.getElementById('new-obj').value.trim();
+  const dur=document.getElementById('new-dur').value.trim();
+  const req=document.getElementById('new-req').value;
+  const position=document.getElementById('new-position').value;
+  if(!id||!title||!url){showToast('⚠ 請填寫課程編號、名稱與影片連結');return;}
+  const newCourse={id,title,url,obj,dur,required:req,status:'上架',position,modId,topics:[]};
+  if(position==='appendix'){
+    // Add to appendixAdmin
+    appendixAdmin.courses.push(newCourse);
+    showToast(`✅ 已新增至「附錄參考」`);
+  } else {
+    const mod=catalog.find(m=>m.id===modId);
+    if(!mod) return;
+    mod.courses.push(newCourse);
+    showToast(`✅ 已新增至「課程模組 ${modId}」`);
+  }
+  buildDB();
+  ['new-id','new-title','new-url','new-obj','new-dur'].forEach(f=>document.getElementById(f).value='');
+  buildManageTable();buildAllList();buildTimeline();buildSidebar();
+  if(activeMod>=0) renderModDetail(catalog[activeMod],activeMod);
+  updateProgress();
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ============================================================
+// MICROSOFT GRAPH API — OneDrive 記錄同步
+// ============================================================
+const CLIENT_ID = 'dd1d2589-11e8-42ed-b609-3150ab13f662';
+const TENANT_ID = 'a77d40d9-dcba-4dda-b571-5f18e6da853f';
+const SCOPES = ['User.Read','Files.ReadWrite.All'];
+// OneDrive 目標路徑：新人訓練記錄/{姓名}/CE_學習進度.json
+const OD_FOLDER = '新人訓練記錄';
+
+let msalApp = null;
+let msAccount = null;
+let msToken = null;
+let currentUserName = '';
+
+async function initMSAL(){
+  try {
+    msalApp = new msal.PublicClientApplication({
+      auth: {
+        clientId: CLIENT_ID,
+        authority: `https://login.microsoftonline.com/${TENANT_ID}`,
+        redirectUri: window.location.href.split('?')[0]
+      },
+      cache: { cacheLocation: 'sessionStorage' }
+    });
+    await msalApp.initialize();
+    // Check if already signed in
+    const accounts = msalApp.getAllAccounts();
+    if(accounts.length > 0){
+      msAccount = accounts[0];
+      await acquireToken();
+      await onSignedIn();
+    }
+  } catch(e){ console.warn('MSAL init failed:', e); }
+}
+
+async function msLogin(){
+  if(!msalApp){ showToast('⚠ MSAL 未初始化，請確認網路連線'); return; }
+  try {
+    const result = await msalApp.loginPopup({ scopes: SCOPES });
+    msAccount = result.account;
+    msToken = result.accessToken;
+    await onSignedIn();
+  } catch(e){
+    if(e.errorCode !== 'user_cancelled') showToast('登入失敗：' + (e.message||e));
+  }
+}
+window.msLogin = msLogin;
+
+async function acquireToken(){
+  if(!msalApp || !msAccount) return null;
+  try {
+    const result = await msalApp.acquireTokenSilent({ scopes: SCOPES, account: msAccount });
+    msToken = result.accessToken;
+    return msToken;
+  } catch(e){
+    try {
+      const result = await msalApp.acquireTokenPopup({ scopes: SCOPES });
+      msToken = result.accessToken;
+      return msToken;
+    } catch(e2){ return null; }
+  }
+}
+
+async function onSignedIn(){
+  currentUserName = msAccount.name || msAccount.username.split('@')[0];
+  const btn = document.getElementById('btn-login');
+  if(btn){ btn.textContent = '✅ ' + currentUserName; btn.classList.add('signed-in'); }
+  const bar = document.getElementById('login-info-bar');
+  if(bar){ bar.style.display='flex'; document.getElementById('login-user-name').textContent = '👤 ' + currentUserName; }
+  document.getElementById('login-sync-status').textContent = '正在讀取 OneDrive 記錄...';
+  await syncFromOneDrive();
+}
+
+async function msLogout(){
+  if(!msalApp) return;
+  await msalApp.logoutPopup();
+  msAccount = null; msToken = null;
+  const btn = document.getElementById('btn-login');
+  if(btn){ btn.textContent = '🔑 登入公司帳號'; btn.classList.remove('signed-in'); }
+  const bar = document.getElementById('login-info-bar');
+  if(bar) bar.style.display = 'none';
+  document.getElementById('data-status').textContent = '已登出 — 進度暫存於本機';
+}
+window.msLogout = msLogout;
+
+// ---- OneDrive R/W ----
+async function getODFilePath(){
+  // Path: /新人訓練記錄/{name}/CE_學習進度.json
+  const safeName = currentUserName.replace(/[/\\:*?"<>|]/g,'_');
+  return `${OD_FOLDER}/${safeName}/CE_學習進度.json`;
+}
+
+async function syncFromOneDrive(){
+  const token = await acquireToken();
+  if(!token){ document.getElementById('login-sync-status').textContent = '無法取得授權'; return; }
+  const path = await getODFilePath();
+  try {
+    const res = await fetch(`https://graph.microsoft.com/v1.0/me/drive/root:/${encodeURIComponent(path)}:/content`, {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if(res.ok){
+      const data = await res.json();
+      if(data.completed) { completed.clear(); data.completed.forEach(id=>completed.add(id)); }
+      if(data.feedback) feedbackStore = {...feedbackStore, ...data.feedback};
+      saveToLS();
+      buildSidebar();
+      renderModDetail(catalog[activeMod>=0?activeMod:0], activeMod>=0?activeMod:0);
+      updateProgress();
+      const ts = data.savedAt ? new Date(data.savedAt).toLocaleString('zh-TW') : '';
+      document.getElementById('login-sync-status').textContent = `✅ 已同步 OneDrive（${ts}）`;
+      document.getElementById('data-status').textContent = `同步自 OneDrive（${ts}）`;
+    } else if(res.status === 404){
+      document.getElementById('login-sync-status').textContent = '✅ 已連線（尚無記錄，從新開始）';
+      document.getElementById('data-status').textContent = '已連線 OneDrive，完成課程後自動儲存';
+    } else {
+      document.getElementById('login-sync-status').textContent = '⚠ 讀取失敗（' + res.status + '）';
+    }
+  } catch(e){
+    document.getElementById('login-sync-status').textContent = '⚠ 連線失敗：' + e.message;
+  }
+}
+
+async function syncToOneDrive(){
+  const token = await acquireToken();
+  if(!token) return false;
+  const path = await getODFilePath();
+  const data = { completed:[...completed], feedback:feedbackStore, savedAt:new Date().toISOString(), user:currentUserName, version:'v0' };
+  try {
+    // Create folder first (ignore error if exists)
+    const safeName = currentUserName.replace(/[/\\:*?"<>|]/g,'_');
+    await fetch(`https://graph.microsoft.com/v1.0/me/drive/root:/${OD_FOLDER}:/children`, {
+      method: 'POST',
+      headers: { Authorization:'Bearer '+token, 'Content-Type':'application/json' },
+      body: JSON.stringify({ name:safeName, folder:{}, '@microsoft.graph.conflictBehavior':'ignore' })
+    }).catch(()=>{});
+
+    const res = await fetch(`https://graph.microsoft.com/v1.0/me/drive/root:/${encodeURIComponent(path)}:/content`, {
+      method: 'PUT',
+      headers: { Authorization:'Bearer '+token, 'Content-Type':'application/json' },
+      body: JSON.stringify(data)
+    });
+    if(res.ok){
+      const ts = new Date().toLocaleString('zh-TW');
+      if(document.getElementById('login-sync-status'))
+        document.getElementById('login-sync-status').textContent = `✅ 已儲存至 OneDrive（${ts}）`;
+      document.getElementById('data-status').textContent = `上次同步 OneDrive：${ts}`;
+      return true;
+    }
+  } catch(e){ console.warn('OneDrive write failed:', e); }
+  return false;
+}
+
+// Override saveToLS to also sync to OneDrive when logged in
+const _origSaveToLS = saveToLS;
+// Redefine saveToLS globally
+
+let feedbackStore = {}; // courseId → feedback text
+let _syncTimer = null;
+
+const LS_KEY = 'ce_onboarding_v0';
+
+function saveToLS(){
+  const data = {
+    completed: [...completed],
+    feedback: feedbackStore,
+    submittedCourses: submittedCourses,
+    savedAt: new Date().toISOString()
+  };
+  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e){}
+  // Auto sync to OneDrive 2s after last change (when logged in)
+  if(msAccount && msToken){
+    clearTimeout(_syncTimer);
+    _syncTimer = setTimeout(()=>syncToOneDrive(), 2000);
+  }
+}
+
+function loadFromLS(){
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    if(data.completed) data.completed.forEach(id => completed.add(id));
+    if(data.feedback) feedbackStore = data.feedback;
+    if(data.submittedCourses) submittedCourses = data.submittedCourses;
+    const ts = data.savedAt ? new Date(data.savedAt).toLocaleString('zh-TW') : '';
+    document.getElementById('data-status').textContent = ts ? `上次儲存：${ts}` : '進度儲存於本機瀏覽器';
+  } catch(e){}
+}
+
+function submitFeedback(id, modIdx){
+  const input = document.getElementById('fb-input-'+id);
+  if(!input) return;
+  const text = input.value.trim();
+  if(!text){ alert('請先填寫學習心得再傳送！'); input.focus(); return; }
+  feedbackStore[id] = text;
+  completed.add(id);
+  saveToLS();
+  updateProgress();
+  updateSbCount(modIdx);
+  // Re-render current mod to show done state
+  const mod = modIdx >= 0 ? catalog[modIdx] : (modIdx===-1 ? appendixMod : appendixAdmin);
+  renderModDetail(mod, modIdx);
+  // Re-open that card
+  setTimeout(()=>{
+    const body = document.getElementById('body-'+id);
+    if(body){ body.classList.add('open'); const chev=document.getElementById('chev-'+id); if(chev) chev.textContent='▲'; }
+  }, 50);
+  showToast('✅ 學習心得已儲存，課程完成！');
+}
+window.submitFeedback = submitFeedback;
+
+function redoCourse(id, modIdx){
+  if(!confirm('確定要重新填寫嗎？目前的心得將被清除。')) return;
+  delete feedbackStore[id];
+  completed.delete(id);
+  saveToLS();
+  updateProgress();
+  updateSbCount(modIdx);
+  const mod = modIdx >= 0 ? catalog[modIdx] : (modIdx===-1 ? appendixMod : appendixAdmin);
+  renderModDetail(mod, modIdx);
+  setTimeout(()=>{
+    const body = document.getElementById('body-'+id);
+    if(body){ body.classList.add('open'); const chev=document.getElementById('chev-'+id); if(chev) chev.textContent='▲'; }
+  }, 50);
+}
+window.redoCourse = redoCourse;
+
+function updateSbCount(modIdx){
+  if(modIdx < 0) return;
+  const mod = catalog[modIdx];
+  if(!mod) return;
+  const done = mod.courses.filter(c=>completed.has(c.id)).length;
+  const tot = mod.courses.filter(c=>c.status==='上架').length;
+  const el = document.getElementById('sbcnt-'+modIdx);
+  if(el) el.textContent = done+'/'+tot;
+}
+
+// Export to JSON (downloadable, importable next session)
+function exportRecord(){
+  // Build JSON with full course progress + feedback + submitted courses
+  const courseProgress = [];
+  catalog.forEach(mod=>{
+    mod.courses.forEach(c=>{
+      courseProgress.push({
+        modId:mod.id, modTitle:mod.title,
+        courseId:c.id, courseTitle:c.title,
+        required:c.required||'必修', dur:c.dur,
+        completed: completed.has(c.id),
+        feedback: feedbackStore[c.id]||''
+      });
+    });
+  });
+  [appendixAdmin, appendixMod].forEach(app=>{
+    app.courses.forEach(c=>{
+      courseProgress.push({
+        modId:app.id, modTitle:app.title,
+        courseId:c.id, courseTitle:c.title,
+        required:c.required||'參考', dur:c.dur,
+        completed: completed.has(c.id),
+        feedback: feedbackStore[c.id]||''
+      });
+    });
+  });
+
+  const jsonData = {
+    completed: [...completed],
+    feedback: feedbackStore,
+    submittedCourses,
+    courseProgress,
+    savedAt: new Date().toISOString(),
+    version: 'v0'
+  };
+
+  const dateStr = new Date().toLocaleDateString('zh-TW').replace(/\//g,'-');
+  const blob = new Blob([JSON.stringify(jsonData,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `CE_進度記錄_${dateStr}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  showToast('✅ 已下載 CE_進度記錄.json，請存入新人學習記錄資料夾');
+}
+window.exportRecord = exportRecord;
+
+function importRecord(){
+  document.getElementById('import-file').click();
+}
+window.importRecord = importRecord;
+
+function loadImportFile(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    try {
+      const data = JSON.parse(ev.target.result);
+      if(data.completed) { completed.clear(); data.completed.forEach(id=>completed.add(id)); }
+      if(data.feedback) feedbackStore = {...feedbackStore, ...data.feedback};
+      if(data.submittedCourses) submittedCourses = data.submittedCourses;
+      saveToLS();
+      buildSidebar();
+      renderModDetail(catalog[activeMod>=0?activeMod:0], activeMod>=0?activeMod:0);
+      updateProgress();
+      buildSubmittedTable();
+      const ts = data.savedAt ? new Date(data.savedAt).toLocaleString('zh-TW') : '';
+      document.getElementById('data-status').textContent = `已匯入記錄（原儲存時間：${ts}）`;
+      showToast('✅ 進度已還原！');
+    } catch(err) {
+      alert('檔案格式錯誤，請選擇正確的 CE_進度記錄_.json 檔案。');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+window.loadImportFile = loadImportFile;
+
+// ---- SUBMITTED COURSES ----
+let submittedCourses = []; // {title, instructor, category, date, material, video, note, submittedAt}
+
+// (toggleSubmitForm removed — submit form is now a dedicated sidebar section)
+
+function submitNewCourse(){
+  const title = document.getElementById('sub-title').value.trim();
+  const instructor = document.getElementById('sub-instructor').value.trim();
+  if(!title || !instructor){ alert('請填寫課程名稱和授課人員'); return; }
+  const entry = {
+    title,
+    instructor,
+    category: document.getElementById('sub-category').value,
+    date: document.getElementById('sub-date').value,
+    material: document.getElementById('sub-material').value.trim(),
+    video: document.getElementById('sub-video').value.trim(),
+    note: document.getElementById('sub-note').value.trim(),
+    submittedAt: new Date().toISOString()
+  };
+  submittedCourses.push(entry);
+  saveToLS();
+  // Clear form
+  ['sub-title','sub-instructor','sub-date','sub-material','sub-video','sub-note'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  buildSubmittedTable();
+  showToast('✅ 課程回報已提交，將在匯出記錄時一併儲存！');
+}
+window.submitNewCourse = submitNewCourse;
+
+function buildSubmittedTable(){
+  function makeRows(tbodyId, showDelete){
+    const tbody=document.getElementById(tbodyId);
+    if(!tbody) return;
+    if(submittedCourses.length===0){
+      tbody.innerHTML=`<tr><td colspan="${showDelete?7:6}" style="text-align:center;color:var(--text-3);padding:16px;font-size:12px;">尚無回報記錄</td></tr>`;
+      return;
+    }
+    tbody.innerHTML=submittedCourses.map((c,i)=>`
+      <tr>
+        <td style="font-size:12px;font-weight:500">${c.title}</td>
+        <td style="font-size:12px">${c.instructor}</td>
+        <td style="font-size:11px;color:var(--text-3)">${c.category}</td>
+        <td style="font-size:12px">${c.material?`<a href="${c.material}" target="_blank" style="color:var(--blue)">開啟</a>`:'—'}</td>
+        <td style="font-size:12px">${c.video?`<a href="${c.video}" target="_blank" style="color:var(--blue)">開啟</a>`:'—'}</td>
+        <td style="font-size:11px;color:var(--text-3)">${c.submittedAt?new Date(c.submittedAt).toLocaleDateString('zh-TW'):'—'}</td>
+        ${showDelete?`<td><button class="icon-btn" onclick="deleteSubmitted(${i})" style="color:var(--red)">🗑</button></td>`:''}
+      </tr>`).join('');
+  }
+  makeRows('submittedCoursesBody', true);
+  makeRows('homeSubmittedBody', false);
+}
+window.deleteSubmitted = function(i){ if(confirm('確定刪除？')) { submittedCourses.splice(i,1); saveToLS(); buildSubmittedTable(); }};
+
+// ---- EXPORT STUDENT HTML ----
+function exportStudentHTML(){
+  const name = document.getElementById('student-name').value.trim();
+  if(!name){ alert('請輸入新人姓名'); document.getElementById('student-name').focus(); return; }
+
+  // Get current page HTML
+  let html = document.documentElement.outerHTML;
+
+  // Inject current catalog state (replaces hardcoded catalog with admin's modifications)
+  const currentCatalogJS = 'const catalog=' + JSON.stringify(catalog) + ';';
+  const currentAppendixModJS = 'const appendixMod=' + JSON.stringify(appendixMod) + ';';
+  const currentAppendixAdminJS = 'const appendixAdmin=' + JSON.stringify(appendixAdmin) + ';';
+
+  // Replace the original catalog declaration with current state
+  html = html.replace(/const catalog=\[[\s\S]*?\];\s*\n(?=const appendixMod)/,
+    currentCatalogJS + '\n');
+  html = html.replace(/const appendixMod=\{[\s\S]*?\};\s*\n(?=const appendixAdmin)/,
+    currentAppendixModJS + '\n');
+  html = html.replace(/const appendixAdmin=\{[\s\S]*?\};\s*\n(?=\/\/ ---- STATE)/,
+    currentAppendixAdminJS + '\n');
+
+  // Remove admin tab from tabs bar
+  html = html.replace(/<div class="tab admin-tab"[^>]*>[^<]*<\/div>/, '');
+
+  // Replace admin section using unique comment markers (reliable across browser serialization)
+  const adminStart = html.indexOf('<!-- ADMIN-SECTION-START -->');
+  const adminEnd = html.indexOf('<!-- Edit Modal -->');
+  if(adminStart !== -1 && adminEnd !== -1){
+    html = html.slice(0, adminStart)
+      + '<div class="section" id="sec-admin"><div style="padding:48px 20px;text-align:center;color:#9CA3AF;font-size:13px;">課程維護功能僅供主管使用</div></div>\n  '
+      + html.slice(adminEnd);
+  }
+
+  // Disable login button permanently in student version
+  html = html.replace('disabled title="Azure AD 設定完成後啟用"', 'disabled title="功能開發中"');
+
+  // Add student name to hero
+  html = html.replace('適用對象：所有 CE 部門新進員工', `適用對象：${name}`);
+
+  // Update title
+  html = html.replace('<title>CE 部門 新人 On-Boarding 課程目錄</title>',
+    `<title>CE On-Boarding — ${name}</title>`);
+
+  // Update LS_KEY to be student-specific
+  html = html.replace("const LS_KEY = 'ce_onboarding_v0'",
+    `const LS_KEY = 'ce_onboarding_${name.replace(/[\s\W]/g,'_')}'`);
+
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `CE_OnBoarding_${name}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`✅ 已產出 CE_OnBoarding_${name}.html`);
+}
+window.exportStudentHTML = exportStudentHTML;
+
+function buildHomeGrid(){
+  const grid=document.getElementById('home-mod-grid');
+  if(!grid) return;
+  grid.innerHTML=catalog.map((mod,i)=>{
+    const c=COLORS[i%8];
+    const done=mod.courses.filter(x=>completed.has(x.id)).length;
+    const tot=mod.courses.filter(x=>x.status!=='下架').length;
+    const pct=tot?Math.round(done/tot*100):0;
+    return `<div onclick="switchMod(${i})" style="background:var(--white);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:border-color .15s;" onmouseover="this.style.borderColor='${c.fg}'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <div style="width:24px;height:24px;border-radius:50%;background:${c.bg};color:${c.fg};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">${mod.id}</div>
+        <span style="font-size:12px;font-weight:500;color:var(--navy);flex:1;line-height:1.3">${mod.title}</span>
+      </div>
+      <div style="background:var(--bg-2);border-radius:3px;height:4px;margin-bottom:4px;"><div style="background:${c.fg};border-radius:3px;height:4px;width:${pct}%;transition:width .3s;"></div></div>
+      <div style="font-size:10px;color:var(--text-3)">${done}/${tot} 門　${mod.tag}</div>
+    </div>`;
+  }).join('');
+}
+
+// Init
+loadFromLS();
+buildSidebar();
+buildHomeGrid();
+buildAllList();
+buildTimeline();
+updateProgress();
+buildSubmittedTable();
+// Start on home tab
+switchTab('home');
+document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+// Init Microsoft login (non-blocking)
+initMSAL().catch(()=>{});
+</script>
+</body>
+</html>
