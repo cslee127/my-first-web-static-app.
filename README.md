@@ -2,7 +2,7 @@
 
 A collection of standalone, single-file interactive HTML pages (dashboards, decks, flowcharts, 3D demos) hosted as an [Azure Static Web App](https://azure.microsoft.com/en-us/products/app-service/static). The root [index.html](index.html) is an auto-generated card-grid hub that links every page in the repo.
 
-**Live site:** [polite-water-0d2260e10.azurestaticapps.net](https://polite-water-0d2260e10.azurestaticapps.net)
+**Live site:** [polite-water-0d2260e10.6.azurestaticapps.net](https://polite-water-0d2260e10.6.azurestaticapps.net/)
 
 ## How it works
 
