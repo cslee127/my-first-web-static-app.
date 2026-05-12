@@ -1,0 +1,1176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>2026 PCN — Top-10 Root Causes &amp; Vendor Strategy Map</title>
+<style>
+  :root{
+    --ink:#0B1B33; --ink-soft:#1F2D44; --ink-faint:#52607A;
+    --bg:#F7F9FC; --panel:#FFFFFF; --line:#E2E8F0;
+    --brand:#D4001A;          /* Advantech red */
+    --brand-dark:#9F0010;
+    --accent:#0096D6;         /* electric cyan */
+    --gold:#FFB200;
+    --green:#1BA672;
+    --orange:#F58220;
+    --purple:#7B61FF;
+    --pink:#E91E63;
+    --shadow:0 8px 24px rgba(11,27,51,.08);
+    --radius:14px;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans TC','Microsoft JhengHei',sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent); text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ===== Header ===== */
+  header.hero{
+    background:linear-gradient(135deg,#0B1B33 0%,#172A4D 60%,#1F3A6B 100%);
+    color:#fff; padding:34px 28px 28px;
+  }
+  .hero-inner{max-width:1280px; margin:0 auto}
+  .eyebrow{font-size:11px; letter-spacing:.28em; text-transform:uppercase; color:#92B4FF; font-weight:700}
+  h1.title{font-size:clamp(26px,3.4vw,40px); margin:6px 0 2px; line-height:1.15; letter-spacing:-.02em}
+  .subtitle{color:#C9D7EE; font-size:15px; max-width:780px}
+  .badges{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+  .badge{
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18);
+    padding:6px 12px; border-radius:99px; font-size:12px; color:#E6EEFA; font-weight:600;
+    backdrop-filter:blur(6px);
+  }
+  .badge b{color:#FFB200}
+
+  /* ===== Map at top ===== */
+  .map-wrap{
+    max-width:1280px; margin:-16px auto 0; padding:0 28px 28px;
+  }
+  .map-card{
+    background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow);
+    overflow:hidden; border:1px solid var(--line);
+  }
+  .map-card figure{margin:0; position:relative}
+  .map-card img{display:block; width:100%; height:auto}
+  .map-card figcaption{
+    padding:10px 18px; font-size:12px; color:var(--ink-faint);
+    background:#F1F5FA; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+
+  /* ===== Section frame ===== */
+  section{max-width:1280px; margin:0 auto; padding:28px}
+  .section-head{display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; margin-bottom:14px; gap:10px}
+  h2.sec-title{font-size:22px; margin:0; letter-spacing:-.01em}
+  h2.sec-title .kicker{color:var(--brand); font-weight:800}
+  .sec-note{color:var(--ink-faint); font-size:13px}
+
+  /* ===== Vendor Strategy SVG panel ===== */
+  .svg-stage{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:8px; position:relative;
+  }
+  .svg-stage svg{width:100%; height:auto; display:block}
+  .legend-row{
+    display:flex; gap:14px; flex-wrap:wrap; padding:10px 14px 14px; font-size:12px; color:var(--ink-soft);
+  }
+  .legend-row .swatch{display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-2px; margin-right:6px}
+
+  /* ===== Top-10 cards ===== */
+  .cards{display:grid; grid-template-columns:1fr; gap:14px; margin-top:6px}
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); overflow:hidden; transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .card:hover{transform:translateY(-2px); box-shadow:0 12px 28px rgba(11,27,51,.12)}
+  .card-head{
+    display:flex; align-items:flex-start; gap:14px; padding:16px 18px; cursor:pointer; user-select:none;
+  }
+  .rank{
+    flex:0 0 52px; height:52px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-weight:800; font-size:22px; color:#fff;
+    background:linear-gradient(135deg,#0B1B33,#1F3A6B);
+    box-shadow:0 4px 10px rgba(11,27,51,.18);
+  }
+  .card.top .rank{background:linear-gradient(135deg,#D4001A,#9F0010)}
+  .head-text{flex:1; min-width:0}
+  .head-text h3{margin:0 0 4px; font-size:16px; letter-spacing:-.01em}
+  .head-text .vendors{font-size:12px; color:var(--ink-faint); margin:0}
+  .head-meta{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+  .pill{
+    font-size:11px; padding:3px 9px; border-radius:99px; font-weight:700; letter-spacing:.02em;
+  }
+  .pill.count{background:#EEF5FB; color:#0A4A6E; border:1px solid #CFE3F4}
+  .pill.impact-high{background:#FDECEA; color:#9F0010; border:1px solid #F5C2BD}
+  .pill.impact-med{background:#FFF6E0; color:#8A5A00; border:1px solid #F4DC9B}
+  .pill.impact-low{background:#E9F6EF; color:#0E6A47; border:1px solid #BFE4D1}
+  .chev{
+    flex:0 0 24px; height:24px; margin-top:14px; color:var(--ink-faint);
+    transition:transform .2s ease;
+  }
+  .card.open .chev{transform:rotate(180deg)}
+  .body{
+    max-height:0; overflow:hidden; transition:max-height .35s ease;
+    border-top:1px solid var(--line); background:#FAFBFD;
+  }
+  .card.open .body{max-height:1600px}
+  .body-inner{padding:16px 18px 20px}
+  .body-inner h4{margin:0 0 6px; font-size:13px; color:var(--brand); letter-spacing:.05em; text-transform:uppercase}
+  .body-inner p{margin:0 0 10px; font-size:14px}
+  .pcn-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:8px; margin-top:6px;
+  }
+  .pcn-chip{
+    background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px 10px;
+    font-size:12px; color:var(--ink-soft);
+  }
+  .pcn-chip b{color:var(--ink); font-family:var(--mono); font-size:11px}
+  .quote{
+    border-left:3px solid var(--accent); padding:6px 12px; background:#EEF7FC;
+    font-size:13px; color:var(--ink-soft); border-radius:4px; margin-top:10px;
+  }
+  .action{
+    margin-top:12px; padding:10px 12px; border-radius:8px;
+    background:#FFF7E6; border:1px solid #F4DC9B; font-size:13px;
+  }
+  .action b{color:#8A5A00}
+
+  /* ===== Filter bar ===== */
+  .filter-bar{
+    display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+    margin:0 0 12px;
+  }
+  .chip-btn{
+    border:1px solid var(--line); background:#fff; color:var(--ink-soft);
+    padding:6px 12px; border-radius:99px; font-size:12px; cursor:pointer;
+    font-weight:600; transition:all .15s ease;
+  }
+  .chip-btn:hover{border-color:var(--accent); color:var(--accent)}
+  .chip-btn.active{background:var(--ink); color:#fff; border-color:var(--ink)}
+
+  /* ===== Footer ===== */
+  footer{
+    text-align:center; padding:24px; color:var(--ink-faint); font-size:12px;
+    border-top:1px solid var(--line); margin-top:16px;
+  }
+  footer code{font-family:var(--mono); background:#EEF2F8; padding:2px 6px; border-radius:4px}
+
+  /* ===== SVG animation keyframes ===== */
+  @keyframes pulse-ring {
+    0%{r:8; opacity:.85}
+    100%{r:32; opacity:0}
+  }
+  @keyframes pulse-fill {
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.18)}
+  }
+  @keyframes dash-flow {
+    to{stroke-dashoffset:-160}
+  }
+  @keyframes float-y {
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-3px)}
+  }
+  .arc{stroke-dasharray:8 6; animation:dash-flow 4s linear infinite}
+  .arc.fast{animation-duration:2.5s}
+  .arc.slow{animation-duration:6s}
+  .node-pulse{transform-origin:center; transform-box:fill-box; animation:pulse-fill 2.4s ease-in-out infinite}
+  .ring{fill:none; stroke-width:2; transform-origin:center; transform-box:fill-box}
+  .ring.r1{animation:pulse-ring 2.2s ease-out infinite}
+  .ring.r2{animation:pulse-ring 2.2s ease-out infinite .9s}
+  .vendor-card{cursor:pointer; transition:filter .18s ease, opacity .18s ease}
+  .vendor-card rect:first-of-type{transition:stroke-width .18s ease, filter .18s ease}
+  .vendor-card:hover rect:first-of-type{stroke-width:3.5; filter:drop-shadow(0 6px 18px rgba(11,27,51,.35))}
+  .vendor-card.dim{opacity:.18; filter:grayscale(.9)}
+  .vendor-card.focused rect:first-of-type{stroke-width:4; filter:drop-shadow(0 10px 22px rgba(11,27,51,.45))}
+  /* MPN/PG panel inside cards */
+  .pg-panel{
+    margin-top:14px; padding:12px 14px; border-radius:10px;
+    background:linear-gradient(135deg,#F0F7FC,#FFF5F5);
+    border:1px solid #D6E3F0;
+  }
+  .pg-panel h4{margin:0 0 8px; font-size:12px; color:var(--brand-dark); letter-spacing:.06em; text-transform:uppercase}
+  .pg-panel .mpn-row{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start; padding:8px 0; border-top:1px dashed #CFE3F4}
+  .pg-panel .mpn-row:first-of-type{border-top:none; padding-top:0}
+  .pg-panel .mpn-block{flex:0 0 220px}
+  .mpn-name{font-family:var(--mono); font-size:12px; font-weight:700; color:var(--ink)}
+  .mpn-meta{font-size:11px; color:var(--ink-faint); margin-top:2px}
+  .mpn-meta .in{font-family:var(--mono); color:var(--accent); font-weight:700}
+  .stats{flex:1; min-width:200px}
+  .stats .total{font-size:13px; font-weight:700; color:var(--ink); margin-bottom:6px}
+  .stats .total b{color:var(--brand); font-size:18px; font-family:var(--mono)}
+  .pg-bars{display:flex; flex-direction:column; gap:3px}
+  .pg-bar{display:flex; align-items:center; gap:8px; font-size:11px}
+  .pg-bar .label{flex:0 0 56px; font-family:var(--mono); font-weight:700; color:var(--ink-soft)}
+  .pg-bar .track{flex:1; height:14px; background:#E6EEF7; border-radius:4px; overflow:hidden; position:relative; display:block}
+  .pg-bar .fill{display:block; height:100%; background:linear-gradient(90deg,#0096D6,#7B61FF); border-radius:4px; transition:width .6s ease}
+  .pg-bar .num{flex:0 0 38px; text-align:right; font-family:var(--mono); font-weight:700; color:var(--ink)}
+  .pg-bar.hot .fill{background:linear-gradient(90deg,#D4001A,#FFB200)}
+  .no-bom{font-size:12px; color:var(--ink-faint); font-style:italic; padding:6px 0}
+  .no-bom::before{content:"⚠ "; color:var(--gold)}
+
+  /* SVG focus detail panel */
+  #focus-panel{
+    margin-top:14px; padding:14px 18px; border-radius:12px;
+    background:#0B1B33; color:#E6EEFA; box-shadow:0 8px 20px rgba(11,27,51,.25);
+    display:none;
+  }
+  #focus-panel.open{display:block}
+  #focus-panel h5{margin:0 0 6px; font-size:13px; color:#FFB200; letter-spacing:.08em; text-transform:uppercase}
+  #focus-panel .body-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-top:8px}
+  #focus-panel .col h6{margin:0 0 4px; font-size:11px; color:#92B4FF; text-transform:uppercase; letter-spacing:.08em}
+  #focus-panel .col p{margin:0; font-size:13px; line-height:1.5}
+  #focus-panel a.deeplink{color:#FFB200; font-weight:700; text-decoration:underline; font-size:12px}
+  @media (max-width:900px){
+    #focus-panel .body-grid{grid-template-columns:1fr}
+  }
+
+  @media (max-width:720px){
+    .head-meta{display:none}
+    .rank{flex-basis:44px; height:44px; font-size:18px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Advantech KB · 2026 PCN Intelligence</div>
+    <h1 class="title">2026 PCN Top-10 Root Causes — Vendor Strategy Map</h1>
+    <p class="subtitle">A guided tour of why <b>186 PCN notices</b> (Jan-May 2026) flooded the supply chain — and what each major IC vendor is doing about it. The world map above shows where every change is landing; the cards below explain why.</p>
+    <div class="badges">
+      <span class="badge"><b>186</b>&nbsp;PCNs Jan-May 2026</span>
+      <span class="badge"><b>6.9×</b>&nbsp;vs 2025 same period</span>
+      <span class="badge"><b>17</b>&nbsp;mfrs reshaping</span>
+      <span class="badge"><b>Oct 1, 2026</b>&nbsp;NVIDIA Jetson approval deadline</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============== MAP AT TOP ============== -->
+<div class="map-wrap">
+  <div class="map-card">
+    <figure>
+      <img src="2026-pcn-world-impact-map.png" alt="STMicroelectronics + Industry 2026 PCN Impact Map" />
+      <figcaption>
+        <span>Source: <code>output/2026-pcn-world-impact-map.png</code> — generated from <code>wiki/pcn/2026-may-batch-pcn-summary.md</code></span>
+        <span style="color:var(--brand); font-weight:700">⬇ Top-10 root causes &amp; vendor strategy detail below</span>
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<!-- ============== VENDOR STRATEGY ANIMATED SVG ============== -->
+<section>
+  <div class="section-head">
+    <h2 class="sec-title"><span class="kicker">①</span>&nbsp;Vendor Strategy Choreography (animated)</h2>
+    <span class="sec-note">Hover/click a vendor card to focus its move · arcs animate donor → receiver site</span>
+  </div>
+  <div class="svg-stage">
+    <svg viewBox="0 0 1240 540" role="img" aria-label="Animated vendor strategy diagram">
+      <!-- ===== background grid ===== -->
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M40 0H0V40" fill="none" stroke="#EAF0F8" stroke-width="1"/>
+        </pattern>
+        <linearGradient id="g-red" x1="0" x2="1"><stop offset="0" stop-color="#D4001A"/><stop offset="1" stop-color="#FFB200"/></linearGradient>
+        <linearGradient id="g-blue" x1="0" x2="1"><stop offset="0" stop-color="#0096D6"/><stop offset="1" stop-color="#7B61FF"/></linearGradient>
+        <linearGradient id="g-green" x1="0" x2="1"><stop offset="0" stop-color="#1BA672"/><stop offset="1" stop-color="#0096D6"/></linearGradient>
+        <linearGradient id="g-orange" x1="0" x2="1"><stop offset="0" stop-color="#F58220"/><stop offset="1" stop-color="#E91E63"/></linearGradient>
+        <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 L10 5 L0 10 Z" fill="#D4001A"/>
+        </marker>
+        <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 L10 5 L0 10 Z" fill="#0096D6"/>
+        </marker>
+        <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 L10 5 L0 10 Z" fill="#F58220"/>
+        </marker>
+        <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 L10 5 L0 10 Z" fill="#1BA672"/>
+        </marker>
+      </defs>
+      <rect width="1240" height="540" fill="url(#grid)"/>
+
+      <!-- title strip -->
+      <text x="20" y="28" font-size="14" font-weight="700" fill="#0B1B33">10 brands · 10 strategies · one cascade year</text>
+      <text x="20" y="46" font-size="11" fill="#52607A">Each card = one vendor. Arcs show site moves; rings show production activity intensity.</text>
+
+      <!-- ===== Vendor 1: TI (Sherman ramp + assembly diversification) ===== -->
+      <g class="vendor-card" data-vendor="ti" transform="translate(40,80)">
+        <rect width="220" height="120" rx="14" fill="#FFF" stroke="#D4001A" stroke-width="2"/>
+        <rect x="0" y="0" width="220" height="28" rx="14" fill="#D4001A"/>
+        <rect x="0" y="14" width="220" height="14" fill="#D4001A"/>
+        <text x="14" y="19" font-size="12" font-weight="800" fill="#FFF">#1 · TEXAS INSTRUMENTS</text>
+        <text x="14" y="48" font-size="11" font-weight="700" fill="#0B1B33">Sherman SM1 LIVE + 6× assy sites</text>
+        <text x="14" y="64" font-size="10" fill="#52607A">MLA · CDAT · TIEM · FMX · Clark · PH</text>
+        <!-- Mini map -->
+        <circle cx="40" cy="92" r="6" fill="#D4001A" class="node-pulse"/>
+        <text x="52" y="96" font-size="9" fill="#0B1B33" font-weight="700">SM1 Sherman, TX</text>
+        <circle cx="40" cy="108" r="4" fill="#0096D6"/>
+        <text x="52" y="112" font-size="9" fill="#52607A">→ APAC assembly fan-out</text>
+        <text x="172" y="112" font-size="11" font-weight="800" fill="#D4001A">42 PCNs</text>
+      </g>
+
+      <!-- ===== Vendor 2: ST Microelectronics ===== -->
+      <g class="vendor-card" data-vendor="st" transform="translate(280,80)">
+        <rect width="220" height="120" rx="14" fill="#FFF" stroke="#0096D6" stroke-width="2"/>
+        <rect x="0" y="0" width="220" height="28" rx="14" fill="#0096D6"/>
+        <rect x="0" y="14" width="220" height="14" fill="#0096D6"/>
+        <text x="14" y="19" font-size="12" font-weight="800" fill="#FFF">#2 · STMICROELECTRONICS</text>
+        <text x="14" y="48" font-size="11" font-weight="700" fill="#0B1B33">Manufacturing Reshaping</text>
+        <text x="14" y="64" font-size="10" fill="#52607A">Crolles · Agrate · Catania · Rousset</text>
+        <circle cx="40" cy="92" r="6" fill="#0096D6" class="node-pulse"/>
+        <text x="52" y="96" font-size="9" fill="#0B1B33" font-weight="700">300mm + 200mm SiC</text>
+        <circle cx="40" cy="108" r="4" fill="#F58220"/>
+        <text x="52" y="112" font-size="9" fill="#52607A">200mm phase-out · AMK = hub</text>
+        <text x="172" y="112" font-size="11" font-weight="800" fill="#0096D6">22 PCNs</text>
+      </g>
+
+      <!-- ===== Vendor 3: Nexperia (crisis) ===== -->
+      <g class="vendor-card" data-vendor="nxperia" transform="translate(520,80)">
+        <rect width="220" height="120" rx="14" fill="#FFF" stroke="#E91E63" stroke-width="2"/>
+        <rect x="0" y="0" width="220" height="28" rx="14" fill="#E91E63"/>
+        <rect x="0" y="14" width="220" height="14" fill="#E91E63"/>
+        <text x="14" y="19" font-size="12" font-weight="800" fill="#FFF">#3 · NEXPERIA · CRISIS</text>
+        <text x="14" y="48" font-size="11" font-weight="700" fill="#0B1B33">ATGD Dongguan → ATSN Malaysia</text>
+        <text x="14" y="64" font-size="10" fill="#52607A">Extraordinary PCN + 10× follow-ups</text>
+        <circle cx="40" cy="92" r="6" fill="#E91E63" class="node-pulse"/>
+        <text x="52" y="96" font-size="9" fill="#0B1B33" font-weight="700">Forced site exit</text>
+        <circle cx="40" cy="108" r="4" fill="#1BA672"/>
+        <text x="52" y="112" font-size="9" fill="#52607A">+ SOT457 Cu wire + 8" wafer</text>
+        <text x="172" y="112" font-size="11" font-weight="800" fill="#E91E63">11 PCNs</text>
+      </g>
+
+      <!-- ===== Vendor 4: MPS ===== -->
+      <g class="vendor-card" data-vendor="mps" transform="translate(760,80)">
+        <rect width="220" height="120" rx="14" fill="#FFF" stroke="#7B61FF" stroke-width="2"/>
+        <rect x="0" y="0" width="220" height="28" rx="14" fill="#7B61FF"/>
+        <rect x="0" y="14" width="220" height="14" fill="#7B61FF"/>
+        <text x="14" y="19" font-size="12" font-weight="800" fill="#FFF">#4 · MONOLITHIC POWER (MPS)</text>
+        <text x="14" y="48" font-size="11" font-weight="700" fill="#0B1B33">Bumping + Assembly fan-out</text>
+        <text x="14" y="64" font-size="10" fill="#52607A">GTA · SCS · HTJS · GREATEK · UGP</text>
+        <circle cx="40" cy="92" r="6" fill="#7B61FF" class="node-pulse"/>
+        <text x="52" y="96" font-size="9" fill="#0B1B33" font-weight="700">Single mfr, 12 PCNs</text>
+        <circle cx="40" cy="108" r="4" fill="#0096D6"/>
+        <text x="52" y="112" font-size="9" fill="#52607A">Preventive dual-source posture</text>
+        <text x="172" y="112" font-size="11" font-weight="800" fill="#7B61FF">12 PCNs</text>
+      </g>
+
+      <!-- ===== Vendor 5: NXP ===== -->
+      <g class="vendor-card" data-vendor="nxp" transform="translate(1000,80)">
+        <rect width="220" height="120" rx="14" fill="#FFF" stroke="#F58220" stroke-width="2"/>
+        <rect x="0" y="0" width="220" height="28" rx="14" fill="#F58220"/>
+        <rect x="0" y="14" width="220" height="14" fill="#F58220"/>
+        <text x="14" y="19" font-size="12" font-weight="800" fill="#FFF">#5 · NXP / FREESCALE</text>
+        <text x="14" y="48" font-size="11" font-weight="700" fill="#0B1B33">Amkor Korea → ASE Kaohsiung</text>
+        <text x="14" y="64" font-size="10" fill="#52607A">i.MX 8M Plus · i.MX 93</text>
+        <circle cx="40" cy="92" r="6" fill="#F58220" class="node-pulse"/>
+        <text x="52" y="96" font-size="9" fill="#0B1B33" font-weight="700">Korea exit (geo-risk)</text>
+        <circle cx="40" cy="108" r="4" fill="#1BA672"/>
+        <text x="52" y="112" font-size="9" fill="#52607A">Cpk PASS · AECQ100RevG</text>
+        <text x="172" y="112" font-size="11" font-weight="800" fill="#F58220">7 PCNs</text>
+      </g>
+
+      <!-- ===== Animated cascade lane (middle) ===== -->
+      <g transform="translate(0,220)">
+        <rect x="20" y="0" width="1200" height="110" rx="10" fill="#F1F5FA" stroke="#CFE3F4"/>
+        <text x="36" y="22" font-size="12" font-weight="800" fill="#0B1B33">↻ ANIMATED CASCADE — donor → receiver site flow</text>
+
+        <!-- Donor sites (left) -->
+        <g transform="translate(60,68)">
+          <circle r="14" fill="#D4001A"/>
+          <circle class="ring r1" r="14" stroke="#D4001A"/>
+          <circle class="ring r2" r="14" stroke="#D4001A"/>
+          <text y="38" font-size="10" font-weight="700" fill="#9F0010" text-anchor="middle">Tower IL</text>
+        </g>
+        <g transform="translate(180,68)">
+          <circle r="14" fill="#D4001A"/>
+          <circle class="ring r1" r="14" stroke="#D4001A"/>
+          <text y="38" font-size="10" font-weight="700" fill="#9F0010" text-anchor="middle">Nexperia ATGD</text>
+        </g>
+        <g transform="translate(320,68)">
+          <circle r="14" fill="#D4001A"/>
+          <circle class="ring r1" r="14" stroke="#D4001A"/>
+          <text y="38" font-size="10" font-weight="700" fill="#9F0010" text-anchor="middle">Amkor ATK4/5</text>
+        </g>
+        <g transform="translate(460,68)">
+          <circle r="14" fill="#D4001A"/>
+          <circle class="ring r1" r="14" stroke="#D4001A"/>
+          <text y="38" font-size="10" font-weight="700" fill="#9F0010" text-anchor="middle">TSMC Fab 5</text>
+        </g>
+        <g transform="translate(600,68)">
+          <circle r="14" fill="#F58220"/>
+          <circle class="ring r1" r="14" stroke="#F58220"/>
+          <text y="38" font-size="10" font-weight="700" fill="#8A5A00" text-anchor="middle">ST 200mm legacy</text>
+        </g>
+
+        <!-- Receiver sites (right) -->
+        <g transform="translate(760,68)">
+          <circle r="14" fill="#1BA672"/>
+          <circle class="ring r1" r="14" stroke="#1BA672"/>
+          <text y="38" font-size="10" font-weight="700" fill="#0E6A47" text-anchor="middle">Vishay Newport UK</text>
+        </g>
+        <g transform="translate(890,68)">
+          <circle r="14" fill="#1BA672"/>
+          <circle class="ring r1" r="14" stroke="#1BA672"/>
+          <text y="38" font-size="10" font-weight="700" fill="#0E6A47" text-anchor="middle">ATSN Seremban MY</text>
+        </g>
+        <g transform="translate(1020,68)">
+          <circle r="14" fill="#1BA672"/>
+          <circle class="ring r1" r="14" stroke="#1BA672"/>
+          <text y="38" font-size="10" font-weight="700" fill="#0E6A47" text-anchor="middle">ASE-KH Taiwan</text>
+        </g>
+        <g transform="translate(1150,68)">
+          <circle r="14" fill="#1BA672"/>
+          <circle class="ring r1" r="14" stroke="#1BA672"/>
+          <text y="38" font-size="10" font-weight="700" fill="#0E6A47" text-anchor="middle">ST Ang Mo Kio</text>
+        </g>
+
+        <!-- Arcs (animated) -->
+        <path class="arc" d="M74,68 Q420,-10 760,68" stroke="#D4001A" stroke-width="2" fill="none" marker-end="url(#arrow-red)"/>
+        <path class="arc fast" d="M194,68 Q540,-10 890,68" stroke="#E91E63" stroke-width="2" fill="none" marker-end="url(#arrow-red)"/>
+        <path class="arc" d="M334,68 Q680,-10 1020,68" stroke="#F58220" stroke-width="2" fill="none" marker-end="url(#arrow-orange)"/>
+        <path class="arc slow" d="M474,68 Q740,-10 1020,68" stroke="#7B61FF" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+        <path class="arc" d="M614,68 Q880,-10 1150,68" stroke="#0096D6" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+      </g>
+
+      <!-- ===== Lower vendor cards row ===== -->
+      <g class="vendor-card" data-vendor="vishay" transform="translate(40,360)">
+        <rect width="220" height="120" rx="14" fill="#FFF" stroke="#1BA672" stroke-width="2"/>
+        <rect x="0" y="0" width="220" height="28" rx="14" fill="#1BA672"/>
+        <rect x="0" y="14" width="220" height="14" fill="#1BA672"/>
+        <text x="14" y="19" font-size="12" font-weight="800" fill="#FFF">#6 · VISHAY</text>
+        <text x="14" y="48" font-size="11" font-weight="700" fill="#0B1B33">Tower IL 6" → Newport UK</text>
+        <text x="14" y="64" font-size="10" fill="#52607A">Power MOSFETs Phase8 · IRF series</text>
+        <circle cx="40" cy="92" r="6" fill="#1BA672" class="node-pulse"/>
+        <text x="52" y="96" font-size="9" fill="#0B1B33" font-weight="700">Marking "R" = Newport</text>
+        <text x="172" y="112" font-size="11" font-weight="800" fill="#1BA672">2 PCNs</text>
+      </g>
+
+      <g class="vendor-card" data-vendor="nuvoton" transform="translate(280,360)">
+        <rect width="220" height="120" rx="14" fill="#FFF" stroke="#FFB200" stroke-width="2"/>
+        <rect x="0" y="0" width="220" height="28" rx="14" fill="#FFB200"/>
+        <rect x="0" y="14" width="220" height="14" fill="#FFB200"/>
+        <text x="14" y="19" font-size="12" font-weight="800" fill="#FFF">#7 · NUVOTON</text>
+        <text x="14" y="48" font-size="11" font-weight="700" fill="#0B1B33">TSMC Fab 5 stops 2027</text>
+        <text x="14" y="64" font-size="10" fill="#52607A">33 parts to alternate fabs</text>
+        <circle cx="40" cy="92" r="6" fill="#FFB200" class="node-pulse"/>
+        <text x="52" y="96" font-size="9" fill="#0B1B33" font-weight="700">Pre-PCN · MAJOR</text>
+        <text x="172" y="112" font-size="11" font-weight="800" fill="#8A5A00">1 Pre-PCN</text>
+      </g>
+
+      <g class="vendor-card" data-vendor="microchip" transform="translate(520,360)">
+        <rect width="220" height="120" rx="14" fill="#FFF" stroke="#7B61FF" stroke-width="2"/>
+        <rect x="0" y="0" width="220" height="28" rx="14" fill="#7B61FF"/>
+        <rect x="0" y="14" width="220" height="14" fill="#7B61FF"/>
+        <text x="14" y="19" font-size="12" font-weight="800" fill="#FFF">#8 · MICROCHIP</text>
+        <text x="14" y="48" font-size="11" font-weight="700" fill="#0B1B33">KSZ9131 PHY tri-source</text>
+        <text x="14" y="64" font-size="10" fill="#52607A">ASE-CL + Amkor SH + MTAI Thailand</text>
+        <circle cx="40" cy="92" r="6" fill="#7B61FF" class="node-pulse"/>
+        <text x="52" y="96" font-size="9" fill="#0B1B33" font-weight="700">Final Notice JPZA-17PROK647</text>
+        <text x="172" y="112" font-size="11" font-weight="800" fill="#7B61FF">3 PCNs</text>
+      </g>
+
+      <g class="vendor-card" data-vendor="diodes" transform="translate(760,360)">
+        <rect width="220" height="120" rx="14" fill="#FFF" stroke="#F58220" stroke-width="2"/>
+        <rect x="0" y="0" width="220" height="28" rx="14" fill="#F58220"/>
+        <rect x="0" y="14" width="220" height="14" fill="#F58220"/>
+        <text x="14" y="19" font-size="12" font-weight="800" fill="#FFF">#9 · DIODES INC</text>
+        <text x="14" y="48" font-size="11" font-weight="700" fill="#0B1B33">SPFAB / GFAB / TYNTEK</text>
+        <text x="14" y="64" font-size="10" fill="#52607A">+ Au→Cu wire industry migration</text>
+        <circle cx="40" cy="92" r="6" fill="#F58220" class="node-pulse"/>
+        <text x="52" y="96" font-size="9" fill="#0B1B33" font-weight="700">CAT · SAT · NS assy adds</text>
+        <text x="172" y="112" font-size="11" font-weight="800" fill="#F58220">5 PCNs</text>
+      </g>
+
+      <g class="vendor-card" data-vendor="micron" transform="translate(1000,360)">
+        <rect width="220" height="120" rx="14" fill="#FFF" stroke="#0B1B33" stroke-width="2"/>
+        <rect x="0" y="0" width="220" height="28" rx="14" fill="#0B1B33"/>
+        <rect x="0" y="14" width="220" height="14" fill="#0B1B33"/>
+        <text x="14" y="19" font-size="12" font-weight="800" fill="#FFF">#10 · MICRON + CoO BLOC</text>
+        <text x="14" y="48" font-size="11" font-weight="700" fill="#0B1B33">NAND TSOP → Cu LF + OSE</text>
+        <text x="14" y="64" font-size="10" fill="#52607A">+ AMD CoO · Intel COF · Cirrus COD</text>
+        <circle cx="40" cy="92" r="6" fill="#0B1B33" class="node-pulse"/>
+        <text x="52" y="96" font-size="9" fill="#0B1B33" font-weight="700">Regulatory + material modernization</text>
+        <text x="172" y="112" font-size="11" font-weight="800" fill="#0B1B33">9 PCNs</text>
+      </g>
+    </svg>
+
+    <div class="legend-row">
+      <span><span class="swatch" style="background:#D4001A"></span>Forced exit / crisis</span>
+      <span><span class="swatch" style="background:#F58220"></span>Strategic reshaping</span>
+      <span><span class="swatch" style="background:#1BA672"></span>Receiver / new capacity</span>
+      <span><span class="swatch" style="background:#0096D6"></span>Preventive dual-source</span>
+      <span><span class="swatch" style="background:#7B61FF"></span>Process / material modernization</span>
+      <span><span class="swatch" style="background:#FFB200"></span>Pre-PCN / advisory</span>
+      <span style="margin-left:auto; color:var(--ink-faint)">↻ animated arcs = live cascade lanes · <b>click a vendor card</b> for detail</span>
+    </div>
+
+    <!-- Focus detail panel (populated by JS on vendor card click) -->
+    <div id="focus-panel">
+      <h5 id="fp-title">Click any vendor card above to see strategy detail</h5>
+      <div class="body-grid">
+        <div class="col"><h6>The Move</h6><p id="fp-move">—</p></div>
+        <div class="col"><h6>Affected Advantech parts</h6><p id="fp-parts">—</p></div>
+        <div class="col"><h6>Triage urgency</h6><p id="fp-urgency">—</p></div>
+      </div>
+      <p style="margin-top:10px; font-size:12px"><a class="deeplink" id="fp-jump" href="#card-1">→ Jump to full root-cause card #1</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TOP-10 CARDS ============== -->
+<section>
+  <div class="section-head">
+    <h2 class="sec-title"><span class="kicker">②</span>&nbsp;Top-10 Root Causes — Ranked by Notice Count × Advantech Impact</h2>
+    <span class="sec-note">Click any card to expand · use filters below</span>
+  </div>
+
+  <div class="filter-bar">
+    <button class="chip-btn active" data-filter="all">All 10</button>
+    <button class="chip-btn" data-filter="crisis">🔴 Crisis-driven</button>
+    <button class="chip-btn" data-filter="strategic">🟠 Strategic reshape</button>
+    <button class="chip-btn" data-filter="preventive">🔵 Preventive dual-source</button>
+    <button class="chip-btn" data-filter="material">🟡 Material / process</button>
+    <button class="chip-btn" data-filter="regulatory">🟣 CoO / regulatory</button>
+  </div>
+
+  <div class="cards" id="cards">
+
+    <!-- ===== Card #1 ===== -->
+    <article id="card-1" class="card top" data-tags="preventive strategic">
+      <div class="card-head" onclick="toggle(this)">
+        <div class="rank">01</div>
+        <div class="head-text">
+          <h3>Supply-Chain Hardening &amp; Proactive Dual-Sourcing</h3>
+          <p class="vendors">TI · MPS · NXP · Microchip · ST · Intel · Diodes · Eaton · Infineon · Macronix</p>
+        </div>
+        <div class="head-meta">
+          <span class="pill count">~50+ PCNs</span>
+          <span class="pill impact-high">High</span>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="body"><div class="body-inner">
+        <h4>What is happening</h4>
+        <p>The single biggest theme of 2026. Manufacturers are <b>simultaneously</b> diversifying assembly, bumping, and wafer sources — not because anything broke today, but to <b>pre-empt single-point-of-failure exposure</b> after multi-year cascade lessons (Sharp K2, Tower Israel, Amkor Korea, Nexperia ATGD).</p>
+        <h4>Strategy by vendor</h4>
+        <ul style="margin:0 0 10px; padding-left:20px; font-size:14px">
+          <li><b>TI</b> — 6 PCNs adding MLA, CDAT, TIEM, FMX, TI Clark, TI Philippines as alternates to existing Asia base.</li>
+          <li><b>MPS</b> — 12 PCNs alone, adding GTA Shanghai (wafer), SCS / HTJS / GREATEK / Unisem-MY / Forehope (bumping/assembly).</li>
+          <li><b>NXP</b> — i.MX 8M Plus + i.MX 93 cut over from Amkor Korea to ASE-KH Taiwan; Cpk PASS, AECQ100RevG.</li>
+          <li><b>Microchip</b> — KSZ9131 PHY now tri-sourced (ASE Chung-Li + Amkor Shanghai + MTAI Thailand).</li>
+          <li><b>Intel</b> — Vietnam added to 3rd Gen Xeon Scalable + Xeon W (existing Malaysia, Costa Rica).</li>
+        </ul>
+        <div class="quote">2026's PCN volume (186 in 5 months vs 27 in all of 2025) is the visible signature of industry-wide supply chain hardening. <b>Most notices are running changes — but they all need triage.</b></div>
+        <div class="action"><b>Advantech action:</b> spot-check Cpk attachments, file all in Redmine, apply JEDEC J-STD-046 30-day tacit acceptance unless QA flags a critical part.</div>
+
+        <div class="pg-panel">
+          <h4>📦 Advantech BOM impact — representative parts</h4>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">SN74LVC2T45DCTR</div>
+              <div class="mpn-meta">TI dual-bit voltage translator<br/>IN&nbsp;<span class="in">1410017970</span></div>
+            </div>
+            <div class="stats">
+              <div class="total"><b>1,153</b> products / 156 models affected</div>
+              <div class="pg-bars">
+                <div class="pg-bar hot"><span class="label">ESG</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="num">424</span></div>
+                <div class="pg-bar hot"><span class="label">ISG</span><span class="track"><span class="fill" style="width:71%"></span></span><span class="num">301</span></div>
+                <div class="pg-bar"><span class="label">ACG</span><span class="track"><span class="fill" style="width:36%"></span></span><span class="num">152</span></div>
+                <div class="pg-bar"><span class="label">ECG</span><span class="track"><span class="fill" style="width:29%"></span></span><span class="num">124</span></div>
+                <div class="pg-bar"><span class="label">EIG</span><span class="track"><span class="fill" style="width:18%"></span></span><span class="num">78</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">TPS54202DDCR</div>
+              <div class="mpn-meta">TI 4.5-28V 2A buck (RFAB→DMOS6, PCN 20260223006.1A) — NRND<br/>IN&nbsp;<span class="in">1410028706-01</span></div>
+            </div>
+            <div class="stats">
+              <div class="total"><b>80</b> products / 22 models affected</div>
+              <div class="pg-bars">
+                <div class="pg-bar hot"><span class="label">IAG</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="num">80</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </article>
+
+    <!-- ===== Card #2 ===== -->
+    <article id="card-2" class="card top" data-tags="crisis">
+      <div class="card-head" onclick="toggle(this)">
+        <div class="rank">02</div>
+        <div class="head-text">
+          <h3>Nexperia ATGD Dongguan Crisis → ATSN Seremban Cascade</h3>
+          <p class="vendors">Nexperia · MOSFETs · ESD diodes · BJTs</p>
+        </div>
+        <div class="head-meta">
+          <span class="pill count">11 PCNs</span>
+          <span class="pill impact-high">High</span>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="body"><div class="body-inner">
+        <h4>What is happening</h4>
+        <p>Geopolitical fallout from the Wingtech ownership dispute forced Nexperia to issue an <b>Extraordinary PCN (CN-202602039F, Mar 4 2026)</b> releasing ATSN Seremban (Malaysia) as the additional assembly site for ATGD Dongguan (China). 10+ follow-up CN-numbered notices propagated to specific part families.</p>
+        <h4>Strategic context</h4>
+        <p>This is the first time a Tier-1 discrete semi vendor has been forced to <b>publicly bifurcate China and ROW assembly within weeks</b>. The pattern (rapid release of pre-qualified alternate sites) will be a template for any future China-AT decoupling.</p>
+        <div class="pcn-grid">
+          <div class="pcn-chip"><b>CN-202602039F</b> Extraordinary PCN</div>
+          <div class="pcn-chip"><b>CN-202603014I</b> ATSN dual-flow</div>
+          <div class="pcn-chip"><b>CN-202512001F</b> SOT457 multi-axis</div>
+          <div class="pcn-chip"><b>+ 8 others</b> 006F, 007F, 019F, 023I, 029F, 037I, 038I, 039I</div>
+        </div>
+        <div class="action"><b>Advantech action:</b> identify all Nexperia parts in active BOMs (logic, ESD, MOSFETs). Capture date-code marking to distinguish ATGD vs ATSN — datecode field will diverge.</div>
+
+        <div class="pg-panel">
+          <h4>📦 Advantech BOM impact — representative Nexperia parts</h4>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">BSS138PW</div>
+              <div class="mpn-meta">Nexperia N-channel MOSFET (logic-level)<br/>IN&nbsp;<span class="in">1310006846-35A0</span></div>
+            </div>
+            <div class="stats">
+              <div class="total"><b>3</b> products / 1 model affected</div>
+              <div class="pg-bars">
+                <div class="pg-bar hot"><span class="label">ECG</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="num">3</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">BSS138PS</div>
+              <div class="mpn-meta">Nexperia dual N-channel<br/>IN&nbsp;<span class="in">1310007670-51A1</span></div>
+            </div>
+            <div class="stats">
+              <div class="no-bom">Not in any active BOM — risk: nil unless used in upcoming designs</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </article>
+
+    <!-- ===== Card #3 ===== -->
+    <article id="card-3" class="card" data-tags="strategic">
+      <div class="card-head" onclick="toggle(this)">
+        <div class="rank">03</div>
+        <div class="head-text">
+          <h3>ST Manufacturing Reshaping Program (Apr 10, 2025 announcement playing out)</h3>
+          <p class="vendors">STMicroelectronics · STM32 · MEMS · SiC · LDOs</p>
+        </div>
+        <div class="head-meta">
+          <span class="pill count">22 PCNs</span>
+          <span class="pill impact-high">High</span>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="body"><div class="body-inner">
+        <h4>What is happening</h4>
+        <p>ST's €hundreds-M savings program: ≤2,800 voluntary departures by 2027, 200mm legacy phased out, 300mm Crolles ramped to 14,000 wpw, 300mm Agrate to 4,000 wpw, Catania 200mm SiC ramp Q4 2025, Ang Mo Kio (Singapore) becomes <b>global 150mm consolidation hub</b>.</p>
+        <h4>PCN-level visibility</h4>
+        <div class="pcn-grid">
+          <div class="pcn-chip"><b>PCN 15789</b> STM32C011x + Crolles 300</div>
+          <div class="pcn-chip"><b>PCN 16018</b> STM32F2/F4 + Shenzhen</div>
+          <div class="pcn-chip"><b>PCN 16131</b> STM32H5x + HHGrace Wuxi</div>
+          <div class="pcn-chip"><b>PCN 16151</b> MEMS TSSOP14 + TSHT</div>
+          <div class="pcn-chip"><b>PCN 16258</b> MEMS + Singapore</div>
+          <div class="pcn-chip"><b>PCN 15586</b> MEMS Crolles→Rousset</div>
+        </div>
+        <div class="action"><b>Advantech action:</b> validate STTS751, STTS22HTR, MP23DB01K, MP34DT05/06 MEMS BOM. Watch for PTN 15801 — LDOs with no replacement.</div>
+
+        <div class="pg-panel">
+          <h4>📦 Advantech BOM impact — representative STM32 parts</h4>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">STM32H573VIT6</div>
+              <div class="mpn-meta">Affected by PCN 16131 (Crolles → HHGrace Wuxi)<br/>IN&nbsp;<span class="in">1400007127-01</span></div>
+            </div>
+            <div class="stats">
+              <div class="total"><b>19</b> products / 12 models affected</div>
+              <div class="pg-bars">
+                <div class="pg-bar hot"><span class="label">IAG</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="num">14</span></div>
+                <div class="pg-bar"><span class="label">ICWG</span><span class="track"><span class="fill" style="width:22%"></span></span><span class="num">3</span></div>
+                <div class="pg-bar"><span class="label">ISG</span><span class="track"><span class="fill" style="width:15%"></span></span><span class="num">2</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">STM32F407VGT6</div>
+              <div class="mpn-meta">High-perf MCU (legacy production line)<br/>IN&nbsp;<span class="in">1400005037-01</span></div>
+            </div>
+            <div class="stats">
+              <div class="total"><b>9</b> products / 3 models affected</div>
+              <div class="pg-bars">
+                <div class="pg-bar hot"><span class="label">IAG</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="num">9</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </article>
+
+    <!-- ===== Card #4 ===== -->
+    <article id="card-4" class="card" data-tags="strategic preventive">
+      <div class="card-head" onclick="toggle(this)">
+        <div class="rank">04</div>
+        <div class="head-text">
+          <h3>TI Sherman SM1 Production Start + 6× Assembly Site Diversification</h3>
+          <p class="vendors">Texas Instruments · analog · logic · LDOs · wireless MCU</p>
+        </div>
+        <div class="head-meta">
+          <span class="pill count">42 PCNs</span>
+          <span class="pill impact-high">High</span>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="body"><div class="body-inner">
+        <h4>What is happening</h4>
+        <p>SM1 (Sherman, TX) went into production <b>Dec 17, 2025</b> — first US 300mm analog/embedded mega-fab. In parallel, TI is fanning out assembly across MLA, CDAT, TIEM, FMX, TI Clark, and TI Philippines. Combined with <b>RFAB / MIHO / DMOS6 fab transitions</b> (TPS54202 LBC7→LBC10LV, BZX/TPD diodes MIHO qual), 2026 is TI's biggest production-side year in a decade.</p>
+        <h4>Selected PCNs</h4>
+        <div class="pcn-grid">
+          <div class="pcn-chip"><b>20251111000.1B</b> MLA — LSF/PCA/SN74LVC</div>
+          <div class="pcn-chip"><b>20260313000.2</b> CDAT+TIEM — Q1 auto logic</div>
+          <div class="pcn-chip"><b>20260331002.1</b> FMX — SN74HC family</div>
+          <div class="pcn-chip"><b>20260416003.1</b> TIEM — CC1310/2640/2650/2652</div>
+          <div class="pcn-chip"><b>20260223006.1A</b> RFAB→DMOS6 TPS54202</div>
+          <div class="pcn-chip"><b>20260326003.1</b> NE555 family die redesign</div>
+        </div>
+        <div class="quote">TI mailed dozens of "informational" datasheet-only PCNs alongside the real ones — auto-classify by filename to keep triage cost down.</div>
+
+        <div class="pg-panel">
+          <h4>📦 Advantech BOM impact — top fab-transition TI parts</h4>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">TPS54202DDCR</div>
+              <div class="mpn-meta">RFAB LBC7 → DMOS6 LBC10LV (PCN 20260223006.1A) · NRND<br/>IN&nbsp;<span class="in">1410028706-01</span></div>
+            </div>
+            <div class="stats">
+              <div class="total"><b>80</b> products / 22 models — concentrated in IAG · DADA</div>
+              <div class="pg-bars">
+                <div class="pg-bar hot"><span class="label">IAG</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="num">80</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">SN74LVC2T45DCTR</div>
+              <div class="mpn-meta">Voltage translator family (MLA assembly add)<br/>IN&nbsp;<span class="in">1410017970</span></div>
+            </div>
+            <div class="stats">
+              <div class="total"><b>1,153</b> products / 156 models — the highest-volume TI BOM hit</div>
+              <div class="pg-bars">
+                <div class="pg-bar hot"><span class="label">ESG</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="num">424</span></div>
+                <div class="pg-bar hot"><span class="label">ISG</span><span class="track"><span class="fill" style="width:71%"></span></span><span class="num">301</span></div>
+                <div class="pg-bar"><span class="label">ACG</span><span class="track"><span class="fill" style="width:36%"></span></span><span class="num">152</span></div>
+                <div class="pg-bar"><span class="label">ECG</span><span class="track"><span class="fill" style="width:29%"></span></span><span class="num">124</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </article>
+
+    <!-- ===== Card #5 ===== -->
+    <article id="card-5" class="card" data-tags="material">
+      <div class="card-head" onclick="toggle(this)">
+        <div class="rank">05</div>
+        <div class="head-text">
+          <h3>Au→Cu Wire &amp; Alloy-42→Cu Leadframe Industry Migration</h3>
+          <p class="vendors">Diodes · Nexperia · NoVoSense · Micron NAND TSOP · Vishay optocoupler</p>
+        </div>
+        <div class="head-meta">
+          <span class="pill count">12 PCNs</span>
+          <span class="pill impact-med">Medium</span>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="body"><div class="body-inner">
+        <h4>Why now</h4>
+        <p>Gold price + density + bond-strength engineering — multiple vendors are <b>simultaneously</b> migrating to Cu (or Cu-alloy) wire and Cu leadframes. The change is mostly transparent at the application level but introduces marking changes and re-qualification needs.</p>
+        <h4>Notable changes</h4>
+        <ul style="margin:0 0 10px; padding-left:20px; font-size:14px">
+          <li><b>Diodes PCN-2798</b> — PdCu wire in CAT assembly</li>
+          <li><b>Nexperia CN-202512001F</b> — SOT457 Cu wire 23μm + 50μm + 8" wafer + BSM + die layout</li>
+          <li><b>Micron PCN 36318</b> — 70s NAND TSOP: Alloy-42 → Cu leadframe + OSE Kaohsiung</li>
+          <li><b>NoVoSense NSI82xx</b> — TFME Hefei + HDS PPF→PSJ Cu-Ag + Au→Cu + marking var code</li>
+          <li><b>Vishay PCN-OPT-1484</b> — VOM617A/VOM618A bond wire diameter reduction (BSOB)</li>
+        </ul>
+        <div class="action"><b>Advantech action:</b> Cu wire ≠ Au wire bend behavior. PCB assemblers should re-verify ATE board life cycle and check for any Au-specific datasheet caveat.</div>
+
+        <div class="pg-panel">
+          <h4>📦 Advantech BOM impact — Diodes Cu-wire migration carrier</h4>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">BSS138-7-F</div>
+              <div class="mpn-meta">Diodes Inc N-channel MOSFET — extremely common<br/>IN&nbsp;<span class="in">1310006296-01</span></div>
+            </div>
+            <div class="stats">
+              <div class="total"><b>577</b> products / 74 models affected — Cu-wire migration touches half the company</div>
+              <div class="pg-bars">
+                <div class="pg-bar hot"><span class="label">ESG</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="num">336</span></div>
+                <div class="pg-bar hot"><span class="label">ISG</span><span class="track"><span class="fill" style="width:24%"></span></span><span class="num">81</span></div>
+                <div class="pg-bar"><span class="label">ECG</span><span class="track"><span class="fill" style="width:21%"></span></span><span class="num">70</span></div>
+                <div class="pg-bar"><span class="label">SIOT</span><span class="track"><span class="fill" style="width:11%"></span></span><span class="num">36</span></div>
+                <div class="pg-bar"><span class="label">IAG</span><span class="track"><span class="fill" style="width:6%"></span></span><span class="num">19</span></div>
+                <div class="pg-bar"><span class="label">AS+</span><span class="track"><span class="fill" style="width:4%"></span></span><span class="num">13</span></div>
+                <div class="pg-bar"><span class="label">WISE</span><span class="track"><span class="fill" style="width:4%"></span></span><span class="num">12</span></div>
+                <div class="pg-bar"><span class="label">ACG</span><span class="track"><span class="fill" style="width:3%"></span></span><span class="num">10</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </article>
+
+    <!-- ===== Card #6 ===== -->
+    <article id="card-6" class="card" data-tags="crisis material">
+      <div class="card-head" onclick="toggle(this)">
+        <div class="rank">06</div>
+        <div class="head-text">
+          <h3>Tower Israel 6" Foundry Termination → Vishay Newport UK</h3>
+          <p class="vendors">Vishay · Phase8 Power MOSFETs · IRF9520PBF · IRF9640 · IRFC9120B · IRFCC50B</p>
+        </div>
+        <div class="head-meta">
+          <span class="pill count">2 PCNs</span>
+          <span class="pill impact-med">Medium</span>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="body"><div class="body-inner">
+        <h4>What is happening</h4>
+        <p>Tower Semiconductor announced 6" foundry termination — Vishay's Phase8 power MOSFET family transfers to <b>Vishay-owned Newport (UK)</b>. First-ship Jun 1, 2026. Date code marking gets an <b>"R"</b> in the 4th position (line 2).</p>
+        <h4>Why this matters strategically</h4>
+        <p>This is the canonical example of a <b>forced fab closure cascade</b>. Tower closing Migdal Haemek's 6" line will keep firing PCNs across <b>every</b> fabless customer (Skyworks, Cirrus, Bourns, multiple smaller MOSFET houses) over the next 18 months.</p>
+        <div class="pcn-grid">
+          <div class="pcn-chip"><b>PCN-SIL-022</b> Mar 27 2026 — Tower→Newport transfer</div>
+          <div class="pcn-chip"><b>PCN-OPT-1484</b> Mar 31 2026 — Bond wire diameter</div>
+        </div>
+
+        <div class="pg-panel">
+          <h4>📦 Advantech BOM impact — Vishay Phase8 MOSFETs</h4>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">IRF9520PBF</div>
+              <div class="mpn-meta">P-channel power MOSFET, Phase8 platform<br/>IN&nbsp;<span class="in">(no Advantech BOM match)</span></div>
+            </div>
+            <div class="stats">
+              <div class="no-bom">Not found in active Advantech BOMs — manual MPN sweep recommended for IRF9640, IRFC9120B, IRFCC50B before Jun 1, 2026 cutover</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </article>
+
+    <!-- ===== Card #7 ===== -->
+    <article id="card-7" class="card" data-tags="crisis">
+      <div class="card-head" onclick="toggle(this)">
+        <div class="rank">07</div>
+        <div class="head-text">
+          <h3>TSMC Fab 5 Closure (Pre-PCN) — Nuvoton 33-Part Migration</h3>
+          <p class="vendors">Nuvoton · 8-bit MCUs · system MCUs</p>
+        </div>
+        <div class="head-meta">
+          <span class="pill count">1 Pre-PCN</span>
+          <span class="pill impact-high">High</span>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="body"><div class="body-inner">
+        <h4>What is happening</h4>
+        <p>TSMC will stop production at Fab 5 (Hsinchu, 6") in 2027. Nuvoton issued <b>Pre-PCN QA00-202601-001 (Mar 6, 2026)</b> announcing 33 affected parts will be transferred to alternate fabs. Pre-PCN means formal qual data + final notices are forthcoming over 2026-2027.</p>
+        <h4>Why this gets a top-10 slot despite only 1 notice</h4>
+        <p>TSMC Fab 5 is the single largest <b>impending</b> root cause in flight. Beyond Nuvoton, this will generate dozens of cascading PCNs from any fabless customer using Fab 5's process tech.</p>
+        <div class="action"><b>Advantech action:</b> Open Redmine watch ticket. Survey all Nuvoton 8-bit MCUs in DIY/Industrial product lines for the affected list.</div>
+
+        <div class="pg-panel">
+          <h4>📦 Advantech BOM impact — Nuvoton parts on Fab 5</h4>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">Pending Nuvoton 33-part list</div>
+              <div class="mpn-meta">Pre-PCN list of 33 affected parts not yet released<br/>IN&nbsp;<span class="in">— (awaiting formal PCN)</span></div>
+            </div>
+            <div class="stats">
+              <div class="no-bom">Pull Nuvoton parts list from Denodo once the formal PCN is issued — likely candidates: NCT78xx, MS51, M0518, NUC1xx 8-bit/Cortex-M0 families used in EC/BMC roles</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </article>
+
+    <!-- ===== Card #8 ===== -->
+    <article id="card-8" class="card" data-tags="crisis">
+      <div class="card-head" onclick="toggle(this)">
+        <div class="rank">08</div>
+        <div class="head-text">
+          <h3>Amkor Korea (ATK4/ATK5) → ASE Kaohsiung Taiwan</h3>
+          <p class="vendors">NXP · i.MX 8M Plus · i.MX 93 · BGA assembly</p>
+        </div>
+        <div class="head-meta">
+          <span class="pill count">7 PCNs</span>
+          <span class="pill impact-high">High</span>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="body"><div class="body-inner">
+        <h4>What is happening</h4>
+        <p>NXP migrating i.MX 8M Plus (548 FCBGA 15×15) and i.MX 93 from Amkor Kwangju (ATK4) + ATK5 Korea to <b>ASE Kaohsiung (ASE-KH) Taiwan</b>. 9mm / 11mm / 14mm + i.MX 8M Plus ED Cpk reports all PASS per AECQ100RevG.</p>
+        <h4>Bigger picture</h4>
+        <p>Amkor Korea capacity rationalization is a real driver — multiple Tier-1 customers (NXP today; ST, Microchip, Diodes in subsequent quarters) are de-risking from ATK4/5. Watch the next 6 months for cross-vendor pattern.</p>
+        <div class="pcn-grid">
+          <div class="pcn-chip"><b>202602007F01</b> i.MX 93</div>
+          <div class="pcn-chip"><b>Cpk 9/11/14mm + 8M+</b> all PASS</div>
+        </div>
+
+        <div class="pg-panel">
+          <h4>📦 Advantech BOM impact — i.MX 8M Plus / i.MX 93 + KSZ9131 PHY</h4>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">MIMX8MP6CVNKZAA</div>
+              <div class="mpn-meta">NXP i.MX 8M Plus quad-A53 + NPU<br/>IN&nbsp;<span class="in">(MPN sweep pending — high SOM use)</span></div>
+            </div>
+            <div class="stats">
+              <div class="no-bom">No direct hit in this batch — i.MX 8M Plus is typically integrated via Advantech SOMs (RSB/ROM/EPC). Run targeted SOM-level sweep before ASE-KH cutover.</div>
+            </div>
+          </div>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">KSZ9131RNXI</div>
+              <div class="mpn-meta">Microchip Gigabit Ethernet PHY — JPZA-17PROK647 Final<br/>IN&nbsp;<span class="in">1410036289-01</span></div>
+            </div>
+            <div class="stats">
+              <div class="no-bom">Item exists in Denodo (Active · Preferred · Z000175) but no BOM hits this query — likely new design-in still in NPI stage</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </article>
+
+    <!-- ===== Card #9 ===== -->
+    <article id="card-9" class="card" data-tags="regulatory">
+      <div class="card-head" onclick="toggle(this)">
+        <div class="rank">09</div>
+        <div class="head-text">
+          <h3>Country-of-Origin / Regulatory Compliance Bloc</h3>
+          <p class="vendors">AMD · Intel · Cirrus Logic · TE Connectivity · ams-OSRAM · Eaton · Lumex</p>
+        </div>
+        <div class="head-meta">
+          <span class="pill count">8 PCNs</span>
+          <span class="pill impact-low">Low (admin)</span>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="body"><div class="body-inner">
+        <h4>What is happening</h4>
+        <p>Driven by US-China trade tensions and EU/Korean recycling rules, a wave of <b>label, marking, and CoO interpretation</b> changes:</p>
+        <div class="pcn-grid">
+          <div class="pcn-chip"><b>AMD 4952(A)</b> CoO laser mark removal</div>
+          <div class="pcn-chip"><b>Intel 915263-00</b> COO = COF (US shipments)</div>
+          <div class="pcn-chip"><b>Cirrus PCN-000034</b> COD added to inner label</div>
+          <div class="pcn-chip"><b>TE 26-274546</b> Austria insourcing</div>
+          <div class="pcn-chip"><b>Intel 874317-00</b> Korea recycling symbol</div>
+          <div class="pcn-chip"><b>ams-OSRAM AO-IN-2026-013-I</b> FR001 label</div>
+          <div class="pcn-chip"><b>Eaton EE-PCN25077</b> +Philippines CoO</div>
+          <div class="pcn-chip"><b>Lumex 241209001</b> manufacture to Taiwan</div>
+        </div>
+        <div class="action"><b>Advantech action:</b> these are <b>running changes — no design impact.</b> Update receiving QA's CoO mapping table and incoming inspection scripts.</div>
+
+        <div class="pg-panel">
+          <h4>📦 Advantech BOM impact — CoO bloc</h4>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">AMD Embedded · Intel · Cirrus · TE</div>
+              <div class="mpn-meta">CoO label/marking changes only<br/>IN&nbsp;<span class="in">N/A (no item change)</span></div>
+            </div>
+            <div class="stats">
+              <div class="no-bom">Pure regulatory metadata — no Item Number splits, no BOM impact, no PG exposure. Receiving QA workflow update only.</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </article>
+
+    <!-- ===== Card #10 ===== -->
+    <article id="card-10" class="card" data-tags="material preventive">
+      <div class="card-head" onclick="toggle(this)">
+        <div class="rank">10</div>
+        <div class="head-text">
+          <h3>Form-Factor &amp; Package Changes Requiring PCB Verification</h3>
+          <p class="vendors">Winbond/Z200 · Micron LPDDR4 tray · ST TSSOP14 · Bourns SRF · Lumex</p>
+        </div>
+        <div class="head-meta">
+          <span class="pill count">9 PCNs</span>
+          <span class="pill impact-high">High (re-layout)</span>
+        </div>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="body"><div class="body-inner">
+        <h4>Why this lands top-10 despite low count</h4>
+        <p>Form-factor changes are <b>the only PCN class that forces a PCB re-layout.</b> While only ~9 notices fall in this category, each one can sink a product on the production floor if missed.</p>
+        <h4>Highest-impact items</h4>
+        <div class="pcn-grid">
+          <div class="pcn-chip"><b>Z200 DM202601-03</b> W25Q16JV→RV: USON8 → XSON8</div>
+          <div class="pcn-chip"><b>Z200 DM202601-06</b> W25Q20: USON8→XSON8 + VSOP8→SOP8 150mil</div>
+          <div class="pcn-chip"><b>Z200 DM202601-07</b> W25Q40 same as 06</div>
+          <div class="pcn-chip"><b>Micron PCN 36217</b> LPDDR4 tray PPE→MPPO-LP</div>
+          <div class="pcn-chip"><b>Bourns SRF12xx</b> manual→auto + glue change</div>
+          <div class="pcn-chip"><b>Lumex 241209001</b> LDD-F302NI-RA pin 3.4→3.15mm</div>
+        </div>
+        <div class="action"><b>Advantech action:</b> route to PCB layout team. Map every Winbond SPI Flash usage. Hard cutover Jul 1, 2026 for Micron LPDDR4 tray — verify tray-handling on SMT lines.</div>
+
+        <div class="pg-panel">
+          <h4>📦 Advantech BOM impact — Winbond SPI Flash (Z200 PCN family)</h4>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">W25Q16JVSSIQ</div>
+              <div class="mpn-meta">16Mb SPI Flash · SOIC8 — direct target of Z200 DM202601-03 (→ W25Q16RV, USON8 form change)<br/>IN&nbsp;<span class="in">1410027468-01</span></div>
+            </div>
+            <div class="stats">
+              <div class="total"><b>4,072</b> products / 464 models — single biggest BOM exposure in the 2026 batch</div>
+              <div class="pg-bars">
+                <div class="pg-bar hot"><span class="label">ECG</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="num">1575</span></div>
+                <div class="pg-bar hot"><span class="label">ISG</span><span class="track"><span class="fill" style="width:53%"></span></span><span class="num">837</span></div>
+                <div class="pg-bar"><span class="label">iMS</span><span class="track"><span class="fill" style="width:30%"></span></span><span class="num">472</span></div>
+                <div class="pg-bar"><span class="label">ESG</span><span class="track"><span class="fill" style="width:15%"></span></span><span class="num">244</span></div>
+                <div class="pg-bar"><span class="label">ACG</span><span class="track"><span class="fill" style="width:15%"></span></span><span class="num">236</span></div>
+                <div class="pg-bar"><span class="label">ICWG</span><span class="track"><span class="fill" style="width:14%"></span></span><span class="num">220</span></div>
+                <div class="pg-bar"><span class="label">EIG</span><span class="track"><span class="fill" style="width:14%"></span></span><span class="num">220</span></div>
+                <div class="pg-bar"><span class="label">SIOT</span><span class="track"><span class="fill" style="width:6%"></span></span><span class="num">87</span></div>
+                <div class="pg-bar"><span class="label">AS+</span><span class="track"><span class="fill" style="width:5%"></span></span><span class="num">75</span></div>
+                <div class="pg-bar"><span class="label">IAG</span><span class="track"><span class="fill" style="width:4%"></span></span><span class="num">56</span></div>
+                <div class="pg-bar"><span class="label">WISE</span><span class="track"><span class="fill" style="width:3%"></span></span><span class="num">50</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="mpn-row">
+            <div class="mpn-block">
+              <div class="mpn-name">W25Q32JV / MP2315GJ</div>
+              <div class="mpn-meta">Other form-factor PCN carriers<br/>IN&nbsp;<span class="in">1410027479-01 / 1410027028-01</span></div>
+            </div>
+            <div class="stats">
+              <div class="total">MP2315GJ (NRND) hits <b>71</b> products — 65 in ECG (SOMD/SOMX), 6 in ACG</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </article>
+
+  </div>
+</section>
+
+<footer>
+  Generated 2026-05-12 · Source: <code>wiki/pcn/2026-may-batch-pcn-summary.md</code> · Map: <code>output/2026-pcn-world-impact-map.png</code> · Advantech Knowledge Base
+</footer>
+
+<script>
+  function toggle(headEl){
+    const card = headEl.closest('.card');
+    card.classList.toggle('open');
+  }
+  // filter
+  document.querySelectorAll('.chip-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.chip-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      document.querySelectorAll('.card').forEach(c=>{
+        const tags = (c.dataset.tags||'').split(' ');
+        c.style.display = (f==='all' || tags.includes(f)) ? '' : 'none';
+      });
+    });
+  });
+  // SVG vendor focus + detail panel
+  const VENDOR_DATA = {
+    ti:       {n:1, t:'#1 · Texas Instruments — Sherman SM1 LIVE + 6× assembly diversification',
+               m:'SM1 went hot Dec 17, 2025. In parallel TI added MLA, CDAT, TIEM, FMX, TI Clark, TI Philippines, plus RFAB → DMOS6 (LBC7→LBC10LV) and MIHO qualifications.',
+               p:'SN74LVC2T45DCTR (1410017970) — <b>1,153 products / 156 models</b>. TPS54202DDCR (1410028706-01) — <b>80 products / 22 models</b>.',
+               u:'Medium — running changes. Apply JEDEC 30-day tacit acceptance. Spot-check Cpk attachments.'},
+    st:       {n:3, t:'#2 · STMicroelectronics — Manufacturing Reshaping Program',
+               m:'≤2,800 voluntary departures by 2027. Crolles 300 → 14,000 wpw, Agrate 300 → 4,000 wpw, Catania SiC Q4 2025, Ang Mo Kio = global 150mm hub. Multi-PCN cascade across STM32, MEMS, LDOs.',
+               p:'STM32H573VIT6 (1400007127-01) — <b>19 products / 12 models</b> across IAG/ICWG/ISG. STM32F407VGT6 (1400005037-01) — <b>9 products / 3 models</b> in IAG.',
+               u:'High — multi-axis. Validate MEMS BOM (STTS751, STTS22HTR, MP23DB01K, MP34DT05/06). PTN 15801 LDOs have NO replacement.'},
+    nxperia:  {n:2, t:'#3 · Nexperia — ATGD Dongguan crisis → ATSN Seremban cascade',
+               m:'Extraordinary PCN CN-202602039F (Mar 4, 2026) forced bifurcation of China and ROW assembly. 10+ follow-up notices. SOT457 multi-axis adds Cu wire + 8" wafer + die layout change.',
+               p:'BSS138PW (1310006846-35A0) — 3 products / 1 model in ECG. BSS138PS (1310007670-51A1) — not in active BOM.',
+               u:'High — geopolitical. Capture datecode marking to distinguish ATGD vs ATSN.'},
+    mps:      {n:1, t:'#4 · Monolithic Power Systems — Bumping + Assembly fan-out',
+               m:'12 PCNs from a single mfr — GTA Shanghai, SCS, HTJS, GREATEK, Unisem-MY, Forehope. Strongest signal of pure preventive dual-sourcing in the 2026 batch.',
+               p:'MP2315GJ (1410027028-01) — <b>71 products / 12 models</b>. 65 in ECG (SOMD 51, SOMX 14), 6 in ACG.',
+               u:'Low — running changes. No action required unless customer audit flags.'},
+    nxp:      {n:8, t:'#5 · NXP / Freescale — Amkor Korea → ASE Kaohsiung',
+               m:'i.MX 8M Plus + i.MX 93 transferred from Amkor ATK4/ATK5 (Korea) to ASE-KH Taiwan. ED Cpk reports (9/11/14mm + 8M+) all PASS per AECQ100RevG.',
+               p:'i.MX 8M Plus typically integrated via Advantech SOMs (RSB/ROM/EPC). Run targeted SOM-level Denodo sweep before cutover.',
+               u:'Medium — qualified path. Watch for subsequent ATK4/5 customers (ST, Microchip likely next).'},
+    vishay:   {n:6, t:'#6 · Vishay — Tower IL 6" termination → Newport UK',
+               m:'Vishay Phase8 power MOSFET family migrates to Vishay-owned Newport UK fab. First-ship Jun 1, 2026. Date code marking gets "R" in line 2 position 4.',
+               p:'IRF9520PBF, IRF9640, IRFC9120B, IRFCC50B — none in current Advantech BOM hit. Manual sweep recommended.',
+               u:'Low — but Tower closure will fire more cascades over 18 months. Monitor Skyworks/Cirrus/Bourns.'},
+    nuvoton:  {n:7, t:'#7 · Nuvoton — TSMC Fab 5 closure Pre-PCN',
+               m:'TSMC stops Fab 5 production in 2027. Nuvoton Pre-PCN QA00-202601-001 announces 33-part migration. Formal PCN + qual data forthcoming.',
+               p:'Likely candidates: NCT78xx, MS51, M0518, NUC1xx 8-bit/Cortex-M0 families used in EC/BMC roles.',
+               u:'High (future) — open Redmine watch ticket now to track formal PCN release.'},
+    microchip:{n:8, t:'#8 · Microchip — KSZ9131 PHY tri-sourcing',
+               m:'JPZA-17PROK647 Final Notice (Mar 30, 2026) — KSZ9131RNXI/RNXC now tri-sourced: ASE Chung-Li + Amkor Shanghai + MTAI Thailand.',
+               p:'KSZ9131RNXI (1410036289-01) exists in Denodo (Active/Preferred) but no current BOM hits — likely still in NPI.',
+               u:'Low — Final Notice = qualified. Capture for any in-flight gigabit Ethernet design.'},
+    diodes:   {n:5, t:'#9 · Diodes Inc — SPFAB/GFAB/TYNTEK + Au→Cu wire migration',
+               m:'PCN-2790 (BGBM), PCN-2798 (SPFAB+TYNTEK + CAT/SAT/NS assy + PdCu wire), PCN-2808 (SPFAB South Portland USA). Multi-axis change.',
+               p:'BSS138-7-F (1310006296-01) — <b>577 products / 74 models</b>. ESG 336, ISG 81, ECG 70, SIOT 36 — half the company.',
+               u:'High — Cu wire ≠ Au wire bend behavior. PCB assembler ATE board life cycle re-verification needed.'},
+    micron:   {n:10,t:'#10 · Micron NAND + CoO bloc (AMD/Intel/Cirrus/TE)',
+               m:'Micron 70s NAND TSOP: Alloy-42 → Cu leadframe + OSE Kaohsiung. Plus CoO bloc: AMD CoO laser mark removal, Intel COO=COF, Cirrus COD, TE Austria insourcing, Korean recycling.',
+               p:'NAND TSOP candidate parts: pull MT29F series. CoO bloc is label-only — no Item Number change, no PG exposure.',
+               u:'Low — running change for CoO. Receiving QA workflow update only.'},
+  };
+  const fp = document.getElementById('focus-panel');
+  document.querySelectorAll('.vendor-card').forEach(g=>{
+    g.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      const v = g.dataset.vendor;
+      const isAlready = g.classList.contains('focused');
+      document.querySelectorAll('.vendor-card').forEach(x=>{
+        x.classList.remove('focused');
+        x.classList.toggle('dim', !isAlready);
+      });
+      if(!isAlready){
+        g.classList.add('focused'); g.classList.remove('dim');
+        const d = VENDOR_DATA[v];
+        if(d){
+          document.getElementById('fp-title').innerHTML = d.t;
+          document.getElementById('fp-move').innerHTML = d.m;
+          document.getElementById('fp-parts').innerHTML = d.p;
+          document.getElementById('fp-urgency').innerHTML = d.u;
+          const jump = document.getElementById('fp-jump');
+          jump.href = '#card-' + d.n;
+          jump.textContent = '→ Jump to full root-cause card #' + d.n;
+          fp.classList.add('open');
+        }
+      } else {
+        document.querySelectorAll('.vendor-card').forEach(x=>x.classList.remove('dim'));
+        fp.classList.remove('open');
+      }
+    });
+  });
+  // Click outside SVG = clear focus
+  document.addEventListener('click',(e)=>{
+    if(!e.target.closest('.vendor-card') && !e.target.closest('#focus-panel')){
+      document.querySelectorAll('.vendor-card').forEach(x=>{
+        x.classList.remove('focused','dim');
+      });
+      fp.classList.remove('open');
+    }
+  });
+  // open first 3 cards by default for instant payoff
+  document.querySelectorAll('.card').forEach((c,i)=>{ if(i<3) c.classList.add('open'); });
+</script>
+</body>
+</html>
