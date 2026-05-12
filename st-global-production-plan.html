@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>STMicroelectronics — Global Production Plan (Manufacturing Reshaping Program)</title>
+<style>
+  :root{
+    --st-blue:#03234B;
+    --st-cyan:#0096D6;
+    --st-light:#E8F4FB;
+    --st-accent:#FFB200;
+    --ink:#0d1b2a;
+    --muted:#5a6b7b;
+    --line:#dfe6ed;
+    --bg:#f6f8fb;
+    --good:#1f8a4c;
+    --warn:#c0392b;
+    --neutral:#5a6b7b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.55;font-size:15px}
+  a{color:var(--st-cyan);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* ===== Hero ===== */
+  .hero{
+    background:linear-gradient(135deg,var(--st-blue) 0%, #062c5d 55%, var(--st-cyan) 100%);
+    color:#fff;
+    padding:48px 32px 60px;
+  }
+  .hero-inner{max-width:1200px;margin:0 auto}
+  .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#9bd6f0;margin:0 0 8px}
+  .hero h1{font-size:36px;line-height:1.15;margin:0 0 10px;font-weight:700;letter-spacing:-.5px}
+  .hero h2{font-size:18px;font-weight:400;margin:0 0 28px;color:#cfe6f5;max-width:900px}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;color:#cfe6f5}
+  .hero-meta b{color:#fff;font-weight:600}
+
+  /* ===== KPI strip ===== */
+  .kpis{
+    max-width:1200px;margin:-32px auto 0;
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;
+    padding:0 32px;
+  }
+  .kpi{
+    background:#fff;border-radius:12px;padding:18px 18px 16px;
+    box-shadow:0 6px 20px rgba(3,35,75,.10);
+    border-top:4px solid var(--st-cyan);
+  }
+  .kpi .num{font-size:28px;font-weight:700;color:var(--st-blue);line-height:1.1}
+  .kpi .lbl{font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.08em}
+  .kpi.alt{border-top-color:var(--st-accent)}
+
+  /* ===== Sections ===== */
+  main{max-width:1200px;margin:0 auto;padding:40px 32px 60px}
+  section{margin-bottom:40px}
+  h3.section{font-size:22px;color:var(--st-blue);margin:0 0 6px;font-weight:700;letter-spacing:-.2px}
+  .section-sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+  .rule{height:3px;width:48px;background:var(--st-cyan);border-radius:2px;margin:0 0 18px}
+
+  /* ===== Region cards ===== */
+  .regions{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .region{
+    background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 22px;
+    position:relative;overflow:hidden;
+  }
+  .region::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:4px;
+    background:var(--st-cyan);
+  }
+  .region.it::before{background:#16a34a}
+  .region.sg::before{background:#a855f7}
+  .region h4{margin:8px 0 6px;color:var(--st-blue);font-size:18px}
+  .flag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .region p{margin:8px 0 0;color:#243747;font-size:14px}
+
+  /* ===== Tables ===== */
+  .tablewrap{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  thead th{
+    background:var(--st-light);color:var(--st-blue);
+    text-align:left;padding:11px 14px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--line)
+  }
+  tbody td{padding:11px 14px;border-bottom:1px solid #eef2f6;vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:#fafcfe}
+  td.site{font-weight:600;color:var(--st-blue);white-space:nowrap}
+  .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase}
+  .b-grow{background:#dcf2e6;color:#0f6b3a}
+  .b-refocus{background:#e3eefc;color:#1d4ed8}
+  .b-phase{background:#fde2e2;color:#a61b1b}
+  .b-back{background:#fff1cc;color:#7a5800}
+
+  /* ===== Timeline ===== */
+  .timeline{position:relative;padding-left:24px;border-left:2px solid var(--st-cyan)}
+  .tl-item{position:relative;margin-bottom:20px}
+  .tl-item::before{
+    content:"";position:absolute;left:-31px;top:6px;width:12px;height:12px;border-radius:50%;
+    background:#fff;border:2px solid var(--st-cyan);
+  }
+  .tl-item.now::before{background:var(--st-accent);border-color:var(--st-accent);box-shadow:0 0 0 4px rgba(255,178,0,.25)}
+  .tl-date{font-weight:700;color:var(--st-blue);font-size:13px}
+  .tl-body{color:#243747;font-size:14px;margin-top:2px}
+
+  /* ===== Two-col list ===== */
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+  .panel h4{margin:0 0 8px;color:var(--st-blue);font-size:16px}
+  .panel ul{padding-left:18px;margin:8px 0 0}
+  .panel li{margin:6px 0;color:#243747;font-size:14px}
+  .panel.warn{border-color:#f3c7c7;background:#fff8f8}
+  .panel.warn h4{color:#8a1f1f}
+  .panel.good{border-color:#c5e6d3;background:#f7fdf9}
+  .panel.good h4{color:#0f6b3a}
+
+  /* ===== Advantech callout ===== */
+  .callout{
+    background:#fff;border:1px solid var(--line);border-left:5px solid var(--st-accent);
+    border-radius:10px;padding:18px 22px;margin-top:14px
+  }
+  .callout h4{margin:0 0 6px;color:var(--st-blue);font-size:16px}
+  .callout ol{margin:8px 0 0;padding-left:20px}
+  .callout li{margin:6px 0;font-size:14px;color:#243747}
+
+  /* ===== Footer ===== */
+  footer{
+    max-width:1200px;margin:0 auto;padding:24px 32px 40px;color:var(--muted);font-size:12px;
+    border-top:1px solid var(--line)
+  }
+  footer .src{margin-top:8px}
+  footer code{background:#eef2f6;padding:2px 6px;border-radius:4px;font-size:12px}
+
+  /* ===== Responsive ===== */
+  @media (max-width: 900px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .regions{grid-template-columns:1fr}
+    .twocol{grid-template-columns:1fr}
+    .hero h1{font-size:28px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">STMicroelectronics N.V — Corporate Strategy</p>
+    <h1>Global Production Plan: Manufacturing Reshaping Program</h1>
+    <h2>April 10, 2025 corporate program reshaping ST's worldwide fab footprint — concentrating capacity into 300mm Si, 200mm SiC, and GaN; consolidating 150mm legacy into Singapore.</h2>
+    <div class="hero-meta">
+      <div><b>Press release:</b> April 10, 2025</div>
+      <div><b>Program announced:</b> October 2024</div>
+      <div><b>Execution window:</b> 2025–2027</div>
+      <div><b>CEO:</b> Jean-Marc Chery</div>
+    </div>
+  </div>
+</header>
+
+<div class="kpis">
+  <div class="kpi">
+    <div class="num">≤ 2,800</div>
+    <div class="lbl">Voluntary departures by 2027</div>
+  </div>
+  <div class="kpi">
+    <div class="num">$Hundreds M</div>
+    <div class="lbl">Annual savings exiting 2027</div>
+  </div>
+  <div class="kpi alt">
+    <div class="num">300mm Si</div>
+    <div class="lbl">+ 200mm SiC + GaN focus</div>
+  </div>
+  <div class="kpi alt">
+    <div class="num">Q4 2025</div>
+    <div class="lbl">Catania 200mm SiC starts</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- Geographic specialization -->
+  <section>
+    <h3 class="section">Strategic Geographic Specialization</h3>
+    <div class="rule"></div>
+    <p class="section-sub">Each region gets a long-term role. CEO Jean-Marc Chery: "all current sites will continue to play a long-term role."</p>
+    <div class="regions">
+      <div class="region fr">
+        <span class="flag">🇫🇷 France</span>
+        <h4>Digital Technologies</h4>
+        <p>Crolles 300mm + Crolles 200mm ecosystem. Optical sensing, silicon photonics, advanced packaging — first such activities in Europe.</p>
+      </div>
+      <div class="region it">
+        <span class="flag">🇮🇹 Italy</span>
+        <h4>Analog &amp; Power</h4>
+        <p>Agrate 300mm Smart Power flagship + Agrate 200mm refocused on MEMS + Catania 200mm Silicon Carbide Campus (SiC + GaN-on-Si).</p>
+      </div>
+      <div class="region sg">
+        <span class="flag">🇸🇬 Singapore</span>
+        <h4>Mature + Global 150mm Hub</h4>
+        <p>Ang Mo Kio: high-volume mature 200mm Si + <b>consolidated global legacy 150mm capabilities</b> — receives Tours' 150mm volume.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 300mm Megafabs -->
+  <section>
+    <h3 class="section">300mm Megafabs — Strategic Growth</h3>
+    <div class="rule"></div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Site</th><th>Tech</th><th>2027 Target</th><th>Modular Ceiling</th><th>Mission</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="site">Agrate 300mm <span class="badge b-grow">Grow</span><br/><small>Italy</small></td>
+            <td>Smart Power + Mixed Signal</td>
+            <td><b>4,000 wpw</b> (2× current)</td>
+            <td>up to 14,000 wpw</td>
+            <td>Flagship high-volume Smart Power facility</td>
+          </tr>
+          <tr>
+            <td class="site">Crolles 300mm <span class="badge b-grow">Grow</span><br/><small>France</small></td>
+            <td>Digital</td>
+            <td><b>14,000 wpw</b></td>
+            <td>up to 20,000 wpw</td>
+            <td>Core of digital products ecosystem</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 200mm sites -->
+  <section>
+    <h3 class="section">200mm Sites — Refocus &amp; Reallocate</h3>
+    <div class="rule"></div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Site</th><th>New Mission</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="site">Agrate 200mm <span class="badge b-refocus">Refocus</span><br/><small>Italy</small></td><td>Refocus on <b>MEMS</b></td></tr>
+          <tr><td class="site">Crolles 200mm <span class="badge b-refocus">Refocus</span><br/><small>France</small></td><td>Convert to <b>EWS high-volume + advanced packaging</b> (optical sensing, silicon photonics — first such activities in Europe)</td></tr>
+          <tr><td class="site">Rousset 200mm <span class="badge b-grow">Saturate</span><br/><small>France</small></td><td>Stays 200mm; <b>full saturation</b> via volume reallocated from other sites</td></tr>
+          <tr><td class="site">Tours 200mm <span class="badge b-refocus">Refocus</span><br/><small>France</small></td><td>Stays 200mm for select techs + <b>GaN epitaxy</b> + new <b>panel-level packaging for chiplets</b></td></tr>
+          <tr><td class="site">Ang Mo Kio 200mm <span class="badge b-grow">Consolidate</span><br/><small>Singapore</small></td><td>High-volume mature 200mm Si + <b>consolidated global legacy 150mm capabilities</b></td></tr>
+          <tr><td class="site">Catania 200mm SiC <span class="badge b-grow">Launch</span><br/><small>Italy</small></td><td>Production of <b>200mm SiC wafers begins Q4 2025</b> (Silicon Carbide Campus)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 150mm sites -->
+  <section>
+    <h3 class="section">150mm Sites — Phase Out / Consolidate</h3>
+    <div class="rule"></div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Site</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="site">Tours 150mm <span class="badge b-phase">Phase Out</span><br/><small>France</small></td><td><b>Legacy 150mm activities transferred out</b> to other ST sites — confirms RC 39 "Tours 6&quot; closure"</td></tr>
+          <tr><td class="site">Catania 150mm <span class="badge b-refocus">Refocus</span><br/><small>Italy</small></td><td>Resources <b>refocused to 200mm SiC + GaN-on-Si</b></td></tr>
+          <tr><td class="site">Other legacy 150mm <span class="badge b-grow">Consolidate</span></td><td><b>Consolidated into Ang Mo Kio (Singapore)</b> as global 150mm hub</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Back-end -->
+  <section>
+    <h3 class="section">Back-End / Test / Packaging</h3>
+    <div class="rule"></div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Site</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td class="site">Kirkop <span class="badge b-back">Upgrade</span><br/><small>Malta</small></td><td>High-volume test &amp; packaging fab in Europe — <b>upgraded with advanced automation</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Timeline -->
+  <section>
+    <h3 class="section">Execution Timeline</h3>
+    <div class="rule"></div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">October 2024</div>
+        <div class="tl-body">Manufacturing Reshaping Program first announced (no detail).</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">April 10, 2025</div>
+        <div class="tl-body">Full corporate plan published — workforce numbers, per-site missions, capacity targets disclosed.</div>
+      </div>
+      <div class="tl-item now">
+        <div class="tl-date">Q4 2025</div>
+        <div class="tl-body"><b>Catania 200mm SiC production begins</b> — Silicon Carbide Campus operational.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2026 – 2027</div>
+        <div class="tl-body">Bulk of <b>2,800 voluntary departures</b> executed; transition risk window for PCN qualification &amp; customer support continuity.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">By 2027</div>
+        <div class="tl-body">Capacity targets reached: <b>Crolles 300 → 14,000 wpw</b>, <b>Agrate 300 → 4,000 wpw</b>; high triple-digit-million-USD annual cost savings exiting 2027.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PCN-level confirmation vs gaps -->
+  <section>
+    <h3 class="section">What Advantech Sees vs. What the Press Release Hides</h3>
+    <div class="rule"></div>
+    <div class="twocol">
+      <div class="panel good">
+        <h4>✅ Press Release Confirms PCN Cascades</h4>
+        <ul>
+          <li><b>Tours 6" closure (RC 39)</b> — matches PCN PDP/25/15486 (Rectifiers EWS → ST Singapore) + PCN PDP/25/15489-15491 (TVS Protection FE+EWS → Singapore + China subcons)</li>
+          <li><b>Crolles 300 expansion to 14,000 wpw</b> — matches PCN 15789 (STM32C011x +Crolles 300) + PCN 16131 (STM32H5xx +Crolles 300 / +HHGrace Wuxi)</li>
+          <li><b>Singapore mature-tech consolidation</b> — matches multiple FE/EWS transfers from Tours into ST Singapore</li>
+          <li><b>Rousset full saturation</b> — matches PCN 15305 (STM32F411/F412/F76/F77 → Rousset RS8F at M10/90nm) + PCN 15586 (MEMS ASIC: Crolles 8" → Rousset 8")</li>
+          <li><b>Catania 200mm SiC ramp Q4 2025</b> — relevant for Advantech designs using ST silicon-carbide power devices</li>
+        </ul>
+      </div>
+      <div class="panel warn">
+        <h4>⚠ PCN-Only Visibility (Press Release Silent)</h4>
+        <ul>
+          <li><b>China-localization sub-pattern (RC 66)</b> — Shenzhen assembly add (PCN 16018), HHGrace Wuxi FE (PCN 16131), JSCC carrier-tape (PCI 15166), D2PAK/DPAK to ST China (PCN 15835/15852), M24256E EEPROM Au→Cu in Shenzhen (PCN 15827)</li>
+          <li><b>Bouskoura (Morocco)</b> EEPROM TSSOP8 line replacing Amkor PH (PCN 14750)</li>
+          <li><b>TSHT (Taiwan)</b> TSSOP14 MEMS assembly (PCN 16151)</li>
+          <li><b>ASE Kaohsiung</b> add for legacy STM32F2x/F4x/F7x LQFP (PCN 15271)</li>
+          <li><b>PTN 15801 LDOs with NO replacement</b> (LD56100, LDLN025) — Advantech must redesign or LTB</li>
+          <li><b>PTN MDG/20/12324</b> — separate, earlier 8-bit MCU rationalization (NOT part of Reshaping)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Advantech action -->
+  <section>
+    <h3 class="section">Advantech Action Items</h3>
+    <div class="rule"></div>
+    <div class="callout">
+      <h4>Priority BOM re-checks driven by ST Reshaping cascade</h4>
+      <ol>
+        <li><b>MEMS sensors &amp; mics</b>: re-check BOMs for STTS751, STTS22HTR, MP23DB01K family, MP34DT05/06</li>
+        <li><b>Specialty LDOs</b>: PTN 15801 hits LD56100, LDLN025 with <b>no replacement</b> — fast LTB or redesign</li>
+        <li><b>Rectifiers / TVS</b>: STTH-series + SM-series automotive TVS — Tours 150mm exit cascading via PDP/25/15486 + 15489-15491</li>
+        <li><b>STM32 dual-source qualification</b>: validate +Crolles 300 / +HHGrace Wuxi adds (PCN 15789, 16131)</li>
+        <li><b>6-month Last Time Order is short</b> for Reshaping-affected parts — fast LTB / qualification action required</li>
+        <li><b>Workforce transition risk 2026-2027</b>: monitor PCN qual quality + customer-support continuity during voluntary departures</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Key takeaways -->
+  <section>
+    <h3 class="section">Key Takeaways</h3>
+    <div class="rule"></div>
+    <div class="panel">
+      <ul>
+        <li><b>Reshaping ≠ shrinking</b>: ST is concentrating capacity into 300mm Si + 200mm SiC + GaN. French/Italian footprint stays (and grows in 300mm), but legacy 150mm in Tours and Catania exits.</li>
+        <li><b>Singapore Ang Mo Kio = global 150mm consolidation hub</b> — important for parts that previously came from European 150mm lines.</li>
+        <li><b>Tours not closing entirely</b> — keeps 200mm Si + GaN epitaxy + new panel-level packaging mission. Only the 150mm activities transfer out.</li>
+        <li><b>2026–2027 = transition risk window</b> — workforce departures concentrated here; expect ongoing Reshaping-related PCN volume.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div><b>Source</b>: STMicroelectronics press release "STMicroelectronics details company-wide program to reshape manufacturing footprint and resize global cost base," April 10, 2025.</div>
+  <div class="src">Wiki: <code>wiki/by-manufacturer/st-manufacturing-reshaping-program.md</code> · <code>wiki/by-manufacturer/st-microelectronics.md</code> · <code>wiki/eol-notices/eol-root-cause-analysis.md</code> §RC 36, §RC 39, §RC 66</div>
+  <div class="src">URL: <a href="https://newsroom.st.com/media-center/press-item.html/c3330.html" target="_blank" rel="noopener">https://newsroom.st.com/media-center/press-item.html/c3330.html</a> · Speaker: Jean-Marc Chery (President &amp; CEO)</div>
+  <div class="src" style="margin-top:12px;color:#8b9aab">Generated 2026-05-12 from EOLPCN_KW knowledge base. For Advantech internal use.</div>
+</footer>
+
+</body>
+</html>
