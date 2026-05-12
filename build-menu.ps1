@@ -18,6 +18,8 @@ function Get-PageTitle {
     $m = [regex]::Match($text, '<title[^>]*>(.*?)</title>', 'IgnoreCase, Singleline')
     if ($m.Success) {
         $t = $m.Groups[1].Value.Trim() -replace '\s+', ' '
+        # Decode any HTML entities already in the source title so HtmlEscape doesn't double-encode them.
+        $t = [System.Net.WebUtility]::HtmlDecode($t)
         if ($t) { return $t }
     }
     return [System.IO.Path]::GetFileNameWithoutExtension($Path)
